@@ -1,0 +1,15 @@
+# Local node deps
+node_modules/
+
+# Cached upstream OpenAPI spec (17 MB - re-fetched on demand)
+provider-dev/downloads/cloudflare-openapi.json
+provider-dev/downloads/cloudflare-openapi.yaml
+
+# stackql binary if downloaded locally
+stackql
+stackql.exe
+stackql-server.log
+
+# Python cache
+__pycache__/
+*.pyc

@@ -1,0 +1,42 @@
+See also:
+[[` SHOW `]](https://stackql.io/docs/language-spec/show) [[` DESCRIBE `]](https://stackql.io/docs/language-spec/describe)  [[` REGISTRY `]](https://stackql.io/docs/language-spec/registry)
+* * *
+
+## Installation
+
+To pull the latest version of the `cloudflare` provider, run the following command:
+
+```bash
+REGISTRY PULL cloudflare;
+```
+> To view previous provider versions or to pull a specific provider version, see [here](https://stackql.io/docs/language-spec/registry).
+
+## Authentication
+
+The following system environment variable is used for authentication by default:
+
+- <CopyableCode code="CLOUDFLARE_API_TOKEN" /> - A Cloudflare API token (see <a href="https://developers.cloudflare.com/fundamentals/api/get-started/create-token/">Create a token</a>)
+
+This variable is sourced at runtime (from the local machine or as a CI variable/secret).
+
+<details>
+
+<summary>Using a different environment variable</summary>
+
+To use a different environment variable (instead of the default), use the `--auth` flag of the `stackql` program. For example:
+
+```bash
+
+AUTH='{ "cloudflare": { "type": "bearer", "credentialsenvvar": "YOUR_CLOUDFLARE_TOKEN_VAR" }}'
+stackql shell --auth="${AUTH}"
+
+```
+or using PowerShell:
+
+```powershell
+
+$Auth = "{ 'cloudflare': { 'type': 'bearer', 'credentialsenvvar': 'YOUR_CLOUDFLARE_TOKEN_VAR' }}"
+stackql.exe shell --auth=$Auth
+
+```
+</details>

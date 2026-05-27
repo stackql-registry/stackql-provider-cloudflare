@@ -1,0 +1,28 @@
+{
+  "name": "stackql-provider-cloudflare",
+  "version": "0.1.0",
+  "description": "StackQL Provider for Cloudflare (generated from the Cloudflare Python SDK service hierarchy)",
+  "type": "module",
+  "scripts": {
+    "generate-specs": "python -m stackql_cloudflare_provider.generate_specs",
+    "assign-resource-names": "python -m stackql_cloudflare_provider.assign_resource_names",
+    "generate-provider": "node ./bin/generate-provider.mjs",
+    "generate-docs": "node ./bin/generate-docs.mjs",
+    "start-server": "bash ./bin/start-server.sh",
+    "stop-server": "bash ./bin/stop-server.sh",
+    "server-status": "bash ./bin/server-status.sh",
+    "test-meta-routes": "node ./bin/test-meta-routes.cjs cloudflare"
+  },
+  "dependencies": {
+    "@stackql/pgwire-lite": "^1.0.1",
+    "@stackql/provider-utils": "^0.7.5"
+  },
+  "keywords": [
+    "stackql",
+    "cloudflare",
+    "provider"
+  ],
+  "engines": {
+    "node": ">=14.16.0"
+  }
+}

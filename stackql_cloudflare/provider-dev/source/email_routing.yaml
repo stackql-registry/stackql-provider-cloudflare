@@ -1,0 +1,1854 @@
+openapi: 3.0.3
+info:
+  title: email_routing API
+  description: Welcome to Cloudflare's API documentation site. We are experimenting with an updated version of our API documentation - check out [developers.cloudflare.com/api-next/](https://developers.cloudflare.com/api-next/) to test out the new experience. To get started using Cloudflare's products and services via the API, refer to [how to interact with Cloudflare](https://developers.cloudflare.com/fundamentals/basic-tasks/interact-with-cloudflare/), which covers using tools like [Terraform](https://developers.cloudflare.com/terraform/#cloudflare-terraform) and the [official SDKs](https://developers.cloudflare.com/fundamentals/api/reference/sdks/) to maintain your Cloudflare resources. Using the Cloudflare API requires authentication so that Cloudflare knows who is making requests and what permissions you have. Create an API token to grant access to the API to perform actions. You can also authenticate with [API keys](https://developers.cloudflare.com/fundamentals/api/get-started/keys/),
+    but these keys have [several limitations](https://developers.cloudflare.com/fundamentals/api/get-started/keys/#limitations) that make them less secure than API tokens. Whenever possible, use API tokens to interact with the Cloudflare API. To create an API token, from the Cloudflare dashboard, go to My Profile > API Tokens and select Create Token. For more information on how to create and troubleshoot API tokens, refer to our [API fundamentals](https://developers.cloudflare.com/fundamentals/api/). For information regarding rate limits, refer to our [API Rate Limits](https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/platform/limits/#api-rate-limits). Totally new to Cloudflare? [Start here](https://developers.cloudflare.com/fundamentals/get-started/).
+  version: 4.0.0
+  contact:
+    name: Cloudflare
+    url: https://www.cloudflare.com
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_token: []
+paths:
+  /accounts/{account_id}/email/routing/addresses:
+    get:
+      description: Lists existing destination addresses.
+      operationId: email-routing-destination-addresses-list-destination-addresses
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        description: The Cloudflare account ID.
+        schema:
+          type: string
+      - in: query
+        name: page
+        schema:
+          default: 1
+          description: Page number of paginated results.
+          minimum: 1
+          type: number
+      - in: query
+        name: per_page
+        schema:
+          default: 20
+          description: Maximum number of results per page.
+          maximum: 50
+          minimum: 5
+          type: number
+      - in: query
+        name: direction
+        schema:
+          default: asc
+          description: Sorts results in an ascending or descending order.
+          enum:
+          - asc
+          - desc
+          type: string
+      - in: query
+        name: verified
+        schema:
+          default: true
+          description: Filter by verified destination addresses.
+          enum:
+          - true
+          - false
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailDestinationAddressesResponseCollection'
+          description: List destination addresses response
+      security:
+      - api_email: []
+        api_key: []
+      summary: List destination addresses
+      tags:
+      - Email Routing destination addresses
+      x-api-token-group:
+      - Email Routing Addresses Write
+      - Email Routing Addresses Read
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.email.routing.address.list
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - addresses
+        method: list
+    post:
+      description: Create a destination address to forward your emails to. Destination addresses need to be verified before they can be used.
+      operationId: email-routing-destination-addresses-create-a-destination-address
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        description: The Cloudflare account ID.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/emailCreateDestinationAddressProperties'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailDestinationAddressResponseSingle'
+          description: Create a destination address response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Create a destination address
+      tags:
+      - Email Routing destination addresses
+      x-api-token-group:
+      - Email Routing Addresses Write
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.email.routing.address.create
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - addresses
+        method: create
+  /accounts/{account_id}/email/routing/addresses/{destination_address_identifier}:
+    delete:
+      description: Deletes a specific destination address.
+      operationId: email-routing-destination-addresses-delete-destination-address
+      parameters:
+      - in: path
+        name: destination_address_identifier
+        schema:
+          $ref: '#/components/schemas/emailDestinationAddressIdentifier'
+        required: true
+      - name: account_id
+        in: path
+        required: true
+        description: The Cloudflare account ID.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailDestinationAddressResponseSingle'
+          description: Delete destination address response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Delete destination address
+      tags:
+      - Email Routing destination addresses
+      x-api-token-group:
+      - Email Routing Addresses Write
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.email.routing.address.delete
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - addresses
+        method: delete
+    get:
+      description: Gets information for a specific destination email already created.
+      operationId: email-routing-destination-addresses-get-a-destination-address
+      parameters:
+      - in: path
+        name: destination_address_identifier
+        schema:
+          $ref: '#/components/schemas/emailDestinationAddressIdentifier'
+        required: true
+      - name: account_id
+        in: path
+        required: true
+        description: The Cloudflare account ID.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailDestinationAddressResponseSingle'
+          description: Get a destination address response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Get a destination address
+      tags:
+      - Email Routing destination addresses
+      x-api-token-group:
+      - Email Routing Addresses Write
+      - Email Routing Addresses Read
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.email.routing.address.read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - addresses
+        method: get
+  /zones/{zone_id}/email/routing:
+    get:
+      description: Get information about the settings for your Email Routing zone.
+      operationId: email-routing-settings-get-email-routing-settings
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailEmailSettingsResponseSingle'
+          description: Get Email Routing settings response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Get Email Routing settings
+      tags:
+      - Email Routing settings
+      x-api-token-group:
+      - Zone Settings Write
+      - Zone Settings Read
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.config.read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain: []
+        method: get
+  /zones/{zone_id}/email/routing/disable:
+    post:
+      deprecated: true
+      description: Disable your Email Routing zone. Also removes additional MX records previously required for Email Routing to work.
+      operationId: email-routing-settings-disable-email-routing
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailEmailSettingsResponseSingle'
+          description: Disable Email Routing response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Disable Email Routing
+      tags:
+      - Email Routing settings
+      x-api-token-group:
+      - Zone Settings Write
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.config.update
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain: []
+        method: disable
+  /zones/{zone_id}/email/routing/dns:
+    delete:
+      description: Disable your Email Routing zone. Also removes additional MX records previously required for Email Routing to work.
+      operationId: email-routing-settings-disable-email-routing-dns
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: '#/components/schemas/emailMessages'
+                  messages:
+                    $ref: '#/components/schemas/emailMessages'
+                  success:
+                    description: Whether the API call was successful.
+                    enum:
+                    - true
+                    type: boolean
+                  result_info:
+                    properties:
+                      count:
+                        description: Total number of results for the requested service.
+                        type: number
+                      page:
+                        description: Current page within paginated list of results.
+                        type: number
+                      per_page:
+                        description: Number of results per page of results.
+                        type: number
+                      total_count:
+                        description: Total results available without any search parameters.
+                        type: number
+                      total_pages:
+                        description: The number of total pages in the entire result set.
+                        type: number
+                    type: object
+                  result:
+                    items:
+                      $ref: '#/components/schemas/emailDnsRecord'
+                    type: array
+                required:
+                - errors
+                - success
+                - messages
+          description: Disable Email Routing response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Disable Email Routing
+      tags:
+      - Email Routing settings
+      x-api-token-group:
+      - Zone Settings Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+    get:
+      description: Show the DNS records needed to configure your Email Routing zone.
+      operationId: email-routing-settings-email-routing-dns-settings
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      - in: query
+        name: subdomain
+        schema:
+          $ref: '#/components/schemas/emailEmailSettingName'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: '#/components/schemas/emailMessages'
+                  messages:
+                    $ref: '#/components/schemas/emailMessages'
+                  success:
+                    description: Whether the API call was successful.
+                    enum:
+                    - true
+                    type: boolean
+                  result_info:
+                    properties:
+                      count:
+                        description: Total number of results for the requested service.
+                        type: number
+                      page:
+                        description: Current page within paginated list of results.
+                        type: number
+                      per_page:
+                        description: Number of results per page of results.
+                        type: number
+                      total_count:
+                        description: Total results available without any search parameters.
+                        type: number
+                      total_pages:
+                        description: The number of total pages in the entire result set.
+                        type: number
+                    type: object
+                  result:
+                    properties:
+                      errors:
+                        $ref: '#/components/schemas/emailEmailRoutingGetResponseDnsErrors'
+                      record:
+                        items:
+                          $ref: '#/components/schemas/emailDnsRecord'
+                        type: array
+                    type: object
+                required:
+                - errors
+                - messages
+                - success
+          description: Email Routing - DNS settings response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Email Routing - DNS settings
+      tags:
+      - Email Routing settings
+      x-api-token-group:
+      - Zone Settings Write
+      - Zone Settings Read
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.config.read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - dns
+        method: delete
+    patch:
+      description: Unlock MX Records previously locked by Email Routing.
+      operationId: email-routing-settings-unlock-email-routing-dns
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/emailEmailSettingDnsRequestBody'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailEmailSettingsResponseSingle'
+          description: Unlock Email Routing MX records
+      security:
+      - api_email: []
+        api_key: []
+      summary: Unlock Email Routing
+      tags:
+      - Email Routing settings
+      x-api-token-group:
+      - Zone Settings Write
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.config.update
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - dns
+        method: edit
+    post:
+      description: Enable you Email Routing zone. Add and lock the necessary MX and SPF records.
+      operationId: email-routing-settings-enable-email-routing-dns
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/emailEmailSettingDnsRequestBody'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailEmailSettingsResponseSingle'
+          description: Enable Email Routing response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Enable Email Routing
+      tags:
+      - Email Routing settings
+      x-api-token-group:
+      - Zone Settings Write
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.config.update
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - dns
+        method: create
+  /zones/{zone_id}/email/routing/enable:
+    post:
+      deprecated: true
+      description: Enable you Email Routing zone. Add and lock the necessary MX and SPF records.
+      operationId: email-routing-settings-enable-email-routing
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailEmailSettingsResponseSingle'
+          description: Enable Email Routing response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Enable Email Routing
+      tags:
+      - Email Routing settings
+      x-api-token-group:
+      - Zone Settings Write
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.config.update
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain: []
+        method: enable
+  /zones/{zone_id}/email/routing/rules:
+    get:
+      description: Lists existing routing rules.
+      operationId: email-routing-routing-rules-list-routing-rules
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      - in: query
+        name: page
+        schema:
+          default: 1
+          description: Page number of paginated results.
+          minimum: 1
+          type: number
+      - in: query
+        name: per_page
+        schema:
+          default: 20
+          description: Maximum number of results per page.
+          maximum: 50
+          minimum: 5
+          type: number
+      - in: query
+        name: enabled
+        schema:
+          description: Filter by enabled routing rules.
+          enum:
+          - true
+          - false
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailRulesResponseCollection'
+          description: List routing rules response
+      security:
+      - api_email: []
+        api_key: []
+      summary: List routing rules
+      tags:
+      - Email Routing routing rules
+      x-api-token-group:
+      - Email Routing Rules Write
+      - Email Routing Rules Read
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.rule.list
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - rules
+        method: list
+    post:
+      description: Rules consist of a set of criteria for matching emails (such as an email being sent to a specific custom email address) plus a set of actions to take on the email (like forwarding it to a specific destination address). Forward actions require all destination addresses to be verified.
+      operationId: email-routing-routing-rules-create-routing-rule
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/emailCreateRuleProperties'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailRuleResponseSingle'
+          description: Create routing rule response
+        '400':
+          description: 'Error 2054: Destination address is not verified. All forward action destination addresses must be verified before they can be used in rules.'
+      security:
+      - api_email: []
+        api_key: []
+      summary: Create routing rule
+      tags:
+      - Email Routing routing rules
+      x-api-token-group:
+      - Email Routing Rules Write
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.rule.create
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - rules
+        method: create
+  /zones/{zone_id}/email/routing/rules/catch_all:
+    get:
+      description: Get information on the default catch-all routing rule.
+      operationId: email-routing-routing-rules-get-catch-all-rule
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailCatchAllRuleResponseSingle'
+          description: Get catch-all rule response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Get catch-all rule
+      tags:
+      - Email Routing routing rules
+      x-api-token-group:
+      - Email Routing Rules Write
+      - Email Routing Rules Read
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.rule.read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - rules
+        - catch_alls
+        method: get
+    put:
+      description: Enable or disable catch-all routing rule, or change action to forward to specific destination address. Forward actions require all destination addresses to be verified.
+      operationId: email-routing-routing-rules-update-catch-all-rule
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/emailUpdateCatchAllRuleProperties'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailCatchAllRuleResponseSingle'
+          description: Update catch-all rule response
+        '400':
+          description: 'Error 2054: Destination address is not verified. All forward action destination addresses must be verified before they can be used in rules.'
+      security:
+      - api_email: []
+        api_key: []
+      summary: Update catch-all rule
+      tags:
+      - Email Routing routing rules
+      x-api-token-group:
+      - Email Routing Rules Write
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.rule.update
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - rules
+        - catch_alls
+        method: update
+  /zones/{zone_id}/email/routing/rules/{rule_identifier}:
+    delete:
+      description: Delete a specific routing rule.
+      operationId: email-routing-routing-rules-delete-routing-rule
+      parameters:
+      - in: path
+        name: rule_identifier
+        schema:
+          $ref: '#/components/schemas/emailRuleIdentifier'
+        required: true
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailRuleResponseSingle'
+          description: Delete routing rule response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Delete routing rule
+      tags:
+      - Email Routing routing rules
+      x-api-token-group:
+      - Email Routing Rules Write
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.rule.delete
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - rules
+        method: delete
+    get:
+      description: Get information for a specific routing rule already created.
+      operationId: email-routing-routing-rules-get-routing-rule
+      parameters:
+      - in: path
+        name: rule_identifier
+        schema:
+          $ref: '#/components/schemas/emailRuleIdentifier'
+        required: true
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailRuleResponseSingle'
+          description: Get routing rule response
+      security:
+      - api_email: []
+        api_key: []
+      summary: Get routing rule
+      tags:
+      - Email Routing routing rules
+      x-api-token-group:
+      - Email Routing Rules Write
+      - Email Routing Rules Read
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.rule.read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - rules
+        method: get
+    put:
+      description: Update actions and matches, or enable/disable specific routing rules. Forward actions require all destination addresses to be verified.
+      operationId: email-routing-routing-rules-update-routing-rule
+      parameters:
+      - in: path
+        name: rule_identifier
+        schema:
+          $ref: '#/components/schemas/emailRuleIdentifier'
+        required: true
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/emailUpdateRuleProperties'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emailRuleResponseSingle'
+          description: Update routing rule response
+        '400':
+          description: 'Error 2054: Destination address is not verified. All forward action destination addresses must be verified before they can be used in rules.'
+      security:
+      - api_email: []
+        api_key: []
+      summary: Update routing rule
+      tags:
+      - Email Routing routing rules
+      x-api-token-group:
+      - Email Routing Rules Write
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.api.account.zone.email.routing.rule.update
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-stackql-sdk:
+        service: email_routing
+        resource_chain:
+        - rules
+        method: update
+  /zones/{zone_id}/email/routing/suppression:
+    get:
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      - in: query
+        name: page
+        schema:
+          default: 1
+          minimum: 0
+          type: integer
+      - in: query
+        name: per_page
+        schema:
+          default: 100
+          maximum: 1000
+          minimum: 0
+          type: integer
+      - in: query
+        name: order
+        schema:
+          default: created_at
+          enum:
+          - email
+          - expires_at
+          - created_at
+          type: string
+      - in: query
+        name: direction
+        schema:
+          default: desc
+          enum:
+          - asc
+          - desc
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  page:
+                    type: integer
+                  per_page:
+                    type: integer
+                  result:
+                    items:
+                      properties:
+                        created_at:
+                          format: date-time
+                          type: string
+                          readOnly: true
+                        email:
+                          format: email
+                          type: string
+                        expires_at:
+                          format: date-time
+                          nullable: true
+                          type: string
+                        id:
+                          format: uuid
+                          type: string
+                        reason:
+                          type: string
+                        zones:
+                          default: []
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - id
+                      - email
+                      - reason
+                      - created_at
+                      - expires_at
+                      type: object
+                    type: array
+                  total:
+                    type: integer
+                required:
+                - page
+                - per_page
+                - total
+                - result
+                type: object
+          description: Returns suppressed emails.
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  errors:
+                    items:
+                      type: string
+                    type: array
+                  success:
+                    type: boolean
+                required:
+                - success
+                - errors
+                type: object
+          description: Bad request.
+      security:
+      - bearerAuth: []
+      summary: List account or zone email suppressions
+      tags: []
+      operationId: get_zones_zone_id_email_routing_suppression
+    post:
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  format: email
+                  type: string
+                expires_at:
+                  format: date-time
+                  nullable: true
+                  type: string
+              required:
+              - email
+              type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  result:
+                    properties:
+                      id:
+                        format: uuid
+                        type: string
+                    required:
+                    - id
+                    type: object
+                required:
+                - result
+                type: object
+          description: Returns suppression.
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  errors:
+                    items:
+                      type: string
+                    type: array
+                  success:
+                    type: boolean
+                required:
+                - success
+                - errors
+                type: object
+          description: Bad request.
+      security:
+      - bearerAuth: []
+      summary: Create account or zone email suppression
+      tags: []
+      operationId: post_zones_zone_id_email_routing_suppression
+  /zones/{zone_id}/email/routing/suppression/{suppression_id}:
+    get:
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      - in: path
+        name: suppression_id
+        schema:
+          type: string
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  result:
+                    properties:
+                      created_at:
+                        format: date-time
+                        type: string
+                        readOnly: true
+                      email:
+                        format: email
+                        type: string
+                      expires_at:
+                        format: date-time
+                        nullable: true
+                        type: string
+                      id:
+                        format: uuid
+                        type: string
+                      reason:
+                        type: string
+                      zones:
+                        default: []
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - id
+                    - email
+                    - reason
+                    - created_at
+                    - expires_at
+                    type: object
+                required:
+                - result
+                type: object
+          description: Returns suppression.
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    type: string
+                  success:
+                    type: boolean
+                required:
+                - success
+                - error
+                type: object
+          description: Suppression not found.
+      security:
+      - bearerAuth: []
+      summary: Get account or zone email suppression
+      tags: []
+      operationId: get_zones_zone_id_email_routing_suppression_suppression_id
+    delete:
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        description: The Cloudflare zone ID.
+        schema:
+          type: string
+      - in: path
+        name: suppression_id
+        schema:
+          type: string
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                required:
+                - success
+                type: object
+          description: Deletes suppression.
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    type: string
+                  success:
+                    type: boolean
+                required:
+                - success
+                - error
+                type: object
+          description: Suppression not found.
+      security:
+      - bearerAuth: []
+      summary: Delete account or zone email suppression
+      tags: []
+      operationId: delete_zones_zone_id_email_routing_suppression_suppression_id
+components:
+  schemas:
+    emailAddresses:
+      type: object
+      $ref: '#/components/schemas/emailDestinationAddressProperties'
+    emailCatchAllRule:
+      properties:
+        actions:
+          $ref: '#/components/schemas/emailRuleCatchallActions'
+        enabled:
+          $ref: '#/components/schemas/emailRuleEnabled'
+        id:
+          $ref: '#/components/schemas/emailRuleIdentifier'
+        matchers:
+          $ref: '#/components/schemas/emailRuleCatchallMatchers'
+        name:
+          $ref: '#/components/schemas/emailRuleName'
+        tag:
+          $ref: '#/components/schemas/emailRuleTag'
+      type: object
+    emailCatchAllRuleResponseSingle:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/emailMessages'
+        messages:
+          $ref: '#/components/schemas/emailMessages'
+        success:
+          description: Whether the API call was successful.
+          enum:
+          - true
+          example: true
+          type: boolean
+        result:
+          $ref: '#/components/schemas/emailCatchAllRule'
+      required:
+      - success
+      - errors
+      - messages
+    emailCreateDestinationAddressProperties:
+      properties:
+        email:
+          $ref: '#/components/schemas/emailEmail'
+      required:
+      - email
+      type: object
+    emailCreateRuleProperties:
+      properties:
+        actions:
+          $ref: '#/components/schemas/emailRuleActions'
+        enabled:
+          $ref: '#/components/schemas/emailRuleEnabled'
+        matchers:
+          $ref: '#/components/schemas/emailRuleMatchers'
+        name:
+          $ref: '#/components/schemas/emailRuleName'
+        priority:
+          $ref: '#/components/schemas/emailRulePriority'
+      required:
+      - actions
+      - matchers
+      type: object
+    emailCreated:
+      description: The date and time the destination address has been created.
+      example: '2014-01-02T02:20:00Z'
+      format: date-time
+      readOnly: true
+      type: string
+    emailDestinationAddressIdentifier:
+      description: Destination address identifier.
+      example: ea95132c15732412d22c1476fa83f27a
+      maxLength: 32
+      readOnly: true
+      type: string
+      x-auditable: true
+    emailDestinationAddressProperties:
+      properties:
+        created:
+          $ref: '#/components/schemas/emailCreated'
+        email:
+          $ref: '#/components/schemas/emailEmail'
+        id:
+          $ref: '#/components/schemas/emailDestinationAddressIdentifier'
+        modified:
+          $ref: '#/components/schemas/emailModified'
+        tag:
+          $ref: '#/components/schemas/emailDestinationAddressTag'
+        verified:
+          $ref: '#/components/schemas/emailVerified'
+      type: object
+    emailDestinationAddressResponseSingle:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/emailMessages'
+        messages:
+          $ref: '#/components/schemas/emailMessages'
+        success:
+          description: Whether the API call was successful.
+          enum:
+          - true
+          example: true
+          type: boolean
+        result:
+          $ref: '#/components/schemas/emailAddresses'
+      required:
+      - success
+      - errors
+      - messages
+    emailDestinationAddressTag:
+      deprecated: true
+      description: Destination address tag. (Deprecated, replaced by destination address identifier)
+      example: ea95132c15732412d22c1476fa83f27a
+      maxLength: 32
+      readOnly: true
+      type: string
+    emailDestinationAddressesResponseCollection:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/emailMessages'
+        messages:
+          $ref: '#/components/schemas/emailMessages'
+        success:
+          description: Whether the API call was successful.
+          enum:
+          - true
+          example: true
+          type: boolean
+        result_info:
+          properties:
+            count:
+              description: Total number of results for the requested service.
+              example: 1
+              type: number
+            page:
+              description: Current page within paginated list of results.
+              example: 1
+              type: number
+            per_page:
+              description: Number of results per page of results.
+              example: 20
+              type: number
+            total_count:
+              description: Total results available without any search parameters.
+              example: 1
+              type: number
+            total_pages:
+              description: The number of total pages in the entire result set.
+              example: 100
+              type: number
+          type: object
+        result:
+          items:
+            $ref: '#/components/schemas/emailAddresses'
+          type: array
+      required:
+      - success
+      - errors
+      - messages
+    emailDnsRecord:
+      description: List of records needed to enable an Email Routing zone.
+      properties:
+        content:
+          description: DNS record content.
+          example: route1.mx.cloudflare.net
+          type: string
+        name:
+          description: DNS record name (or @ for the zone apex).
+          example: example.com
+          maxLength: 255
+          type: string
+          x-auditable: true
+        priority:
+          description: Required for MX, SRV and URI records. Unused by other record types. Records with lower priorities are preferred.
+          example: 12
+          maximum: 65535
+          minimum: 0
+          type: number
+          x-auditable: true
+        ttl:
+          description: Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.
+          example: 1
+          type: number
+          x-auditable: true
+          enum:
+          - 1
+        type:
+          description: DNS record type.
+          enum:
+          - A
+          - AAAA
+          - CNAME
+          - HTTPS
+          - TXT
+          - SRV
+          - LOC
+          - MX
+          - NS
+          - CERT
+          - DNSKEY
+          - DS
+          - NAPTR
+          - SMIMEA
+          - SSHFP
+          - SVCB
+          - TLSA
+          - URI
+          example: NS
+          readOnly: true
+          type: string
+          x-auditable: true
+      type: object
+    emailEmail:
+      description: The contact email address of the user.
+      example: user@example.com
+      maxLength: 90
+      type: string
+      x-auditable: true
+    emailEmailRoutingGetResponseDnsError:
+      properties:
+        code:
+          type: string
+        missing:
+          $ref: '#/components/schemas/emailDnsRecord'
+      type: object
+    emailEmailRoutingGetResponseDnsErrors:
+      items:
+        $ref: '#/components/schemas/emailEmailRoutingGetResponseDnsError'
+      type: array
+    emailEmailSettingCreated:
+      description: The date and time the settings have been created.
+      example: '2014-01-02T02:20:00Z'
+      format: date-time
+      readOnly: true
+      type: string
+    emailEmailSettingDnsRequestBody:
+      nullable: true
+      properties:
+        name:
+          $ref: '#/components/schemas/emailEmailSettingName'
+      type: object
+    emailEmailSettingEnabled:
+      description: State of the zone settings for Email Routing.
+      enum:
+      - true
+      - false
+      example: true
+      readOnly: true
+      type: boolean
+      x-auditable: true
+    emailEmailSettingIdentifier:
+      description: Email Routing settings identifier.
+      example: 75610dab9e69410a82cf7e400a09ecec
+      maxLength: 32
+      readOnly: true
+      type: string
+      x-auditable: true
+    emailEmailSettingModified:
+      description: The date and time the settings have been modified.
+      example: '2014-01-02T02:20:00Z'
+      format: date-time
+      readOnly: true
+      type: string
+    emailEmailSettingName:
+      description: Domain of your zone.
+      example: example.net
+      type: string
+      x-auditable: true
+    emailEmailSettingSkipWizard:
+      description: Flag to check if the user skipped the configuration wizard.
+      enum:
+      - true
+      - false
+      example: true
+      readOnly: true
+      type: boolean
+    emailEmailSettingStatus:
+      description: Show the state of your account, and the type or configuration error.
+      enum:
+      - ready
+      - unconfigured
+      - misconfigured
+      - misconfigured/locked
+      - unlocked
+      example: ready
+      readOnly: true
+      type: string
+    emailEmailSettingTag:
+      deprecated: true
+      description: Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)
+      example: 75610dab9e69410a82cf7e400a09ecec
+      maxLength: 32
+      readOnly: true
+      type: string
+    emailEmailSettingsProperties:
+      properties:
+        created:
+          $ref: '#/components/schemas/emailEmailSettingCreated'
+        enabled:
+          $ref: '#/components/schemas/emailEmailSettingEnabled'
+        id:
+          $ref: '#/components/schemas/emailEmailSettingIdentifier'
+        modified:
+          $ref: '#/components/schemas/emailEmailSettingModified'
+        name:
+          $ref: '#/components/schemas/emailEmailSettingName'
+        skip_wizard:
+          $ref: '#/components/schemas/emailEmailSettingSkipWizard'
+        status:
+          $ref: '#/components/schemas/emailEmailSettingStatus'
+        tag:
+          $ref: '#/components/schemas/emailEmailSettingTag'
+      required:
+      - id
+      - name
+      - enabled
+      type: object
+    emailEmailSettingsResponseSingle:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/emailMessages'
+        messages:
+          $ref: '#/components/schemas/emailMessages'
+        success:
+          description: Whether the API call was successful.
+          enum:
+          - true
+          example: true
+          type: boolean
+        result:
+          $ref: '#/components/schemas/emailSettings'
+      required:
+      - success
+      - errors
+      - messages
+    emailMessages:
+      example: []
+      items:
+        properties:
+          code:
+            minimum: 1000
+            type: integer
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            properties:
+              pointer:
+                type: string
+            type: object
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+      type: array
+    emailModified:
+      description: The date and time the destination address was last modified.
+      example: '2014-01-02T02:20:00Z'
+      format: date-time
+      readOnly: true
+      type: string
+    emailRuleAction:
+      description: Actions pattern.
+      properties:
+        type:
+          description: Type of supported action.
+          enum:
+          - drop
+          - forward
+          - worker
+          example: forward
+          type: string
+          x-auditable: true
+        value:
+          items:
+            description: Value for action.
+            example: destinationaddress@example.net
+            maxLength: 90
+            type: string
+            x-auditable: true
+          type: array
+      required:
+      - type
+      type: object
+    emailRuleActions:
+      description: List actions patterns.
+      items:
+        $ref: '#/components/schemas/emailRuleAction'
+      maxItems: 1
+      minItems: 1
+      type: array
+    emailRuleCatchallAction:
+      description: Action for the catch-all routing rule.
+      properties:
+        type:
+          description: Type of action for catch-all rule.
+          enum:
+          - drop
+          - forward
+          - worker
+          example: forward
+          type: string
+          x-auditable: true
+        value:
+          items:
+            description: Input value for action.
+            example: destinationaddress@example.net
+            maxLength: 90
+            type: string
+            x-auditable: true
+          type: array
+      required:
+      - type
+      type: object
+    emailRuleCatchallActions:
+      description: List actions for the catch-all routing rule.
+      items:
+        $ref: '#/components/schemas/emailRuleCatchallAction'
+      maxItems: 1
+      minItems: 1
+      type: array
+    emailRuleCatchallMatcher:
+      description: Matcher for catch-all routing rule.
+      properties:
+        type:
+          description: Type of matcher. Default is 'all'.
+          enum:
+          - all
+          example: all
+          type: string
+          x-auditable: true
+      required:
+      - type
+      type: object
+    emailRuleCatchallMatchers:
+      description: List of matchers for the catch-all routing rule.
+      items:
+        $ref: '#/components/schemas/emailRuleCatchallMatcher'
+      type: array
+    emailRuleEnabled:
+      default: true
+      description: Routing rule status.
+      enum:
+      - true
+      - false
+      example: true
+      type: boolean
+      x-auditable: true
+    emailRuleIdentifier:
+      description: Routing rule identifier.
+      example: a7e6fb77503c41d8a7f3113c6918f10c
+      maxLength: 32
+      readOnly: true
+      type: string
+      x-auditable: true
+    emailRuleMatcher:
+      description: Matching pattern to forward your actions.
+      properties:
+        field:
+          description: Field for type matcher.
+          enum:
+          - to
+          example: to
+          type: string
+          x-auditable: true
+        type:
+          description: Type of matcher.
+          enum:
+          - all
+          - literal
+          example: literal
+          type: string
+          x-auditable: true
+        value:
+          description: Value for matcher.
+          example: test@example.com
+          maxLength: 90
+          type: string
+          x-auditable: true
+      required:
+      - type
+      type: object
+    emailRuleMatchers:
+      description: Matching patterns to forward to your actions.
+      items:
+        $ref: '#/components/schemas/emailRuleMatcher'
+      type: array
+    emailRuleName:
+      description: Routing rule name.
+      example: Send to user@example.net rule.
+      maxLength: 256
+      type: string
+      x-auditable: true
+    emailRulePriority:
+      default: 0
+      description: Priority of the routing rule.
+      minimum: 0
+      type: number
+      x-auditable: true
+    emailRuleProperties:
+      properties:
+        actions:
+          $ref: '#/components/schemas/emailRuleActions'
+        enabled:
+          $ref: '#/components/schemas/emailRuleEnabled'
+        id:
+          $ref: '#/components/schemas/emailRuleIdentifier'
+        matchers:
+          $ref: '#/components/schemas/emailRuleMatchers'
+        name:
+          $ref: '#/components/schemas/emailRuleName'
+        priority:
+          $ref: '#/components/schemas/emailRulePriority'
+        tag:
+          $ref: '#/components/schemas/emailRuleTag'
+      type: object
+    emailRuleResponseSingle:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/emailMessages'
+        messages:
+          $ref: '#/components/schemas/emailMessages'
+        success:
+          description: Whether the API call was successful.
+          enum:
+          - true
+          example: true
+          type: boolean
+        result:
+          $ref: '#/components/schemas/emailRules'
+      required:
+      - success
+      - errors
+      - messages
+    emailRuleTag:
+      deprecated: true
+      description: Routing rule tag. (Deprecated, replaced by routing rule identifier)
+      example: a7e6fb77503c41d8a7f3113c6918f10c
+      maxLength: 32
+      readOnly: true
+      type: string
+    emailRules:
+      type: object
+      $ref: '#/components/schemas/emailRuleProperties'
+    emailRulesResponseCollection:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/emailMessages'
+        messages:
+          $ref: '#/components/schemas/emailMessages'
+        success:
+          description: Whether the API call was successful.
+          enum:
+          - true
+          example: true
+          type: boolean
+        result_info:
+          properties:
+            count:
+              description: Total number of results for the requested service.
+              example: 1
+              type: number
+            page:
+              description: Current page within paginated list of results.
+              example: 1
+              type: number
+            per_page:
+              description: Number of results per page of results.
+              example: 20
+              type: number
+            total_count:
+              description: Total results available without any search parameters.
+              example: 1
+              type: number
+            total_pages:
+              description: The number of total pages in the entire result set.
+              example: 100
+              type: number
+          type: object
+        result:
+          items:
+            $ref: '#/components/schemas/emailRules'
+          type: array
+      required:
+      - success
+      - errors
+      - messages
+    emailSettings:
+      type: object
+      $ref: '#/components/schemas/emailEmailSettingsProperties'
+    emailUpdateCatchAllRuleProperties:
+      properties:
+        actions:
+          $ref: '#/components/schemas/emailRuleCatchallActions'
+        enabled:
+          $ref: '#/components/schemas/emailRuleEnabled'
+        matchers:
+          $ref: '#/components/schemas/emailRuleCatchallMatchers'
+        name:
+          $ref: '#/components/schemas/emailRuleName'
+      required:
+      - actions
+      - matchers
+      type: object
+    emailUpdateRuleProperties:
+      properties:
+        actions:
+          $ref: '#/components/schemas/emailRuleActions'
+        enabled:
+          $ref: '#/components/schemas/emailRuleEnabled'
+        matchers:
+          $ref: '#/components/schemas/emailRuleMatchers'
+        name:
+          $ref: '#/components/schemas/emailRuleName'
+        priority:
+          $ref: '#/components/schemas/emailRulePriority'
+      required:
+      - actions
+      - matchers
+      type: object
+    emailVerified:
+      description: The date and time the destination address has been verified. Null means not verified yet.
+      example: '2014-01-02T02:20:00Z'
+      format: date-time
+      readOnly: true
+      type: string
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+      description: The previous authorization scheme for interacting with the Cloudflare API, used in conjunction with a Global API key.
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+      description: The previous authorization scheme for interacting with the Cloudflare API. When possible, use API tokens instead of Global API keys.
+    api_token:
+      scheme: bearer
+      type: http
+      description: The preferred authorization scheme for interacting with the Cloudflare API. [Create a token](https://developers.cloudflare.com/fundamentals/api/get-started/create-token/).
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+      description: Used when interacting with the Origin CA certificates API. [View/change your key](https://developers.cloudflare.com/fundamentals/api/get-started/ca-keys/#viewchange-your-origin-ca-keys).

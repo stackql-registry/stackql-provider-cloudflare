@@ -1,0 +1,106 @@
+# Operation spec: account.r2OperationsAdaptiveGroups
+#
+# R2 storage operations analytics, grouped by bucket / action /
+# region / status. Per-tuple totals: requests, response bytes,
+# response object size.
+
+description: >-
+  Cloudflare R2 storage operation analytics for an account, grouped by
+  bucket, operation type, region, and HTTP status. Per-tuple totals
+  for request count, response bytes, and object size.
+
+parameters:
+  - name: account_tag
+    in: path
+    required: true
+    schema: { type: string }
+    description: Cloudflare account ID (the 32-char hex tag).
+  - name: since
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Lower bound (inclusive). RFC3339.
+  - name: until
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Upper bound (exclusive). RFC3339.
+  - name: limit
+    in: query
+    required: false
+    schema: { type: integer, default: 100 }
+    description: Maximum dimension-tuple rows per call.
+
+query: |
+  query {
+    viewer {
+      accounts(filter: { accountTag: "{{ .account_tag }}" }, limit: 1) {
+        r2OperationsAdaptiveGroups(
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
+          orderBy: [datetimeMinute_ASC]
+        ) {
+          dimensions {
+            datetime: datetimeMinute
+            bucketName
+            actionType
+            actionStatus
+            responseStatusCode
+            eyeballRegion
+            storageClass
+          }
+          sum {
+            requests
+            responseBytes
+            responseObjectSize
+          }
+        }
+      }
+    }
+  }
+
+transform:
+  type: golang_template_json_v0.3.0
+  body: |
+    {
+      "result": [
+        {{- $data := index . "data" }}
+        {{- if $data }}
+        {{- $viewer := index $data "viewer" }}
+        {{- $accounts := index $viewer "accounts" }}
+        {{- if and $accounts (gt (len $accounts) 0) }}
+        {{- $rows := index (index $accounts 0) "r2OperationsAdaptiveGroups" }}
+        {{- $first := true -}}
+        {{- range $i, $row := $rows }}
+        {{- if not $first }},{{ end }}{{- $first = false }}
+        {
+          "datetime":             {{ toJson (index $row "dimensions" "datetime") }},
+          "bucket_name":          {{ toJson (index $row "dimensions" "bucketName") }},
+          "action_type":          {{ toJson (index $row "dimensions" "actionType") }},
+          "action_status":        {{ toJson (index $row "dimensions" "actionStatus") }},
+          "response_status_code": {{ index $row "dimensions" "responseStatusCode" }},
+          "eyeball_region":       {{ toJson (index $row "dimensions" "eyeballRegion") }},
+          "storage_class":        {{ toJson (index $row "dimensions" "storageClass") }},
+          "requests":             {{ index $row "sum" "requests" }},
+          "response_bytes":       {{ index $row "sum" "responseBytes" }},
+          "response_object_size": {{ index $row "sum" "responseObjectSize" }}
+        }
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      ]
+    }
+
+row_schema:
+  type: object
+  properties:
+    datetime:             { type: string, format: date-time }
+    bucket_name:          { type: string, description: R2 bucket name. }
+    action_type:          { type: string, description: R2 operation (GetObject / PutObject / ListObjects / etc.). }
+    action_status:        { type: string, description: Operation result (success / failure / etc.). }
+    response_status_code: { type: integer, description: HTTP status returned. }
+    eyeball_region:       { type: string, description: Region of the requesting eyeball (WNAM / ENAM / WEU / etc.). }
+    storage_class:        { type: string, description: Storage class (Standard / InfrequentAccess). }
+    requests:             { type: integer, description: Request count for the tuple. }
+    response_bytes:       { type: integer, description: Total retrieved bytes. }
+    response_object_size: { type: integer, description: Total response object sizes. }

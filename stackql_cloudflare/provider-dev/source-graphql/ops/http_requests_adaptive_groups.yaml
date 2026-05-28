@@ -1,0 +1,165 @@
+# Operation spec: zone.httpRequestsAdaptiveGroups
+#
+# Cloudflare's adaptive-sampling HTTP request analytics. GraphQL replacement
+# for the sunset REST endpoint /zones/{zone_id}/analytics/dashboard (error
+# code 1015 - "Zone Analytics API is sunset and replaced by GraphQL API").
+#
+# A response.transform flattens the Cloudflare GraphQL row shape
+#   { dimensions: {...}, sum: {...}, count: N }
+# into one flat row, so users can SELECT requests, bytes directly (no
+# json_extract gymnastics).
+#
+# Column source mapping:
+#   requests              <- top-level `count`            (= request count for this tuple)
+#   bytes                 <- sum.edgeResponseBytes        (bytes served to client)
+#   visits                <- sum.visits                   (Referer != host heuristic)
+#   datetime              <- dimensions.datetime          (aliased from datetimeMinute in the GraphQL query)
+#   client_country_name   <- dimensions.clientCountryName
+#   edge_response_status  <- dimensions.edgeResponseStatus
+#   client_request_http_method_name <- dimensions.clientRequestHTTPMethodName
+#
+# Threats / firewall events are NOT in this node - the GraphQL schema
+# puts them under `firewallEventsAdaptiveGroups`, which we surface
+# separately as `cloudflare.firewall.zone_firewall_events_adaptive_groups`.
+#
+# `crossZoneSubrequests` is plan-gated (enterprise) and returns an
+# authz error on non-enterprise zones, so we don't expose it here. If
+# users on enterprise plans need it, we can ship a sibling resource
+# (`zone_http_requests_adaptive_groups_enterprise`) that adds it.
+
+description: >-
+  HTTP request analytics for a zone with adaptive sampling, grouped by
+  minute, client country, edge response status, and HTTP method. Replaces
+  the sunset REST endpoint /zones/{zone_id}/analytics/dashboard. Each row
+  aggregates request count, byte volume, cache hits, and threat counts
+  for one dimension tuple over the requested time window.
+
+# Parameters surfaced to stackql. zone_tag is the path-style required
+# parameter (the WHERE-clause selector); since / until / limit are
+# query-style. The merge script writes these verbatim into the OpenAPI
+# operation's parameters[] array.
+parameters:
+  - name: zone_tag
+    in: path
+    required: true
+    schema: { type: string }
+    description: Cloudflare zone ID (the 32-char hex tag).
+  - name: since
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Lower bound (inclusive) of the time range. RFC3339 (e.g. 2026-05-28T00:00:00Z).
+  - name: until
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Upper bound (exclusive) of the time range. RFC3339.
+  - name: limit
+    in: query
+    required: false
+    schema: { type: integer, default: 100 }
+    description: Maximum number of dimension-tuple rows to return per call.
+
+# GraphQL query template. any-sdk strips newlines before send, so all
+# whitespace collapses to single spaces - safe to write multi-line for
+# readability. Parameters interpolate via Go text/template syntax; string
+# values are wrapped in literal quotes in the template (any-sdk does NOT
+# send a separate JSON `variables` block, only the rendered query string).
+query: |
+  query {
+    viewer {
+      zones(filter: { zoneTag: "{{ .zone_tag }}" }, limit: 1) {
+        httpRequestsAdaptiveGroups(
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
+          orderBy: [datetimeMinute_ASC]
+        ) {
+          dimensions {
+            datetime: datetimeMinute
+            clientCountryName
+            edgeResponseStatus
+            clientRequestHTTPMethodName
+          }
+          sum {
+            edgeResponseBytes
+            visits
+          }
+          count
+        }
+      }
+    }
+  }
+
+# response.transform: walks the Cloudflare GraphQL response and emits a
+# top-level array at `$.data.<resource>[*]` matching the path the merge
+# script writes into responseSelection.jsonPath and response.objectKey.
+# This follows the trevorblades reference pattern from
+#   stackql/test/registry/src/trevorblades/v0.1.0/services/geo.yaml
+#
+# The pattern is necessary because Cloudflare's response has two array
+# levels (`viewer.zones[*].<field>[*]`), and PaesslerAG/jsonpath does
+# not return a flat slice across two `[*]` projections - any-sdk's
+# reader expects a single `[]interface{}` at the jsonpath endpoint.
+# The transform flattens the inner array to a one-level shape that
+# matches what the reader can iterate.
+#
+# Type is golang_template_json_v0.3.0 (same engine as binary_responses.py
+# and trevorblades/geo.yaml). Whitespace trim markers (`{{-` / `-}}`)
+# keep the emitted JSON valid.
+transform:
+  type: golang_template_json_v0.3.0
+  body: |
+    {
+      "result": [
+        {{- $data := index . "data" }}
+        {{- if $data }}
+        {{- $viewer := index $data "viewer" }}
+        {{- $zones := index $viewer "zones" }}
+        {{- if and $zones (gt (len $zones) 0) }}
+        {{- $rows := index (index $zones 0) "httpRequestsAdaptiveGroups" }}
+        {{- $first := true -}}
+        {{- range $i, $row := $rows }}
+        {{- if not $first }},{{ end }}{{- $first = false }}
+        {
+          "datetime":                        {{ toJson (index $row "dimensions" "datetime") }},
+          "client_country_name":             {{ toJson (index $row "dimensions" "clientCountryName") }},
+          "edge_response_status":            {{ index $row "dimensions" "edgeResponseStatus" }},
+          "client_request_http_method_name": {{ toJson (index $row "dimensions" "clientRequestHTTPMethodName") }},
+          "requests":                        {{ index $row "count" }},
+          "bytes":                           {{ index $row "sum" "edgeResponseBytes" }},
+          "visits":                          {{ index $row "sum" "visits" }}
+        }
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      ]
+    }
+
+row_schema:
+  type: object
+  properties:
+    datetime:
+      type: string
+      format: date-time
+      description: Minute-bucketed timestamp (RFC3339).
+    client_country_name:
+      type: string
+      description: ISO-3166 alpha-2 country code derived from client IP.
+    edge_response_status:
+      type: integer
+      description: HTTP status returned to the client.
+    client_request_http_method_name:
+      type: string
+      description: HTTP method (GET, POST, etc.).
+    requests:
+      type: integer
+      description: Total request count for this dimension tuple.
+    bytes:
+      type: integer
+      description: Total bytes served to the client from the edge.
+    visits:
+      type: integer
+      description: >-
+        Requests by end-users that were initiated from a different website
+        (i.e. the HTTP Referer header does not match the host in the HTTP
+        Host header). A coarse "human visitor" heuristic.

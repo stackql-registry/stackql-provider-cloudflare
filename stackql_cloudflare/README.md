@@ -262,6 +262,10 @@ To stop the local server:
 npm run stop-server
 ```
 
+## Analytics resources
+
+The provider exposes a curated set of 10 analytics resources covering HTTP request rollups, DNS query analytics, firewall events, Workers invocations, R2 / D1 / CDN-network metrics, and more. They require a broader API token scope than the typical REST endpoints (`Account -> Analytics -> Read`) and take a mandatory `since` / `until` time window. Example queries are in [examples/analytics/](examples/analytics/); maintainer-facing detail on the underlying dispatch is in [GRAPHQL.md](GRAPHQL.md).
+
 ## Updating to a new upstream spec
 
 When the Cloudflare Python SDK is bumped:

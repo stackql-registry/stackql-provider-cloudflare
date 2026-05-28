@@ -1,0 +1,16 @@
+-- Top firewall actions over the requested window, grouped by action
+-- and source product. Use the related firewall_events resource
+-- for raw event drilldown.
+
+SELECT
+  action,
+  source,
+  client_country_name AS country,
+  sum(events) AS hits
+FROM cloudflare.firewall.firewall_events_adaptive_groups
+WHERE zone_tag = '<ZONE_TAG>'
+  AND since    = '<RFC3339_FROM>'
+  AND until    = '<RFC3339_TO>'
+GROUP BY action, source, client_country_name
+ORDER BY hits DESC
+LIMIT 50;

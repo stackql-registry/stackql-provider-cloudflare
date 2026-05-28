@@ -1,0 +1,20 @@
+-- Replacement for the sunset REST endpoint /zones/{zone_id}/analytics/dashboard.
+-- Returns one row per (minute, country, status, method) tuple over the
+-- requested time window.
+--
+-- Required env: CLOUDFLARE_API_TOKEN (must include Account -> Analytics -> Read).
+
+SELECT
+  datetime,
+  client_country_name AS country,
+  client_request_http_method_name AS method,
+  edge_response_status AS status,
+  requests,
+  bytes,
+  visits
+FROM cloudflare.zones.http_requests_adaptive_groups
+WHERE zone_tag = '<ZONE_TAG>'
+  AND since    = '<RFC3339_FROM>'   -- e.g. 2026-05-28T19:00:00Z
+  AND until    = '<RFC3339_TO>'     -- e.g. 2026-05-28T20:00:00Z
+ORDER BY datetime DESC, requests DESC
+LIMIT 100;

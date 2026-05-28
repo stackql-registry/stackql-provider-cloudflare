@@ -1,0 +1,104 @@
+# Operation spec: account.cdnNetworkAnalyticsAdaptiveGroups
+#
+# Cloudflare CDN edge network-layer (L3/L4) analytics, grouped by colo /
+# country / direction / protocol. Per-tuple totals: bits and packets.
+# Useful for surfacing where edge traffic enters Cloudflare's network
+# and how it splits across protocols (TCP/UDP/ICMP/GRE).
+
+description: >-
+  Cloudflare CDN edge network-layer analytics for an account, grouped by
+  colo, source/destination country, packet direction, and IP protocol.
+  Per-tuple totals for bits and packets received at the edge.
+
+parameters:
+  - name: account_tag
+    in: path
+    required: true
+    schema: { type: string }
+    description: Cloudflare account ID (the 32-char hex tag).
+  - name: since
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Lower bound (inclusive). RFC3339.
+  - name: until
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Upper bound (exclusive). RFC3339.
+  - name: limit
+    in: query
+    required: false
+    schema: { type: integer, default: 100 }
+    description: Maximum dimension-tuple rows per call.
+
+query: |
+  query {
+    viewer {
+      accounts(filter: { accountTag: "{{ .account_tag }}" }, limit: 1) {
+        cdnNetworkAnalyticsAdaptiveGroups(
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
+          orderBy: [datetimeMinute_ASC]
+        ) {
+          dimensions {
+            datetime: datetimeMinute
+            coloCode
+            coloCountry
+            direction
+            ipProtocolName
+            sourceCountry
+            destinationCountry
+          }
+          sum {
+            bits
+            packets
+          }
+        }
+      }
+    }
+  }
+
+transform:
+  type: golang_template_json_v0.3.0
+  body: |
+    {
+      "result": [
+        {{- $data := index . "data" }}
+        {{- if $data }}
+        {{- $viewer := index $data "viewer" }}
+        {{- $accounts := index $viewer "accounts" }}
+        {{- if and $accounts (gt (len $accounts) 0) }}
+        {{- $rows := index (index $accounts 0) "cdnNetworkAnalyticsAdaptiveGroups" }}
+        {{- $first := true -}}
+        {{- range $i, $row := $rows }}
+        {{- if not $first }},{{ end }}{{- $first = false }}
+        {
+          "datetime":            {{ toJson (index $row "dimensions" "datetime") }},
+          "colo_code":           {{ toJson (index $row "dimensions" "coloCode") }},
+          "colo_country":        {{ toJson (index $row "dimensions" "coloCountry") }},
+          "direction":           {{ toJson (index $row "dimensions" "direction") }},
+          "ip_protocol_name":    {{ toJson (index $row "dimensions" "ipProtocolName") }},
+          "source_country":      {{ toJson (index $row "dimensions" "sourceCountry") }},
+          "destination_country": {{ toJson (index $row "dimensions" "destinationCountry") }},
+          "bits":                {{ index $row "sum" "bits" }},
+          "packets":             {{ index $row "sum" "packets" }}
+        }
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      ]
+    }
+
+row_schema:
+  type: object
+  properties:
+    datetime:            { type: string, format: date-time }
+    colo_code:           { type: string, description: IATA code of the receiving Cloudflare datacenter. }
+    colo_country:        { type: string, description: Country of the receiving datacenter. }
+    direction:           { type: string, description: Packet direction relative to the customer network. }
+    ip_protocol_name:    { type: string, description: Name of the L4 protocol (TCP / UDP / ICMP / GRE / etc.). }
+    source_country:      { type: string, description: Country of the source IP. }
+    destination_country: { type: string, description: Country of the destination IP. }
+    bits:                { type: integer, description: Sum of bits received. }
+    packets:             { type: integer, description: Sum of packets received. }

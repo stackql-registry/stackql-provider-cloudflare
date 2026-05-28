@@ -1,0 +1,105 @@
+# Operation spec: account.d1AnalyticsAdaptiveGroups
+#
+# D1 SQLite database analytics, grouped by database / role / region.
+# Per-tuple: total request count + read/write query counts + rows
+# read/written + total response bytes.
+
+description: >-
+  Cloudflare D1 database analytics for an account, grouped by database,
+  serving instance, and region. Per-tuple totals for request count,
+  read/write query counts, rows read/written, and response bytes.
+
+parameters:
+  - name: account_tag
+    in: path
+    required: true
+    schema: { type: string }
+    description: Cloudflare account ID (the 32-char hex tag).
+  - name: since
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Lower bound (inclusive). RFC3339.
+  - name: until
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Upper bound (exclusive). RFC3339.
+  - name: limit
+    in: query
+    required: false
+    schema: { type: integer, default: 100 }
+    description: Maximum dimension-tuple rows per call.
+
+query: |
+  query {
+    viewer {
+      accounts(filter: { accountTag: "{{ .account_tag }}" }, limit: 1) {
+        d1AnalyticsAdaptiveGroups(
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
+          orderBy: [datetimeMinute_ASC]
+        ) {
+          dimensions {
+            datetime: datetimeMinute
+            databaseId
+            databaseRole
+            servedByRegion
+          }
+          sum {
+            readQueries
+            writeQueries
+            rowsRead
+            rowsWritten
+            queryBatchResponseBytes
+          }
+          count
+        }
+      }
+    }
+  }
+
+transform:
+  type: golang_template_json_v0.3.0
+  body: |
+    {
+      "result": [
+        {{- $data := index . "data" }}
+        {{- if $data }}
+        {{- $viewer := index $data "viewer" }}
+        {{- $accounts := index $viewer "accounts" }}
+        {{- if and $accounts (gt (len $accounts) 0) }}
+        {{- $rows := index (index $accounts 0) "d1AnalyticsAdaptiveGroups" }}
+        {{- $first := true -}}
+        {{- range $i, $row := $rows }}
+        {{- if not $first }},{{ end }}{{- $first = false }}
+        {
+          "datetime":         {{ toJson (index $row "dimensions" "datetime") }},
+          "database_id":      {{ toJson (index $row "dimensions" "databaseId") }},
+          "database_role":    {{ toJson (index $row "dimensions" "databaseRole") }},
+          "served_by_region": {{ toJson (index $row "dimensions" "servedByRegion") }},
+          "requests":         {{ index $row "count" }},
+          "read_queries":     {{ index $row "sum" "readQueries" }},
+          "write_queries":    {{ index $row "sum" "writeQueries" }},
+          "rows_read":        {{ index $row "sum" "rowsRead" }},
+          "rows_written":     {{ index $row "sum" "rowsWritten" }}
+        }
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      ]
+    }
+
+row_schema:
+  type: object
+  properties:
+    datetime:                    { type: string, format: date-time }
+    database_id:                 { type: string, description: D1 database UUID. }
+    database_role:               { type: string, description: Primary / replica role of the instance serving the request. }
+    served_by_region:            { type: string, description: Region of the D1 instance that served the request. }
+    requests:                    { type: integer, description: Total D1 request count for the tuple. }
+    read_queries:                { type: integer, description: Read query count. }
+    write_queries:               { type: integer, description: Write query count. }
+    rows_read:                   { type: integer, description: Rows read by queries. }
+    rows_written:                { type: integer, description: Rows written by queries. }
+    query_batch_response_bytes:  { type: integer, description: Total response bytes across batches. }

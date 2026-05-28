@@ -22,7 +22,7 @@ The connectivity cloud - DNS, CDN, Zero Trust, Workers, and more.
 :::info[Provider Summary] 
 
 total services: __108__  
-total resources: __1367__  
+total resources: __1375__  
 
 :::
 

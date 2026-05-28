@@ -37,6 +37,14 @@ Issues handled:
      anchors (e.g. `#get_by_account`) - these are anchors that the
      generated page actually emits.
 
+  6. Analytics-resource pages get a docusaurus admonition banner
+     prepended (after the frontmatter) noting the required time-window
+     parameters, the default row limit, and the broader token scope
+     these resources need. The list of resources to mark is read from
+     `provider-dev/source-graphql/manifest.yaml` (the manifest happens
+     to be the canonical inventory of analytics resources; this pass
+     is otherwise protocol-agnostic).
+
 Run via:
     python -m stackql_cloudflare_provider.sanitize_docs
 """
@@ -54,6 +62,31 @@ logger = logging.getLogger(__name__)
 
 PKG_DIR = Path(__file__).resolve().parent
 WEBSITE_DOCS_DIR = PKG_DIR.parent / "website" / "docs"
+GRAPHQL_MANIFEST = PKG_DIR.parent / "provider-dev" / "source-graphql" / "manifest.yaml"
+
+# Docusaurus admonition prepended to every analytics-resource page
+# after the frontmatter. The text is intentionally protocol-agnostic -
+# the user should not need to know whether the resource is REST-backed
+# or otherwise. We surface only the practical UX details that differ
+# from typical CRUD resources: the time-window requirement, the row
+# limit, and the broader token permission these endpoints need.
+#
+# MDX is opinionated about admonitions: there MUST be a blank line both
+# before the opening `:::info` and after the closing `:::`, or the
+# parser falls back to rendering them as literal text. The leading
+# newline below + the two trailing newlines satisfy that.
+_ANALYTICS_CALLOUT = """
+:::info[Analytics resource]
+
+This is a time-bounded analytics resource. Queries against it differ from typical CRUD resources in a few ways:
+
+- **`since` and `until` are required.** Both are RFC3339 timestamps and define the analytics window (e.g. `since = '2026-05-28T00:00:00Z'`, `until = '2026-05-29T00:00:00Z'`). Queries without them will fail.
+- **Row cap via `limit`.** The `limit` parameter (default `100`) bounds the response. Widen the time window or raise `limit` to return more rows.
+- **Token scope.** Cloudflare's analytics endpoints require an API token with **Account -> Analytics -> Read** permission, which is broader than typical zone-scoped tokens. A token without it will return empty results.
+
+:::
+
+"""
 
 
 # Match a <code>...</code> block (non-greedy, allowing newlines).
@@ -185,7 +218,70 @@ def _fix_orphan_anchors(text: str) -> Tuple[str, int]:
     return _ANCHOR_LINK_RE.sub(_sub, text), n
 
 
-def sanitize_file(path: Path) -> dict:
+def _load_analytics_resource_pages(docs_dir: Path) -> set[Path]:
+    """Return the set of docusaurus `.md` pages that correspond to
+    Cloudflare analytics resources. We read the inventory from the
+    GraphQL manifest (which happens to be where analytics resources
+    are declared) but the callout text itself is protocol-agnostic.
+
+    Missing manifest = empty set (no analytics resources to mark).
+    """
+    if not GRAPHQL_MANIFEST.exists():
+        return set()
+    try:
+        import yaml  # local import - sanitize_docs has no other yaml needs
+    except ImportError:
+        logger.warning("PyYAML not available; skipping analytics callout injection")
+        return set()
+    data = yaml.safe_load(GRAPHQL_MANIFEST.read_text(encoding="utf-8")) or {}
+    pages: set[Path] = set()
+    for op in (data.get("operations") or []):
+        service = op.get("service")
+        resource = op.get("resource")
+        if not service or not resource:
+            continue
+        page = docs_dir / "services" / service / resource / "index.md"
+        pages.add(page.resolve())
+    return pages
+
+
+_FRONTMATTER_RE = re.compile(r"^---\s*\n.*?\n---\s*\n", re.DOTALL)
+# Matches consecutive `import ... from '...';` lines at the top of the
+# MDX body (after the frontmatter). docgen emits these as the first
+# content of every page. The callout must land AFTER them - MDX
+# requires `import` statements to be parsed before any markdown
+# content, including admonitions; placing markdown above the imports
+# falls back to literal rendering.
+_IMPORTS_RE = re.compile(
+    r"(?:^import\s+[^\n;]+;[ \t]*\n)+",
+    re.MULTILINE,
+)
+
+
+def _inject_analytics_callout(text: str) -> Tuple[str, int]:
+    """Insert the analytics-resource admonition AFTER the docgen-emitted
+    `import` block. Idempotent: skipped if the admonition is already
+    present.
+
+    MDX requires `import` statements to come before any markdown content.
+    If we inject the admonition between the frontmatter and the imports
+    it renders as literal text rather than an admonition box."""
+    if ":::info[Analytics resource]" in text:
+        return text, 0
+
+    fm = _FRONTMATTER_RE.match(text)
+    body_start = fm.end() if fm else 0
+
+    # Find the import block within the body. docgen always emits the
+    # imports first; if for some reason they are absent we fall back to
+    # inserting at body_start.
+    imports = _IMPORTS_RE.search(text, body_start)
+    insertion_point = imports.end() if imports else body_start
+
+    return text[:insertion_point] + _ANALYTICS_CALLOUT + text[insertion_point:], 1
+
+
+def sanitize_file(path: Path, analytics_pages: set[Path]) -> dict:
     """Rewrite `path` in-place if any sanitization was needed. Returns a
     per-file stats dict."""
     original = path.read_text(encoding="utf-8")
@@ -197,9 +293,16 @@ def sanitize_file(path: Path) -> dict:
     text, anchor_n = _fix_orphan_anchors(text)
     text, type_n = _fix_bogus_types(text)
 
+    analytics_n = 0
+    if path.resolve() in analytics_pages:
+        text, analytics_n = _inject_analytics_callout(text)
+
     if text != original:
         path.write_text(text, encoding="utf-8")
-    return {"code": code_n, "br": br_n, "cf_link": link_n, "anchor": anchor_n, "bogus_type": type_n}
+    return {
+        "code": code_n, "br": br_n, "cf_link": link_n,
+        "anchor": anchor_n, "bogus_type": type_n, "analytics": analytics_n,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -219,10 +322,14 @@ def main(argv: list[str] | None = None) -> int:
         logger.error("Docs dir not found: %s", docs_dir)
         return 1
 
+    analytics_pages = _load_analytics_resource_pages(docs_dir)
+    if analytics_pages:
+        logger.info("Will inject analytics callouts into %d resource page(s)", len(analytics_pages))
+
     files_touched = 0
-    totals = {"code": 0, "br": 0, "cf_link": 0, "anchor": 0, "bogus_type": 0}
+    totals = {"code": 0, "br": 0, "cf_link": 0, "anchor": 0, "bogus_type": 0, "analytics": 0}
     for md in docs_dir.rglob("*.md"):
-        stats = sanitize_file(md)
+        stats = sanitize_file(md, analytics_pages)
         if any(stats.values()):
             files_touched += 1
             for k, v in stats.items():
@@ -230,8 +337,8 @@ def main(argv: list[str] | None = None) -> int:
             logger.debug("%s: %s", md.relative_to(docs_dir), stats)
 
     logger.info(
-        "Sanitised %d files. Fixes: %d <code> blocks, %d <br> runs, %d cloudflare-api links, %d orphan anchors, %d bogus types.",
-        files_touched, totals["code"], totals["br"], totals["cf_link"], totals["anchor"], totals["bogus_type"],
+        "Sanitised %d files. Fixes: %d <code> blocks, %d <br> runs, %d cloudflare-api links, %d orphan anchors, %d bogus types, %d analytics callouts.",
+        files_touched, totals["code"], totals["br"], totals["cf_link"], totals["anchor"], totals["bogus_type"], totals["analytics"],
     )
     return 0
 

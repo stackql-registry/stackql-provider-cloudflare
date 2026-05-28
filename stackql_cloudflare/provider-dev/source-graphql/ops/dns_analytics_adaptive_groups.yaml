@@ -1,0 +1,113 @@
+# Operation spec: zone.dnsAnalyticsAdaptiveGroups
+#
+# DNS query analytics for a zone, grouped by query name / type / response
+# code / cache status / colo. Replaces the deprecated REST endpoints
+# /zones/{zone_id}/dns_analytics/* (sunset 2026-12-01).
+#
+# `queries` is the top-level `count` field - number of DNS queries
+# for the dimension tuple. `queries_stale` and
+# `queries_not_cached_not_stale` come from the sum block.
+
+description: >-
+  DNS query analytics for a zone, grouped by query name, type, response
+  code, cache status, and serving colo. Replaces the deprecated REST
+  endpoints /zones/{zone_id}/dns_analytics/* (hard EOL 2026-12-01).
+
+parameters:
+  - name: zone_tag
+    in: path
+    required: true
+    schema: { type: string }
+    description: Cloudflare zone ID (the 32-char hex tag).
+  - name: since
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Lower bound (inclusive). RFC3339.
+  - name: until
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Upper bound (exclusive). RFC3339.
+  - name: limit
+    in: query
+    required: false
+    schema: { type: integer, default: 100 }
+    description: Maximum dimension-tuple rows per call.
+
+query: |
+  query {
+    viewer {
+      zones(filter: { zoneTag: "{{ .zone_tag }}" }, limit: 1) {
+        dnsAnalyticsAdaptiveGroups(
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
+          orderBy: [datetimeMinute_ASC]
+        ) {
+          dimensions {
+            datetime: datetimeMinute
+            queryName
+            queryType
+            responseCode
+            responseCached
+            coloName
+            ipVersion
+            protocol
+          }
+          sum {
+            countNotCachedAndNotStale
+            countStale
+          }
+          count
+        }
+      }
+    }
+  }
+
+transform:
+  type: golang_template_json_v0.3.0
+  body: |
+    {
+      "result": [
+        {{- $data := index . "data" }}
+        {{- if $data }}
+        {{- $viewer := index $data "viewer" }}
+        {{- $zones := index $viewer "zones" }}
+        {{- if and $zones (gt (len $zones) 0) }}
+        {{- $rows := index (index $zones 0) "dnsAnalyticsAdaptiveGroups" }}
+        {{- $first := true -}}
+        {{- range $i, $row := $rows }}
+        {{- if not $first }},{{ end }}{{- $first = false }}
+        {
+          "datetime":                     {{ toJson (index $row "dimensions" "datetime") }},
+          "query_name":                   {{ toJson (index $row "dimensions" "queryName") }},
+          "query_type":                   {{ toJson (index $row "dimensions" "queryType") }},
+          "response_code":                {{ toJson (index $row "dimensions" "responseCode") }},
+          "response_cached":              {{ toJson (index $row "dimensions" "responseCached") }},
+          "colo_name":                    {{ toJson (index $row "dimensions" "coloName") }},
+          "ip_version":                   {{ toJson (index $row "dimensions" "ipVersion") }},
+          "protocol":                     {{ toJson (index $row "dimensions" "protocol") }},
+          "queries":                      {{ index $row "count" }},
+          "queries_not_cached_not_stale": {{ index $row "sum" "countNotCachedAndNotStale" }},
+          "queries_stale":                {{ index $row "sum" "countStale" }}
+        }
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      ]
+    }
+
+row_schema:
+  type: object
+  properties:
+    datetime:                     { type: string, format: date-time }
+    query_name:                   { type: string, description: DNS query name (no trailing dot). }
+    query_type:                   { type: string, description: DNS query type (A, AAAA, MX, etc.). }
+    response_code:                { type: string, description: DNS response code (NOERROR, NXDOMAIN, etc.). }
+    response_cached:              { type: string, description: Whether the response was served from cache. }
+    colo_name:                    { type: string, description: IATA code of the Cloudflare colo. }
+    ip_version:                   { type: string, description: IPv4 / IPv6. }
+    protocol:                     { type: string, description: Transport protocol (UDP / TCP / DoH / DoT). }
+    queries:                      { type: integer, description: Total DNS queries for this dimension tuple. }
+    queries_not_cached_not_stale: { type: integer, description: Queries served fresh (not cache, not stale). }
+    queries_stale:                { type: integer, description: Queries served from stale cache. }

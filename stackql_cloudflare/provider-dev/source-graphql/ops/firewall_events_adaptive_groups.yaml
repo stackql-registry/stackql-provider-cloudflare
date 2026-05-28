@@ -1,0 +1,156 @@
+# Operation spec: zone.firewallEventsAdaptiveGroups
+#
+# Cloudflare's adaptive-sampling firewall event analytics, grouped by
+# action / source / rule / country / status / path. Each row aggregates
+# the count of firewall events for one dimension tuple over the
+# requested time window.
+#
+# Column source mapping:
+#   datetime              <- dimensions.datetime (aliased from datetimeMinute)
+#   action                <- dimensions.action
+#   source                <- dimensions.source
+#   rule_id               <- dimensions.ruleId
+#   ruleset_id            <- dimensions.rulesetId
+#   client_country_name   <- dimensions.clientCountryName
+#   client_ip             <- dimensions.clientIP
+#   client_asn_description<- dimensions.clientASNDescription
+#   edge_response_status  <- dimensions.edgeResponseStatus
+#   client_request_path   <- dimensions.clientRequestPath
+#   client_request_http_host <- dimensions.clientRequestHTTPHost
+#   events                <- top-level `count` (event count for this tuple)
+
+description: >-
+  Firewall event analytics for a zone, with adaptive sampling, grouped
+  by action / source / rule / country / status. Each row aggregates the
+  count of firewall events for one dimension tuple over the requested
+  time window. Useful for surfacing top blocking rules, top blocked
+  countries, top targeted paths.
+
+parameters:
+  - name: zone_tag
+    in: path
+    required: true
+    schema: { type: string }
+    description: Cloudflare zone ID (the 32-char hex tag).
+  - name: since
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Lower bound (inclusive) of the time range. RFC3339 (e.g. 2026-05-29T00:00:00Z).
+  - name: until
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Upper bound (exclusive) of the time range. RFC3339.
+  - name: limit
+    in: query
+    required: false
+    schema: { type: integer, default: 100 }
+    description: Maximum number of dimension-tuple rows to return per call.
+
+query: |
+  query {
+    viewer {
+      zones(filter: { zoneTag: "{{ .zone_tag }}" }, limit: 1) {
+        firewallEventsAdaptiveGroups(
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
+          orderBy: [datetimeMinute_ASC]
+        ) {
+          dimensions {
+            datetime: datetimeMinute
+            action
+            source
+            ruleId
+            rulesetId
+            clientCountryName
+            clientIP
+            clientASNDescription
+            edgeResponseStatus
+            clientRequestPath
+            clientRequestHTTPHost
+          }
+          count
+        }
+      }
+    }
+  }
+
+# response.transform: flattens Cloudflare's
+# `viewer.zones[0].firewallEventsAdaptiveGroups[*]` into a top-level
+# `data.zone_firewall_events_adaptive_groups[*]` flat array matching
+# the path the merge script writes.
+transform:
+  type: golang_template_json_v0.3.0
+  body: |
+    {
+      "result": [
+        {{- $data := index . "data" }}
+        {{- if $data }}
+        {{- $viewer := index $data "viewer" }}
+        {{- $zones := index $viewer "zones" }}
+        {{- if and $zones (gt (len $zones) 0) }}
+        {{- $rows := index (index $zones 0) "firewallEventsAdaptiveGroups" }}
+        {{- $first := true -}}
+        {{- range $i, $row := $rows }}
+        {{- if not $first }},{{ end }}{{- $first = false }}
+        {
+          "datetime":                 {{ toJson (index $row "dimensions" "datetime") }},
+          "action":                   {{ toJson (index $row "dimensions" "action") }},
+          "source":                   {{ toJson (index $row "dimensions" "source") }},
+          "rule_id":                  {{ toJson (index $row "dimensions" "ruleId") }},
+          "ruleset_id":               {{ toJson (index $row "dimensions" "rulesetId") }},
+          "client_country_name":      {{ toJson (index $row "dimensions" "clientCountryName") }},
+          "client_ip":                {{ toJson (index $row "dimensions" "clientIP") }},
+          "client_asn_description":   {{ toJson (index $row "dimensions" "clientASNDescription") }},
+          "edge_response_status":     {{ index $row "dimensions" "edgeResponseStatus" }},
+          "client_request_path":      {{ toJson (index $row "dimensions" "clientRequestPath") }},
+          "client_request_http_host": {{ toJson (index $row "dimensions" "clientRequestHTTPHost") }},
+          "events":                   {{ index $row "count" }}
+        }
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      ]
+    }
+
+row_schema:
+  type: object
+  properties:
+    datetime:
+      type: string
+      format: date-time
+      description: Minute-bucketed timestamp (RFC3339).
+    action:
+      type: string
+      description: First-class action taken by the firewall (block, challenge, jschallenge, log, allow, etc.).
+    source:
+      type: string
+      description: Cloudflare security product that triggered the event (waf, firewallrules, ratelimit, etc.).
+    rule_id:
+      type: string
+      description: Product-specific rule ID triggered by this event.
+    ruleset_id:
+      type: string
+      description: Product-specific ruleset ID triggered by this event.
+    client_country_name:
+      type: string
+      description: ISO-3166 alpha-2 country code derived from client IP.
+    client_ip:
+      type: string
+      description: Visitor IP address (IPv4 or IPv6).
+    client_asn_description:
+      type: string
+      description: Visitor ASN as a string (e.g. AS15169 Google LLC).
+    edge_response_status:
+      type: integer
+      description: HTTP status returned to the client.
+    client_request_path:
+      type: string
+      description: Path component of the client request.
+    client_request_http_host:
+      type: string
+      description: Hostname component of the client request.
+    events:
+      type: integer
+      description: Number of firewall events contributing to this dimension tuple.

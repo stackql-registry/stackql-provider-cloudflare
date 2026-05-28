@@ -1,0 +1,16 @@
+-- Replacement for the deprecated REST endpoints /zones/{zone_id}/dns_analytics/*
+-- (hard EOL 2026-12-01). Returns DNS query analytics grouped by
+-- query name + query type + response code over the requested window.
+
+SELECT
+  query_name,
+  query_type,
+  response_code,
+  sum(queries) AS total_queries
+FROM cloudflare.dns.dns_analytics_adaptive_groups
+WHERE zone_tag = '<ZONE_TAG>'
+  AND since    = '<RFC3339_FROM>'
+  AND until    = '<RFC3339_TO>'
+GROUP BY query_name, query_type, response_code
+ORDER BY total_queries DESC
+LIMIT 25;

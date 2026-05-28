@@ -18,7 +18,7 @@ cache service documentation.
 
 :::info[Service Summary]
 
-total resources: __10__  
+total resources: __11__  
 
 :::
 
@@ -29,6 +29,7 @@ total resources: __10__
 <a href="/services/cache/cache_cache_reserve/">cache_cache_reserve</a><br />
 <a href="/services/cache/cache_cache_reserve_clear/">cache_cache_reserve_clear</a><br />
 <a href="/services/cache/cache_reserve/">cache_reserve</a><br />
+<a href="/services/cache/cdn_network_analytics_adaptive_groups/">cdn_network_analytics_adaptive_groups</a><br />
 <a href="/services/cache/origin_cloud_regions/">origin_cloud_regions</a>
 </div>
 <div class="providerDocColumn">

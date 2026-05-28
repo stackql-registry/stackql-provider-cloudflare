@@ -2777,8 +2777,6 @@ zero_trust.yaml,/zones/{zone_id}/devices/policy/certificates,devices-get-policy-
 zero_trust.yaml,/zones/{zone_id}/devices/policy/certificates,devices-update-policy-certificates,devices_update_policy_certificates,patch,teamsDevicesDevicesPolicyCertificatesSingle,Devices,devices,certificates,edit,update,,Update device certificate provisioning status
 zones.yaml,/zones,zones-get,zones_get,get,,Zone,zone,zones,list,select,$.result,List Zones
 zones.yaml,/zones,zones-post,zones_post,post,,Zone,zone,zones,create,insert,,Create Zone
-zones.yaml,/zones/{zone_identifier}/analytics/colos,zone-analytics-(-deprecated)-get-analytics-by-co-locations,zone_analytics_(_deprecated)_get_analytics_by_co_locations,get,zoneAnalyticsApiColoResponse,Zone Analytics (Deprecated),zone_analytics_deprecated,analytics_colos,list_by_zone,select,$.result,Get analytics by Co-locations
-zones.yaml,/zones/{zone_identifier}/analytics/dashboard,zone-analytics-(-deprecated)-get-dashboard,zone_analytics_(_deprecated)_get_dashboard,get,zoneAnalyticsApiDashboardResponse,Zone Analytics (Deprecated),zone_analytics_deprecated,dashboard,list,select,$.result,Get dashboard
 zones.yaml,/zones/{zone_id},zones-0-delete,zones_0_delete,delete,zonesApiResponseSingleId,Zone,zone,zones,delete,delete,,Delete Zone
 zones.yaml,/zones/{zone_id},zones-0-get,zones_0_get,get,,Zone,zone,zones,get,select,$.result,Zone Details
 zones.yaml,/zones/{zone_id},zones-0-patch,zones_0_patch,patch,,Zone,zone,zones,edit,update,,Edit Zone

@@ -18,7 +18,7 @@ firewall service documentation.
 
 :::info[Service Summary]
 
-total resources: __10__  
+total resources: __12__  
 
 :::
 
@@ -27,11 +27,13 @@ total resources: __10__
 <div class="providerDocColumn">
 <a href="/services/firewall/access_rules/">access_rules</a><br />
 <a href="/services/firewall/access_rules_rules/">access_rules_rules</a><br />
+<a href="/services/firewall/firewall_events/">firewall_events</a><br />
+<a href="/services/firewall/firewall_events_adaptive_groups/">firewall_events_adaptive_groups</a><br />
 <a href="/services/firewall/firewall_rules/">firewall_rules</a><br />
-<a href="/services/firewall/groups/">groups</a><br />
-<a href="/services/firewall/lockdowns/">lockdowns</a>
+<a href="/services/firewall/groups/">groups</a>
 </div>
 <div class="providerDocColumn">
+<a href="/services/firewall/lockdowns/">lockdowns</a><br />
 <a href="/services/firewall/overrides/">overrides</a><br />
 <a href="/services/firewall/packages/">packages</a><br />
 <a href="/services/firewall/packages_rules/">packages_rules</a><br />

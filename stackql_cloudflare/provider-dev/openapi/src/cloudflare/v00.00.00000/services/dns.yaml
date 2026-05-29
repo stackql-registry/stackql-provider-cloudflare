@@ -5407,8 +5407,10 @@ paths:
         responseSelection:
           jsonPath: $.result[*]
         cursor:
-          jsonPath: $.result[*].__no_cursor
-        query: "query {\n  viewer {\n    zones(filter: { zoneTag: \"{{ .zone_tag }}\" }, limit: 1) {\n      dnsAnalyticsAdaptiveGroups(\n        filter: { datetime_geq: \"{{ .since }}\", datetime_lt: \"{{ .until }}\" }\n        limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}\n        orderBy: [datetimeMinute_ASC]\n      ) {\n        dimensions {\n          datetime: datetimeMinute\n          queryName\n          queryType\n          responseCode\n          responseCached\n          coloName\n          ipVersion\n          protocol\n        }\n        sum {\n          countNotCachedAndNotStale\n          countStale\n        }\n        count\n      }\n    }\n  }\n}\n"
+          strategy: keyset
+          jsonPath: $.data.viewer.zones[0].dnsAnalyticsAdaptiveGroups[-1:].dimensions.datetime
+          format: ', AND datetime_gt: "{{ .value }}"'
+        query: "query {\n  viewer {\n    zones(filter: { zoneTag: \"{{ .zone_tag }}\" }, limit: 1) {\n      dnsAnalyticsAdaptiveGroups(\n        filter: { datetime_geq: \"{{ .since }}\", datetime_lt: \"{{ .until }}\"{{ .cursor }} }\n        limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}\n        orderBy: [datetimeMinute_ASC]\n      ) {\n        dimensions {\n          datetime: datetimeMinute\n          queryName\n          queryType\n          responseCode\n          responseCached\n          coloName\n          ipVersion\n          protocol\n        }\n        sum {\n          countNotCachedAndNotStale\n          countStale\n        }\n        count\n      }\n    }\n  }\n}\n"
       x-stackql-protocol: graphql
       parameters:
       - name: zone_tag

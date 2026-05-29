@@ -48,12 +48,17 @@ parameters:
     schema: { type: integer, default: 100 }
     description: Maximum number of dimension-tuple rows to return per call.
 
+cursor:
+  strategy: keyset
+  jsonPath: '$.data.viewer.zones[0].firewallEventsAdaptiveGroups[-1:].dimensions.datetime'
+  format: ', AND datetime_gt: "{{ .value }}"'
+
 query: |
   query {
     viewer {
       zones(filter: { zoneTag: "{{ .zone_tag }}" }, limit: 1) {
         firewallEventsAdaptiveGroups(
-          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}"{{ .cursor }} }
           limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
           orderBy: [datetimeMinute_ASC]
         ) {

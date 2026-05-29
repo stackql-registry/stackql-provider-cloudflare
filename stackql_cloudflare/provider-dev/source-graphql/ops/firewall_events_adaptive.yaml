@@ -36,12 +36,20 @@ parameters:
     schema: { type: integer, default: 100 }
     description: Maximum number of events to return per call.
 
+cursor:
+  strategy: keyset
+  # Raw event stream - datetime is a top-level field (no dimensions
+  # wrapper). orderBy is _DESC so subsequent pages move backward in
+  # time; we splice `datetime_lt` to pick up where we left off.
+  jsonPath: '$.data.viewer.zones[0].firewallEventsAdaptive[-1:].datetime'
+  format: ', AND datetime_lt: "{{ .value }}"'
+
 query: |
   query {
     viewer {
       zones(filter: { zoneTag: "{{ .zone_tag }}" }, limit: 1) {
         firewallEventsAdaptive(
-          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}"{{ .cursor }} }
           limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
           orderBy: [datetime_DESC]
         ) {

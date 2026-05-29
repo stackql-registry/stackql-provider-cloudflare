@@ -4929,8 +4929,10 @@ paths:
         responseSelection:
           jsonPath: $.result[*]
         cursor:
-          jsonPath: $.result[*].__no_cursor
-        query: "query {\n  viewer {\n    zones(filter: { zoneTag: \"{{ .zone_tag }}\" }, limit: 1) {\n      firewallEventsAdaptiveGroups(\n        filter: { datetime_geq: \"{{ .since }}\", datetime_lt: \"{{ .until }}\" }\n        limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}\n        orderBy: [datetimeMinute_ASC]\n      ) {\n        dimensions {\n          datetime: datetimeMinute\n          action\n          source\n          ruleId\n          rulesetId\n          clientCountryName\n          clientIP\n          clientASNDescription\n          edgeResponseStatus\n          clientRequestPath\n          clientRequestHTTPHost\n        }\n        count\n      }\n    }\n  }\n}\n"
+          strategy: keyset
+          jsonPath: $.data.viewer.zones[0].firewallEventsAdaptiveGroups[-1:].dimensions.datetime
+          format: ', AND datetime_gt: "{{ .value }}"'
+        query: "query {\n  viewer {\n    zones(filter: { zoneTag: \"{{ .zone_tag }}\" }, limit: 1) {\n      firewallEventsAdaptiveGroups(\n        filter: { datetime_geq: \"{{ .since }}\", datetime_lt: \"{{ .until }}\"{{ .cursor }} }\n        limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}\n        orderBy: [datetimeMinute_ASC]\n      ) {\n        dimensions {\n          datetime: datetimeMinute\n          action\n          source\n          ruleId\n          rulesetId\n          clientCountryName\n          clientIP\n          clientASNDescription\n          edgeResponseStatus\n          clientRequestPath\n          clientRequestHTTPHost\n        }\n        count\n      }\n    }\n  }\n}\n"
       x-stackql-protocol: graphql
       parameters:
       - name: zone_tag
@@ -5021,8 +5023,10 @@ paths:
         responseSelection:
           jsonPath: $.result[*]
         cursor:
-          jsonPath: $.result[*].__no_cursor
-        query: "query {\n  viewer {\n    zones(filter: { zoneTag: \"{{ .zone_tag }}\" }, limit: 1) {\n      firewallEventsAdaptive(\n        filter: { datetime_geq: \"{{ .since }}\", datetime_lt: \"{{ .until }}\" }\n        limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}\n        orderBy: [datetime_DESC]\n      ) {\n        datetime\n        action\n        source\n        ruleId\n        rulesetId\n        ref\n        clientIP\n        clientAsn\n        clientASNDescription\n        clientCountryName\n        clientRequestHTTPHost\n        clientRequestHTTPMethodName\n        clientRequestPath\n        edgeColoName\n        edgeResponseStatus\n        originResponseStatus\n        rayName\n        userAgent\n      }\n    }\n  }\n}\n"
+          strategy: keyset
+          jsonPath: $.data.viewer.zones[0].firewallEventsAdaptive[-1:].datetime
+          format: ', AND datetime_lt: "{{ .value }}"'
+        query: "query {\n  viewer {\n    zones(filter: { zoneTag: \"{{ .zone_tag }}\" }, limit: 1) {\n      firewallEventsAdaptive(\n        filter: { datetime_geq: \"{{ .since }}\", datetime_lt: \"{{ .until }}\"{{ .cursor }} }\n        limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}\n        orderBy: [datetime_DESC]\n      ) {\n        datetime\n        action\n        source\n        ruleId\n        rulesetId\n        ref\n        clientIP\n        clientAsn\n        clientASNDescription\n        clientCountryName\n        clientRequestHTTPHost\n        clientRequestHTTPMethodName\n        clientRequestPath\n        edgeColoName\n        edgeResponseStatus\n        originResponseStatus\n        rayName\n        userAgent\n      }\n    }\n  }\n}\n"
       x-stackql-protocol: graphql
       parameters:
       - name: zone_tag

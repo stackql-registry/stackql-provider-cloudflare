@@ -165,6 +165,37 @@ def _naked_row_schema() -> dict:
     }
 
 
+def _build_cursor(spec: dict) -> dict:
+    """Build the x-stackQL-graphQL.cursor block for one operation.
+
+    If the op spec declares a `cursor:` block, pass it through verbatim.
+    The any-sdk cursor strategies (per stackql PR #658 / any-sdk
+    pkg/graphql/graphql.go) are:
+
+      cursor_after  (default; classic Relay `after:` cursor)
+      keyset        (Cloudflare-style: `_gt` / `_geq` filter on sort key)
+      offset        (offset/limit style)
+      page_info     (Relay-strict; reads `hasNextPage` from response)
+
+    Expected per-strategy fields in the op spec's cursor block:
+
+      strategy: cursor_after | keyset | offset | page_info
+      jsonPath: <path-to-cursor-value>     (required for after/keyset/page_info)
+      format: <Go text/template>           (required for keyset; optional otherwise)
+      terminateOnJsonPath: <path>          (required for page_info)
+      pageSize: <int>                      (optional; offset only)
+
+    If the spec omits `cursor:`, fall back to a single-page sentinel
+    (`$.result[*].__no_cursor`) - any-sdk treats a failed jsonpath
+    lookup as EOF, so iteration terminates after page 1. This is the
+    behavior every op shipped with before pagination support landed.
+    """
+    cursor_spec = spec.get("cursor")
+    if cursor_spec:
+        return cursor_spec
+    return {"jsonPath": "$.result[*].__no_cursor"}
+
+
 def _build_operation(entry: dict, spec: dict) -> dict:
     """Build the OpenAPI operation block for one GraphQL op.
 
@@ -214,14 +245,7 @@ def _build_operation(entry: dict, spec: dict) -> dict:
             "responseSelection": {
                 "jsonPath": raw_path,
             },
-            "cursor": {
-                # Single-page for now. any-sdk treats a failed jsonpath
-                # lookup as EOF, which is exactly what we want -
-                # iteration terminates after page 1. Once any-sdk gains
-                # keyset/offset/page_info pagination, this becomes
-                # per-spec.
-                "jsonPath": "$.result[*].__no_cursor",
-            },
+            "cursor": _build_cursor(spec),
             "query": spec["query"],
         },
         PROTOCOL_MARKER_KEY: PROTOCOL_MARKER_VAL,

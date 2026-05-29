@@ -18,7 +18,7 @@ r2 service documentation.
 
 :::info[Service Summary]
 
-total resources: __17__  
+total resources: __18__  
 
 :::
 
@@ -40,6 +40,7 @@ total resources: __17__
 <a href="/services/r2/managed/">managed</a><br />
 <a href="/services/r2/metrics/">metrics</a><br />
 <a href="/services/r2/r2/">r2</a><br />
+<a href="/services/r2/r2_operations_adaptive_groups/">r2_operations_adaptive_groups</a><br />
 <a href="/services/r2/sippy/">sippy</a><br />
 <a href="/services/r2/slurper_jobs/">slurper_jobs</a><br />
 <a href="/services/r2/source_connectivity_precheck/">source_connectivity_precheck</a><br />

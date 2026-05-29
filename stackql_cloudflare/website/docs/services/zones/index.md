@@ -18,7 +18,7 @@ zones service documentation.
 
 :::info[Service Summary]
 
-total resources: __26__  
+total resources: __27__  
 
 :::
 
@@ -26,16 +26,17 @@ total resources: __26__
 <div class="row">
 <div class="providerDocColumn">
 <a href="/services/zones/aegis/">aegis</a><br />
-<a href="/services/zones/analytics_colos/">analytics_colos</a><br />
 <a href="/services/zones/cache_reserve_clear/">cache_reserve_clear</a><br />
 <a href="/services/zones/custom_nameservers/">custom_nameservers</a><br />
 <a href="/services/zones/custom_topics/">custom_topics</a><br />
-<a href="/services/zones/dashboard/">dashboard</a><br />
 <a href="/services/zones/environments/">environments</a><br />
 <a href="/services/zones/firewall_for_ai_settings/">firewall_for_ai_settings</a><br />
 <a href="/services/zones/fonts/">fonts</a><br />
 <a href="/services/zones/healthchecks/">healthchecks</a><br />
 <a href="/services/zones/holds/">holds</a><br />
+<a href="/services/zones/http_requests_1h_groups/">http_requests_1h_groups</a><br />
+<a href="/services/zones/http_requests_adaptive_groups/">http_requests_adaptive_groups</a><br />
+<a href="/services/zones/http_requests_overview_adaptive_groups/">http_requests_overview_adaptive_groups</a><br />
 <a href="/services/zones/latency/">latency</a><br />
 <a href="/services/zones/latency_colos/">latency_colos</a>
 </div>

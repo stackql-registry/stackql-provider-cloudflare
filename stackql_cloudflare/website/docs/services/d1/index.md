@@ -18,17 +18,18 @@ d1 service documentation.
 
 :::info[Service Summary]
 
-total resources: __3__  
+total resources: __4__  
 
 :::
 
 ## Resources
 <div class="row">
 <div class="providerDocColumn">
-<a href="/services/d1/database/">database</a><br />
-<a href="/services/d1/database_query/">database_query</a>
+<a href="/services/d1/d1_analytics_adaptive_groups/">d1_analytics_adaptive_groups</a><br />
+<a href="/services/d1/database/">database</a>
 </div>
 <div class="providerDocColumn">
+<a href="/services/d1/database_query/">database_query</a><br />
 <a href="/services/d1/time_travel/">time_travel</a>
 </div>
 </div>

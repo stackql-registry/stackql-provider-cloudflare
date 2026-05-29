@@ -18,7 +18,7 @@ workers service documentation.
 
 :::info[Service Summary]
 
-total resources: __39__  
+total resources: __40__  
 
 :::
 
@@ -63,6 +63,7 @@ total resources: __39__
 <a href="/services/workers/v2s/">v2s</a><br />
 <a href="/services/workers/workers/">workers</a><br />
 <a href="/services/workers/workers_builds/">workers_builds</a><br />
+<a href="/services/workers/workers_invocations/">workers_invocations</a><br />
 <a href="/services/workers/workers_scripts/">workers_scripts</a><br />
 <a href="/services/workers/workers_scripts_search/">workers_scripts_search</a><br />
 <a href="/services/workers/workers_versions/">workers_versions</a>

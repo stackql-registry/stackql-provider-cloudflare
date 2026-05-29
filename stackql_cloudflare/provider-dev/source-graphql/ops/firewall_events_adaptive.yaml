@@ -1,0 +1,139 @@
+# Operation spec: zone.firewallEventsAdaptive
+#
+# Raw firewall event log for a zone (not aggregated). One row per
+# event, with attacker context (IP, ASN, country, JA4) and rule
+# context (action, source, ruleId). Use for incident drill-down -
+# "who hit me and what did they trigger".
+#
+# Unlike *Groups endpoints, this node has NO dimensions/sum/count
+# wrapper - the row IS flat at the GraphQL level. The transform
+# just selects + renames fields.
+
+description: >-
+  Raw firewall event stream for a zone. One row per event with
+  attacker context (IP, ASN, country) and rule context (action,
+  source, ruleId). Use for incident drill-down rather than rollups.
+
+parameters:
+  - name: zone_tag
+    in: path
+    required: true
+    schema: { type: string }
+    description: Cloudflare zone ID (the 32-char hex tag).
+  - name: since
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Lower bound (inclusive) of the time range. RFC3339.
+  - name: until
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Upper bound (exclusive) of the time range. RFC3339.
+  - name: limit
+    in: query
+    required: false
+    schema: { type: integer, default: 100 }
+    description: Maximum number of events to return per call.
+
+cursor:
+  strategy: keyset
+  # Raw event stream - datetime is a top-level field (no dimensions
+  # wrapper). orderBy is _DESC so subsequent pages move backward in
+  # time; we splice `datetime_lt` to pick up where we left off.
+  jsonPath: '$.data.viewer.zones[0].firewallEventsAdaptive[-1:].datetime'
+  format: ', AND datetime_lt: "{{ .value }}"'
+
+query: |
+  query {
+    viewer {
+      zones(filter: { zoneTag: "{{ .zone_tag }}" }, limit: 1) {
+        firewallEventsAdaptive(
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}"{{ .cursor }} }
+          limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
+          orderBy: [datetime_DESC]
+        ) {
+          datetime
+          action
+          source
+          ruleId
+          rulesetId
+          ref
+          clientIP
+          clientAsn
+          clientASNDescription
+          clientCountryName
+          clientRequestHTTPHost
+          clientRequestHTTPMethodName
+          clientRequestPath
+          edgeColoName
+          edgeResponseStatus
+          originResponseStatus
+          rayName
+          userAgent
+        }
+      }
+    }
+  }
+
+transform:
+  type: golang_template_json_v0.3.0
+  body: |
+    {
+      "result": [
+        {{- $data := index . "data" }}
+        {{- if $data }}
+        {{- $viewer := index $data "viewer" }}
+        {{- $zones := index $viewer "zones" }}
+        {{- if and $zones (gt (len $zones) 0) }}
+        {{- $rows := index (index $zones 0) "firewallEventsAdaptive" }}
+        {{- $first := true -}}
+        {{- range $i, $row := $rows }}
+        {{- if not $first }},{{ end }}{{- $first = false }}
+        {
+          "datetime":                        {{ toJson (index $row "datetime") }},
+          "action":                          {{ toJson (index $row "action") }},
+          "source":                          {{ toJson (index $row "source") }},
+          "rule_id":                         {{ toJson (index $row "ruleId") }},
+          "ruleset_id":                      {{ toJson (index $row "rulesetId") }},
+          "ref":                             {{ toJson (index $row "ref") }},
+          "client_ip":                       {{ toJson (index $row "clientIP") }},
+          "client_asn":                      {{ index $row "clientAsn" }},
+          "client_asn_description":          {{ toJson (index $row "clientASNDescription") }},
+          "client_country_name":             {{ toJson (index $row "clientCountryName") }},
+          "client_request_http_host":        {{ toJson (index $row "clientRequestHTTPHost") }},
+          "client_request_http_method_name": {{ toJson (index $row "clientRequestHTTPMethodName") }},
+          "client_request_path":             {{ toJson (index $row "clientRequestPath") }},
+          "edge_colo_name":                  {{ toJson (index $row "edgeColoName") }},
+          "edge_response_status":            {{ index $row "edgeResponseStatus" }},
+          "origin_response_status":          {{ index $row "originResponseStatus" }},
+          "ray_name":                        {{ toJson (index $row "rayName") }},
+          "user_agent":                      {{ toJson (index $row "userAgent") }}
+        }
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      ]
+    }
+
+row_schema:
+  type: object
+  properties:
+    datetime:           { type: string, format: date-time, description: Event timestamp (RFC3339). }
+    action:             { type: string, description: First-class action (block / challenge / allow / log / etc.). }
+    source:             { type: string, description: Security product that fired (waf / firewallrules / ratelimit / etc.). }
+    rule_id:            { type: string, description: Product-specific rule ID. }
+    ruleset_id:         { type: string, description: Product-specific ruleset ID. }
+    ref:                { type: string, description: User-defined rule ref tag. }
+    client_ip:          { type: string, description: Visitor IP (v4 or v6). }
+    client_asn:         { type: integer, description: Visitor ASN. }
+    client_asn_description: { type: string, description: Visitor ASN description. }
+    client_country_name: { type: string, description: ISO-3166 alpha-2 country code. }
+    client_request_http_host: { type: string }
+    client_request_http_method_name: { type: string }
+    client_request_path: { type: string }
+    edge_colo_name:     { type: string, description: IATA code of the Cloudflare colo that served the request. }
+    edge_response_status: { type: integer }
+    origin_response_status: { type: integer }
+    ray_name:           { type: string, description: Cloudflare Ray ID. }
+    user_agent:         { type: string }

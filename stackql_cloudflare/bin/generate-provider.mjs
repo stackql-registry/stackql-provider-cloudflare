@@ -58,6 +58,23 @@ console.log(`[generate-provider] input:   ${inputDir}`);
 console.log(`[generate-provider] output:  ${outputDir}`);
 console.log(`[generate-provider] config:  ${configPath}`);
 
+// Pre-process: strip upstream REST endpoints that have been superseded
+// by hand-authored GraphQL operations (read from the source-graphql
+// manifest's `replaces_rest` blocks). Targets are removed from the
+// source yamls AND from all_services.csv so the downstream provider +
+// docs do not surface dead / sunset endpoints (e.g. /zones/{id}/
+// analytics/dashboard, which returns code 1015). Idempotent.
+const pythonBin = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
+console.log(`[generate-provider] stripping REST endpoints superseded by source-graphql/manifest.yaml...`);
+const strip = spawnSync(pythonBin, ['-m', 'stackql_cloudflare_provider.strip_superseded_rest'], {
+  cwd: BASE_DIR,
+  stdio: 'inherit',
+});
+if (strip.status !== 0) {
+  console.error(`[generate-provider] strip_superseded_rest failed with exit ${strip.status}`);
+  process.exit(strip.status ?? 1);
+}
+
 const result = await providerdev.generate({
   inputDir,
   outputDir,
@@ -91,7 +108,6 @@ console.log(`[generate-provider] wrote to ${result.outputDirectory}`);
 // references them. Result: those endpoints become SELECT-able as a
 // one-row table with a `contents` column.
 console.log(`[generate-provider] wrapping binary / non-JSON responses with contents column transform...`);
-const pythonBin = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
 const bin = spawnSync(pythonBin, ['-m', 'stackql_cloudflare_provider.binary_responses'], {
   cwd: BASE_DIR,
   stdio: 'inherit',
@@ -99,4 +115,19 @@ const bin = spawnSync(pythonBin, ['-m', 'stackql_cloudflare_provider.binary_resp
 if (bin.status !== 0) {
   console.error(`[generate-provider] binary_responses failed with exit ${bin.status}`);
   process.exit(bin.status ?? 1);
+}
+
+// Post-process: shim hand-authored Cloudflare GraphQL operations into
+// the matching service yamls. Source manifest + per-op specs live under
+// provider-dev/source-graphql/. The merge script is idempotent and only
+// touches services referenced by the manifest, so REST-only services
+// are untouched.
+console.log(`[generate-provider] shimming GraphQL operations from provider-dev/source-graphql/...`);
+const gql = spawnSync(pythonBin, ['-m', 'stackql_cloudflare_provider.graphql_merge'], {
+  cwd: BASE_DIR,
+  stdio: 'inherit',
+});
+if (gql.status !== 0) {
+  console.error(`[generate-provider] graphql_merge failed with exit ${gql.status}`);
+  process.exit(gql.status ?? 1);
 }

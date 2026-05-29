@@ -1,0 +1,112 @@
+# Operation spec: account.workersInvocationsAdaptive
+#
+# Cloudflare Workers invocation analytics for an account, grouped by
+# script / status / colo. Provides request volume, error count, CPU
+# time, duration, subrequest counts, and response sizes per dimension
+# tuple. Use for "which Worker is doing what" dashboards.
+
+description: >-
+  Cloudflare Workers invocation analytics for an account, grouped by
+  script, status, and serving colo. Per-tuple totals for requests,
+  errors, CPU time, duration (GB-s), subrequests, and response bytes.
+
+parameters:
+  - name: account_tag
+    in: path
+    required: true
+    schema: { type: string }
+    description: Cloudflare account ID (the 32-char hex tag).
+  - name: since
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Lower bound (inclusive). RFC3339.
+  - name: until
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Upper bound (exclusive). RFC3339.
+  - name: limit
+    in: query
+    required: false
+    schema: { type: integer, default: 100 }
+    description: Maximum dimension-tuple rows per call.
+
+query: |
+  query {
+    viewer {
+      accounts(filter: { accountTag: "{{ .account_tag }}" }, limit: 1) {
+        workersInvocationsAdaptive(
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
+          orderBy: [datetimeMinute_ASC]
+        ) {
+          dimensions {
+            datetime: datetimeMinute
+            scriptName
+            status
+            coloCode
+            usageModel
+          }
+          sum {
+            requests
+            errors
+            subrequests
+            cpuTimeUs
+            duration
+            wallTime
+            responseBodySize
+          }
+        }
+      }
+    }
+  }
+
+transform:
+  type: golang_template_json_v0.3.0
+  body: |
+    {
+      "result": [
+        {{- $data := index . "data" }}
+        {{- if $data }}
+        {{- $viewer := index $data "viewer" }}
+        {{- $accounts := index $viewer "accounts" }}
+        {{- if and $accounts (gt (len $accounts) 0) }}
+        {{- $rows := index (index $accounts 0) "workersInvocationsAdaptive" }}
+        {{- $first := true -}}
+        {{- range $i, $row := $rows }}
+        {{- if not $first }},{{ end }}{{- $first = false }}
+        {
+          "datetime":      {{ toJson (index $row "dimensions" "datetime") }},
+          "script_name":   {{ toJson (index $row "dimensions" "scriptName") }},
+          "status":        {{ toJson (index $row "dimensions" "status") }},
+          "colo_code":     {{ toJson (index $row "dimensions" "coloCode") }},
+          "usage_model":   {{ toJson (index $row "dimensions" "usageModel") }},
+          "requests":      {{ index $row "sum" "requests" }},
+          "errors":        {{ index $row "sum" "errors" }},
+          "subrequests":   {{ index $row "sum" "subrequests" }},
+          "cpu_time_us":   {{ index $row "sum" "cpuTimeUs" }},
+          "duration_gb_s": {{ index $row "sum" "duration" }},
+          "wall_time_us":  {{ index $row "sum" "wallTime" }}
+        }
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      ]
+    }
+
+row_schema:
+  type: object
+  properties:
+    datetime:           { type: string, format: date-time }
+    script_name:        { type: string, description: Worker script name. }
+    status:             { type: string, description: Invocation status (success / clientDisconnected / scriptError / etc.). }
+    colo_code:          { type: string, description: IATA airport code of the serving colo. }
+    usage_model:        { type: string, description: Usage model (bundled / unbound / etc.). }
+    requests:           { type: integer, description: Invocation count. }
+    errors:             { type: integer, description: Errored invocations. }
+    subrequests:        { type: integer, description: Subrequest count. }
+    cpu_time_us:        { type: integer, description: Total CPU time in microseconds. }
+    duration_gb_s:      { type: integer, description: Billable duration (GB*s units). }
+    wall_time_us:       { type: integer, description: Total wall time in microseconds. }
+    response_body_size: { type: integer, description: Total response body bytes. }

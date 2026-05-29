@@ -1,0 +1,157 @@
+# Operation spec: zone.httpRequests1hGroups
+#
+# Hourly-bucketed HTTP request analytics for a zone (no adaptive
+# sampling). One row per hour over the requested time window, with
+# request count + byte volume + cache + threat + page-view totals.
+# Useful for "last N hours" traffic dashboards and trend lines.
+#
+# This operation has no dimension fanout beyond the time bucket - each
+# hour produces exactly one row (versus the Adaptive variant which
+# fans out across country / status / method etc).
+#
+# Column source mapping:
+#   datetime              <- dimensions.datetime (hour bucket)
+#   date                  <- dimensions.date
+#   requests              <- sum.requests
+#   bytes                 <- sum.bytes
+#   threats               <- sum.threats
+#   page_views            <- sum.pageViews
+#   cached_requests       <- sum.cachedRequests
+#   cached_bytes          <- sum.cachedBytes
+#   encrypted_requests    <- sum.encryptedRequests
+#   encrypted_bytes       <- sum.encryptedBytes
+#   edge_request_bytes    <- sum.edgeRequestBytes
+
+description: >-
+  Hourly-bucketed HTTP request totals for a zone. One row per hour with
+  totals for requests, bytes, threats, page views, cache hits/bytes,
+  encrypted requests/bytes, and edge request bytes. Use for last-N-hours
+  traffic dashboards and trend visualisations.
+
+parameters:
+  - name: zone_tag
+    in: path
+    required: true
+    schema: { type: string }
+    description: Cloudflare zone ID (the 32-char hex tag).
+  - name: since
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Lower bound (inclusive) of the time range. RFC3339 (e.g. 2026-05-29T00:00:00Z).
+  - name: until
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Upper bound (exclusive) of the time range. RFC3339.
+  - name: limit
+    in: query
+    required: false
+    schema: { type: integer, default: 168 }
+    description: >-
+      Maximum hourly rows to return per call. Default 168 (one week
+      of hourly buckets).
+
+query: |
+  query {
+    viewer {
+      zones(filter: { zoneTag: "{{ .zone_tag }}" }, limit: 1) {
+        httpRequests1hGroups(
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          limit: {{ if .limit }}{{ .limit }}{{ else }}168{{ end }}
+          orderBy: [datetime_ASC]
+        ) {
+          dimensions {
+            datetime
+            date
+          }
+          sum {
+            requests
+            bytes
+            threats
+            pageViews
+            cachedRequests
+            cachedBytes
+            encryptedRequests
+            encryptedBytes
+            edgeRequestBytes
+          }
+        }
+      }
+    }
+  }
+
+# response.transform: flattens Cloudflare's
+# `viewer.zones[0].httpRequests1hGroups[*]` into a top-level
+# `data.zone_http_requests_1h_groups[*]` flat array.
+transform:
+  type: golang_template_json_v0.3.0
+  body: |
+    {
+      "result": [
+        {{- $data := index . "data" }}
+        {{- if $data }}
+        {{- $viewer := index $data "viewer" }}
+        {{- $zones := index $viewer "zones" }}
+        {{- if and $zones (gt (len $zones) 0) }}
+        {{- $rows := index (index $zones 0) "httpRequests1hGroups" }}
+        {{- $first := true -}}
+        {{- range $i, $row := $rows }}
+        {{- if not $first }},{{ end }}{{- $first = false }}
+        {
+          "datetime":           {{ toJson (index $row "dimensions" "datetime") }},
+          "date":               {{ toJson (index $row "dimensions" "date") }},
+          "requests":           {{ index $row "sum" "requests" }},
+          "bytes":              {{ index $row "sum" "bytes" }},
+          "threats":            {{ index $row "sum" "threats" }},
+          "page_views":         {{ index $row "sum" "pageViews" }},
+          "cached_requests":    {{ index $row "sum" "cachedRequests" }},
+          "cached_bytes":       {{ index $row "sum" "cachedBytes" }},
+          "encrypted_requests": {{ index $row "sum" "encryptedRequests" }},
+          "encrypted_bytes":    {{ index $row "sum" "encryptedBytes" }},
+          "edge_request_bytes": {{ index $row "sum" "edgeRequestBytes" }}
+        }
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      ]
+    }
+
+row_schema:
+  type: object
+  properties:
+    datetime:
+      type: string
+      format: date-time
+      description: Hour-bucketed timestamp (RFC3339).
+    date:
+      type: string
+      format: date
+      description: Date component of the hour bucket (YYYY-MM-DD).
+    requests:
+      type: integer
+      description: Total request count for the hour.
+    bytes:
+      type: integer
+      description: Total bytes served from the edge for the hour.
+    threats:
+      type: integer
+      description: Requests classified as threats for the hour.
+    page_views:
+      type: integer
+      description: Successful HTML content requests for the hour.
+    cached_requests:
+      type: integer
+      description: Requests served from cache for the hour.
+    cached_bytes:
+      type: integer
+      description: Bytes served from cache for the hour.
+    encrypted_requests:
+      type: integer
+      description: Requests served over TLS for the hour.
+    encrypted_bytes:
+      type: integer
+      description: Bytes served over TLS for the hour.
+    edge_request_bytes:
+      type: integer
+      description: Bytes received from the client over the hour.

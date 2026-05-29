@@ -1,0 +1,111 @@
+# Operation spec: zone.httpRequestsOverviewAdaptiveGroups
+#
+# Adaptive-sampling HTTP request overview, grouped by country / status /
+# content-type / browser. Smaller dimension/metric set than
+# httpRequestsAdaptiveGroups (no method dimension, no cross-zone metrics,
+# no Worker subreqs). Replaces the deprecated REST endpoint
+# /zones/{zone_id}/analytics/colos.
+
+description: >-
+  HTTP request overview for a zone, adaptive-sampled, grouped by minute,
+  client country, HTTP status, content type, and browser. Lighter-weight
+  than zone_http_requests_adaptive_groups. Replaces the deprecated REST
+  /zones/{zone_id}/analytics/colos endpoint.
+
+parameters:
+  - name: zone_tag
+    in: path
+    required: true
+    schema: { type: string }
+    description: Cloudflare zone ID (the 32-char hex tag).
+  - name: since
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Lower bound (inclusive). RFC3339.
+  - name: until
+    in: query
+    required: true
+    schema: { type: string, format: date-time }
+    description: Upper bound (exclusive). RFC3339.
+  - name: limit
+    in: query
+    required: false
+    schema: { type: integer, default: 100 }
+    description: Maximum dimension-tuple rows per call.
+
+query: |
+  query {
+    viewer {
+      zones(filter: { zoneTag: "{{ .zone_tag }}" }, limit: 1) {
+        httpRequestsOverviewAdaptiveGroups(
+          filter: { datetime_geq: "{{ .since }}", datetime_lt: "{{ .until }}" }
+          limit: {{ if .limit }}{{ .limit }}{{ else }}100{{ end }}
+          orderBy: [datetimeMinute_ASC]
+        ) {
+          dimensions {
+            datetime: datetimeMinute
+            clientCountryName
+            edgeResponseStatus
+            edgeResponseContentTypeName
+            userAgentBrowser
+          }
+          sum {
+            requests
+            bytes
+            cachedRequests
+            cachedBytes
+            pageViews
+            visits
+          }
+        }
+      }
+    }
+  }
+
+transform:
+  type: golang_template_json_v0.3.0
+  body: |
+    {
+      "result": [
+        {{- $data := index . "data" }}
+        {{- if $data }}
+        {{- $viewer := index $data "viewer" }}
+        {{- $zones := index $viewer "zones" }}
+        {{- if and $zones (gt (len $zones) 0) }}
+        {{- $rows := index (index $zones 0) "httpRequestsOverviewAdaptiveGroups" }}
+        {{- $first := true -}}
+        {{- range $i, $row := $rows }}
+        {{- if not $first }},{{ end }}{{- $first = false }}
+        {
+          "datetime":             {{ toJson (index $row "dimensions" "datetime") }},
+          "client_country_name":  {{ toJson (index $row "dimensions" "clientCountryName") }},
+          "edge_response_status": {{ index $row "dimensions" "edgeResponseStatus" }},
+          "user_agent_browser":   {{ toJson (index $row "dimensions" "userAgentBrowser") }},
+          "requests":             {{ index $row "sum" "requests" }},
+          "bytes":                {{ index $row "sum" "bytes" }},
+          "cached_requests":      {{ index $row "sum" "cachedRequests" }},
+          "cached_bytes":         {{ index $row "sum" "cachedBytes" }},
+          "page_views":           {{ index $row "sum" "pageViews" }},
+          "visits":               {{ index $row "sum" "visits" }}
+        }
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      ]
+    }
+
+row_schema:
+  type: object
+  properties:
+    datetime:                        { type: string, format: date-time, description: Minute-bucketed timestamp. }
+    client_country_name:             { type: string, description: ISO-3166 alpha-2 country code. }
+    edge_response_status:            { type: integer, description: HTTP status returned to the client. }
+    edge_response_content_type_name: { type: string, description: Response content type. }
+    user_agent_browser:              { type: string, description: Browser parsed from user agent. }
+    requests:                        { type: integer, description: Total request count for the tuple. }
+    bytes:                           { type: integer, description: Total bytes served. }
+    cached_requests:                 { type: integer, description: Requests served from cache. }
+    cached_bytes:                    { type: integer, description: Bytes served from cache. }
+    page_views:                      { type: integer, description: Successful HTML content requests. }
+    visits:                          { type: integer, description: Cross-referer visit count. }

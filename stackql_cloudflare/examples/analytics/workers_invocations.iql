@@ -1,0 +1,17 @@
+-- Top Workers scripts by invocation count + error rate for the
+-- requested window.
+
+SELECT
+  script_name,
+  status,
+  sum(requests)        AS invocations,
+  sum(errors)          AS errors,
+  sum(cpu_time_us)     AS cpu_time_us,
+  sum(subrequests)     AS subrequests
+FROM cloudflare.workers.workers_invocations
+WHERE account_tag = '<ACCOUNT_TAG>'
+  AND since       = '<RFC3339_FROM>'
+  AND until       = '<RFC3339_TO>'
+GROUP BY script_name, status
+ORDER BY invocations DESC
+LIMIT 25;

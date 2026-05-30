@@ -116,7 +116,7 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-peers"><code>peers</code></a></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-peers"><code>peers</code></a></td>
     <td></td>
     <td>Update primary zone configuration for outgoing zone transfers.</td>
 </tr>

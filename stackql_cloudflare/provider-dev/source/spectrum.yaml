@@ -293,7 +293,41 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/spectrumConfigUpdateAppConfig'
+              type: object
+              properties:
+                created_on:
+                  $ref: '#/components/schemas/spectrumConfigCreated'
+                  readOnly: true
+                id:
+                  $ref: '#/components/schemas/spectrumConfigAppIdentifier'
+                modified_on:
+                  $ref: '#/components/schemas/spectrumConfigModified'
+                  readOnly: true
+                argo_smart_routing:
+                  $ref: '#/components/schemas/spectrumConfigArgoSmartRouting'
+                dns:
+                  $ref: '#/components/schemas/spectrumConfigDns'
+                edge_ips:
+                  $ref: '#/components/schemas/spectrumConfigEdgeIps'
+                ip_firewall:
+                  $ref: '#/components/schemas/spectrumConfigIpFirewall'
+                origin_direct:
+                  $ref: '#/components/schemas/spectrumConfigOriginDirect'
+                origin_dns:
+                  $ref: '#/components/schemas/spectrumConfigOriginDns'
+                origin_port:
+                  $ref: '#/components/schemas/spectrumConfigOriginPort'
+                protocol:
+                  $ref: '#/components/schemas/spectrumConfigProtocol'
+                proxy_protocol:
+                  $ref: '#/components/schemas/spectrumConfigProxyProtocol'
+                tls:
+                  $ref: '#/components/schemas/spectrumConfigTls'
+                traffic_type:
+                  $ref: '#/components/schemas/spectrumConfigTrafficType'
+              required:
+              - dns
+              - protocol
       responses:
         '200':
           content:
@@ -429,7 +463,41 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/spectrumConfigUpdateAppConfig'
+              type: object
+              properties:
+                created_on:
+                  $ref: '#/components/schemas/spectrumConfigCreated'
+                  readOnly: true
+                id:
+                  $ref: '#/components/schemas/spectrumConfigAppIdentifier'
+                modified_on:
+                  $ref: '#/components/schemas/spectrumConfigModified'
+                  readOnly: true
+                argo_smart_routing:
+                  $ref: '#/components/schemas/spectrumConfigArgoSmartRouting'
+                dns:
+                  $ref: '#/components/schemas/spectrumConfigDns'
+                edge_ips:
+                  $ref: '#/components/schemas/spectrumConfigEdgeIps'
+                ip_firewall:
+                  $ref: '#/components/schemas/spectrumConfigIpFirewall'
+                origin_direct:
+                  $ref: '#/components/schemas/spectrumConfigOriginDirect'
+                origin_dns:
+                  $ref: '#/components/schemas/spectrumConfigOriginDns'
+                origin_port:
+                  $ref: '#/components/schemas/spectrumConfigOriginPort'
+                protocol:
+                  $ref: '#/components/schemas/spectrumConfigProtocol'
+                proxy_protocol:
+                  $ref: '#/components/schemas/spectrumConfigProxyProtocol'
+                tls:
+                  $ref: '#/components/schemas/spectrumConfigTls'
+                traffic_type:
+                  $ref: '#/components/schemas/spectrumConfigTrafficType'
+              required:
+              - dns
+              - protocol
       responses:
         '200':
           content:
@@ -1079,45 +1147,6 @@ components:
       - https
       example: direct
       type: string
-    spectrumConfigUpdateAppConfig:
-      type: object
-      properties:
-        created_on:
-          $ref: '#/components/schemas/spectrumConfigCreated'
-          readOnly: true
-        id:
-          $ref: '#/components/schemas/spectrumConfigAppIdentifier'
-        modified_on:
-          $ref: '#/components/schemas/spectrumConfigModified'
-          readOnly: true
-        argo_smart_routing:
-          $ref: '#/components/schemas/spectrumConfigArgoSmartRouting'
-        dns:
-          $ref: '#/components/schemas/spectrumConfigDns'
-        edge_ips:
-          $ref: '#/components/schemas/spectrumConfigEdgeIps'
-        ip_firewall:
-          $ref: '#/components/schemas/spectrumConfigIpFirewall'
-        origin_direct:
-          $ref: '#/components/schemas/spectrumConfigOriginDirect'
-        origin_dns:
-          $ref: '#/components/schemas/spectrumConfigOriginDns'
-        origin_port:
-          $ref: '#/components/schemas/spectrumConfigOriginPort'
-        protocol:
-          $ref: '#/components/schemas/spectrumConfigProtocol'
-        proxy_protocol:
-          $ref: '#/components/schemas/spectrumConfigProxyProtocol'
-        tls:
-          $ref: '#/components/schemas/spectrumConfigTls'
-        traffic_type:
-          $ref: '#/components/schemas/spectrumConfigTrafficType'
-      required:
-      - created_on
-      - dns
-      - id
-      - modified_on
-      - protocol
   securitySchemes:
     api_email:
       in: header

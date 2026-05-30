@@ -244,7 +244,91 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/rulesetsManagedTransforms'
+              description: A Managed Transforms object.
+              properties:
+                managed_request_headers:
+                  description: The list of Managed Request Transforms.
+                  items:
+                    description: A Managed Transform object.
+                    properties:
+                      conflicts_with:
+                        description: The Managed Transforms that this Managed Transform conflicts with.
+                        items:
+                          type: string
+                          title: Transform ID
+                          description: The human-readable identifier of the Managed Transform.
+                        minItems: 1
+                        readOnly: true
+                        title: Conflicts With
+                        type: array
+                        uniqueItems: true
+                        x-stainless-skip:
+                        - terraform
+                      enabled:
+                        description: Whether the Managed Transform is enabled.
+                        title: Enabled
+                        type: boolean
+                      has_conflict:
+                        description: Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.
+                        readOnly: true
+                        title: Has Conflict
+                        type: boolean
+                        x-stainless-skip:
+                        - terraform
+                      id:
+                        $ref: '#/components/schemas/rulesetsManagedTransformId'
+                    required:
+                    - id
+                    - enabled
+                    title: Managed Transform
+                    type: object
+                  title: Managed Request Transforms
+                  type: array
+                  uniqueItems: true
+                managed_response_headers:
+                  description: The list of Managed Response Transforms.
+                  items:
+                    description: A Managed Transform object.
+                    properties:
+                      conflicts_with:
+                        description: The Managed Transforms that this Managed Transform conflicts with.
+                        items:
+                          type: string
+                          title: Transform ID
+                          description: The human-readable identifier of the Managed Transform.
+                        minItems: 1
+                        readOnly: true
+                        title: Conflicts With
+                        type: array
+                        uniqueItems: true
+                        x-stainless-skip:
+                        - terraform
+                      enabled:
+                        description: Whether the Managed Transform is enabled.
+                        title: Enabled
+                        type: boolean
+                      has_conflict:
+                        description: Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.
+                        readOnly: true
+                        title: Has Conflict
+                        type: boolean
+                        x-stainless-skip:
+                        - terraform
+                      id:
+                        $ref: '#/components/schemas/rulesetsManagedTransformId'
+                    required:
+                    - id
+                    - enabled
+                    title: Managed Transform
+                    type: object
+                  title: Managed Response Transforms
+                  type: array
+                  uniqueItems: true
+              required:
+              - managed_request_headers
+              - managed_response_headers
+              title: Managed Transforms
+              type: object
       responses:
         '200':
           content:

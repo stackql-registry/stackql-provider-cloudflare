@@ -162,7 +162,7 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-ua_rule_id"><code>ua_rule_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-mode"><code>mode</code></a>, <a href="#parameter-configuration"><code>configuration</code></a></td>
+    <td><a href="#parameter-ua_rule_id"><code>ua_rule_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-mode"><code>mode</code></a>, <a href="#parameter-configuration"><code>configuration</code></a></td>
     <td></td>
     <td>Updates an existing User Agent Blocking rule.</td>
 </tr>

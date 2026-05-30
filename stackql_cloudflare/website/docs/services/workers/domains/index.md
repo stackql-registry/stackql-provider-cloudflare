@@ -175,7 +175,7 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-cert_id"><code>cert_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-zone_name"><code>zone_name</code></a>, <a href="#parameter-hostname"><code>hostname</code></a>, <a href="#parameter-service"><code>service</code></a>, <a href="#parameter-environment"><code>environment</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-zone_name"><code>zone_name</code></a>, <a href="#parameter-hostname"><code>hostname</code></a>, <a href="#parameter-service"><code>service</code></a>, <a href="#parameter-environment"><code>environment</code></a></td>
     <td></td>
     <td>Attaches a domain that routes traffic to a Worker.</td>
 </tr>

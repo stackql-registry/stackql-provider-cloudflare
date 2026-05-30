@@ -145,14 +145,14 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create"><CopyableCode code="create" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-secret"><code>secret</code></a>, <a href="#parameter-algo"><code>algo</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-secret"><code>secret</code></a>, <a href="#parameter-algo"><code>algo</code></a></td>
     <td></td>
     <td>Create TSIG.</td>
 </tr>
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-tsig_id"><code>tsig_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-secret"><code>secret</code></a>, <a href="#parameter-algo"><code>algo</code></a></td>
+    <td><a href="#parameter-tsig_id"><code>tsig_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-secret"><code>secret</code></a>, <a href="#parameter-algo"><code>algo</code></a></td>
     <td></td>
     <td>Modify TSIG.</td>
 </tr>

@@ -14145,7 +14145,6 @@ paths:
                     type: string
                   entry_name:
                     type: string
-                required: []
                 type: object
                 title: Existing Column
               type: array
@@ -34064,9 +34063,9 @@ components:
               require:
                 $ref: '#/components/schemas/accessSchemasRequire'
             required:
-            - name
             - include
             - decision
+            - name
             description: The UUID of the reusable policy you wish to test
             example: f1a8b3c9d4e5f6789a0b1c2d3e4f5678a9b0c1d2e3f4a5b67890c1d2e3f4b5a6
           type: array
@@ -34125,8 +34124,8 @@ components:
           $ref: '#/components/schemas/accessSchemasRequire'
       type: object
       required:
-      - decision
       - include
+      - decision
       - name
     accessPolicyTestId:
       description: The UUID of the policy test.

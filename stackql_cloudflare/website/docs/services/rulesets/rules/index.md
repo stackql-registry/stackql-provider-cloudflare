@@ -53,28 +53,28 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create_by_account"><CopyableCode code="create_by_account" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-last_updated"><code>last_updated</code></a>, <a href="#parameter-version"><code>version</code></a></td>
+    <td><a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
     <td>Adds a new rule to an account or zone ruleset. The rule will be added to the end of the existing list of rules in the ruleset by default.</td>
 </tr>
 <tr>
     <td><a href="#create_by_zone"><CopyableCode code="create_by_zone" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-last_updated"><code>last_updated</code></a>, <a href="#parameter-version"><code>version</code></a></td>
+    <td><a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a></td>
     <td></td>
     <td>Adds a new rule to an account or zone ruleset. The rule will be added to the end of the existing list of rules in the ruleset by default.</td>
 </tr>
 <tr>
     <td><a href="#edit_by_account"><CopyableCode code="edit_by_account" /></a></td>
     <td><CopyableCode code="update" /></td>
-    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-last_updated"><code>last_updated</code></a>, <a href="#parameter-version"><code>version</code></a></td>
+    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
     <td>Updates an existing rule in an account or zone ruleset.</td>
 </tr>
 <tr>
     <td><a href="#edit_by_zone"><CopyableCode code="edit_by_zone" /></a></td>
     <td><CopyableCode code="update" /></td>
-    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-last_updated"><code>last_updated</code></a>, <a href="#parameter-version"><code>version</code></a></td>
+    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a></td>
     <td></td>
     <td>Updates an existing rule in an account or zone ruleset.</td>
 </tr>

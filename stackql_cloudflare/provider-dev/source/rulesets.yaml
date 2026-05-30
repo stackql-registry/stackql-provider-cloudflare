@@ -214,9 +214,6 @@ paths:
                 rules:
                   $ref: '#/components/schemas/rulesetsRequestRules'
               required:
-              - id
-              - version
-              - last_updated
               - name
               - kind
               - phase
@@ -551,9 +548,6 @@ paths:
                 rules:
                   $ref: '#/components/schemas/rulesetsRequestRules'
               required:
-              - id
-              - version
-              - last_updated
               - name
               - kind
               - phase
@@ -883,10 +877,6 @@ paths:
                   readOnly: true
                 rules:
                   $ref: '#/components/schemas/rulesetsRequestRules'
-              required:
-              - id
-              - version
-              - last_updated
               title: Ruleset
               type: object
       responses:
@@ -1214,10 +1204,6 @@ paths:
                   readOnly: true
                 rules:
                   $ref: '#/components/schemas/rulesetsRequestRules'
-              required:
-              - id
-              - version
-              - last_updated
               title: Ruleset
               type: object
       responses:
@@ -2178,10 +2164,6 @@ paths:
                   $ref: '#/components/schemas/rulesetsRulesetPhase'
                 rules:
                   $ref: '#/components/schemas/rulesetsRequestRules'
-              required:
-              - id
-              - version
-              - last_updated
               title: Ruleset
               type: object
       responses:
@@ -2586,10 +2568,6 @@ paths:
                   $ref: '#/components/schemas/rulesetsRulesetPhase'
                 rules:
                   $ref: '#/components/schemas/rulesetsRequestRules'
-              required:
-              - id
-              - version
-              - last_updated
               title: Ruleset
               type: object
       responses:
@@ -2914,9 +2892,6 @@ paths:
                   - terraform
               type: object
               title: Block Rule
-              required:
-              - last_updated
-              - version
       responses:
         '200':
           content:
@@ -3167,9 +3142,6 @@ paths:
                   - terraform
               type: object
               title: Block Rule
-              required:
-              - last_updated
-              - version
       responses:
         '200':
           content:
@@ -3576,9 +3548,6 @@ paths:
                   - terraform
               type: object
               title: Block Rule
-              required:
-              - last_updated
-              - version
       responses:
         '200':
           content:
@@ -3985,9 +3954,6 @@ paths:
                   - terraform
               type: object
               title: Block Rule
-              required:
-              - last_updated
-              - version
       responses:
         '200':
           content:

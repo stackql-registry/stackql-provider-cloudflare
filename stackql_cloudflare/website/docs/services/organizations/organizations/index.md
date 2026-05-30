@@ -219,14 +219,14 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create"><CopyableCode code="create" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-create_time"><code>create_time</code></a>, <a href="#parameter-meta"><code>meta</code></a></td>
+    <td><a href="#parameter-name"><code>name</code></a></td>
     <td></td>
     <td>Create a new organization for a user. (Currently in Closed Beta - see https://developers.cloudflare.com/fundamentals/organizations/)</td>
 </tr>
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-organization_id"><code>organization_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-create_time"><code>create_time</code></a>, <a href="#parameter-meta"><code>meta</code></a></td>
+    <td><a href="#parameter-organization_id"><code>organization_id</code></a>, <a href="#parameter-name"><code>name</code></a></td>
     <td></td>
     <td>Modify organization. (Currently in Closed Beta - see https://developers.cloudflare.com/fundamentals/organizations/)</td>
 </tr>

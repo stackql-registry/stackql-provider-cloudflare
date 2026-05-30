@@ -121,14 +121,14 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create"><CopyableCode code="create" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-peers"><code>peers</code></a>, <a href="#parameter-auto_refresh_seconds"><code>auto_refresh_seconds</code></a></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-peers"><code>peers</code></a>, <a href="#parameter-auto_refresh_seconds"><code>auto_refresh_seconds</code></a></td>
     <td></td>
     <td>Create secondary zone configuration for incoming zone transfers.</td>
 </tr>
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-peers"><code>peers</code></a>, <a href="#parameter-auto_refresh_seconds"><code>auto_refresh_seconds</code></a></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-peers"><code>peers</code></a>, <a href="#parameter-auto_refresh_seconds"><code>auto_refresh_seconds</code></a></td>
     <td></td>
     <td>Update secondary zone configuration for incoming zone transfers.</td>
 </tr>

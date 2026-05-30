@@ -233,7 +233,40 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/organizationsApiOrganization'
+              description: References an Organization in the Cloudflare data model.
+              properties:
+                create_time:
+                  format: date-time
+                  readOnly: true
+                  type: string
+                id:
+                  readOnly: true
+                  $ref: '#/components/schemas/organizationsApiOrganizationID'
+                meta:
+                  properties:
+                    flags:
+                      $ref: '#/components/schemas/organizationsApiOrganizationFlags'
+                    managed_by:
+                      type: string
+                  readOnly: true
+                  type: object
+                name:
+                  type: string
+                parent:
+                  properties:
+                    id:
+                      $ref: '#/components/schemas/organizationsApiOrganizationID'
+                    name:
+                      readOnly: true
+                      type: string
+                  required:
+                  - id
+                  type: object
+                profile:
+                  $ref: '#/components/schemas/organizationsApiProfile'
+              required:
+              - name
+              type: object
       responses:
         '200':
           content:
@@ -403,7 +436,40 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/organizationsApiOrganization'
+              description: References an Organization in the Cloudflare data model.
+              properties:
+                create_time:
+                  format: date-time
+                  readOnly: true
+                  type: string
+                id:
+                  readOnly: true
+                  $ref: '#/components/schemas/organizationsApiOrganizationID'
+                meta:
+                  properties:
+                    flags:
+                      $ref: '#/components/schemas/organizationsApiOrganizationFlags'
+                    managed_by:
+                      type: string
+                  readOnly: true
+                  type: object
+                name:
+                  type: string
+                parent:
+                  properties:
+                    id:
+                      $ref: '#/components/schemas/organizationsApiOrganizationID'
+                    name:
+                      readOnly: true
+                      type: string
+                  required:
+                  - id
+                  type: object
+                profile:
+                  $ref: '#/components/schemas/organizationsApiProfile'
+              required:
+              - name
+              type: object
         description: The new details of the organization. Only accepts updates to "name" currently.
       responses:
         '200':

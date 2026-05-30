@@ -285,14 +285,14 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create_by_account"><CopyableCode code="create_by_account" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-decision"><code>decision</code></a>, <a href="#parameter-include"><code>include</code></a>, <a href="#parameter-name"><code>name</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-include"><code>include</code></a>, <a href="#parameter-decision"><code>decision</code></a>, <a href="#parameter-name"><code>name</code></a></td>
     <td></td>
     <td>Creates a new Access reusable policy.</td>
 </tr>
 <tr>
     <td><a href="#update_by_account"><CopyableCode code="update_by_account" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-policy_id"><code>policy_id</code></a>, <a href="#parameter-decision"><code>decision</code></a>, <a href="#parameter-include"><code>include</code></a>, <a href="#parameter-name"><code>name</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-policy_id"><code>policy_id</code></a>, <a href="#parameter-include"><code>include</code></a>, <a href="#parameter-decision"><code>decision</code></a>, <a href="#parameter-name"><code>name</code></a></td>
     <td></td>
     <td>Updates a Access reusable policy.</td>
 </tr>
@@ -762,8 +762,8 @@ require = '{{ require }}'
 WHERE 
 account_id = '{{ account_id }}' --required
 AND policy_id = '{{ policy_id }}' --required
-AND decision = '{{ decision }}' --required
 AND include = '{{ include }}' --required
+AND decision = '{{ decision }}' --required
 AND name = '{{ name }}' --required
 RETURNING
 errors,

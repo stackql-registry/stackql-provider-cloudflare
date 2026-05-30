@@ -60,7 +60,7 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create_outgoing"><CopyableCode code="create_outgoing" /></a></td>
     <td><CopyableCode code="exec" /></td>
-    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-peers"><code>peers</code></a></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-peers"><code>peers</code></a></td>
     <td></td>
     <td>Create primary zone configuration for outgoing zone transfers.</td>
 </tr>

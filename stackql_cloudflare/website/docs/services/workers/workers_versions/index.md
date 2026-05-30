@@ -295,7 +295,7 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create_by_account"><CopyableCode code="create_by_account" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-worker_id"><code>worker_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-number"><code>number</code></a>, <a href="#parameter-urls"><code>urls</code></a>, <a href="#parameter-created_on"><code>created_on</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-worker_id"><code>worker_id</code></a></td>
     <td><a href="#parameter-deploy"><code>deploy</code></a></td>
     <td>Create a new version.</td>
 </tr>

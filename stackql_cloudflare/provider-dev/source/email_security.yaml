@@ -1276,11 +1276,6 @@ paths:
                         description: Enforce DMARC, SPF or DKIM authentication. When on, Email Security only honors policies that pass authentication.
                         type: boolean
                         x-auditable: true
-                    required:
-                    - id
-                    - created_at
-                    - last_modified
-                    - id
                     type: object
                   maxItems: 1000
                   type: array
@@ -1352,11 +1347,6 @@ paths:
                         description: Enforce DMARC, SPF or DKIM authentication. When on, Email Security only honors policies that pass authentication.
                         type: boolean
                         x-auditable: true
-                    required:
-                    - id
-                    - created_at
-                    - last_modified
-                    - id
                     type: object
                   maxItems: 1000
                   type: array
@@ -1838,8 +1828,6 @@ paths:
                       pattern_type:
                         $ref: '#/components/schemas/emailSecurityPatternType'
                     type: object
-                    required:
-                    - id
                   maxItems: 1000
                   type: array
                 posts:
@@ -1880,8 +1868,6 @@ paths:
                       pattern_type:
                         $ref: '#/components/schemas/emailSecurityPatternType'
                     type: object
-                    required:
-                    - id
                   maxItems: 1000
                   type: array
               required:
@@ -3443,8 +3429,6 @@ paths:
                         type: string
                         x-auditable: true
                     type: object
-                    required:
-                    - id
                   maxItems: 1000
                   type: array
                 posts:
@@ -3491,8 +3475,6 @@ paths:
                         type: string
                         x-auditable: true
                     type: object
-                    required:
-                    - id
                   maxItems: 1000
                   type: array
               required:

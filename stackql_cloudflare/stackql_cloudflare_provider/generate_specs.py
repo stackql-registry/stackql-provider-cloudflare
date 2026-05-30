@@ -260,6 +260,152 @@ def _normalize_paths_inline(spec: dict) -> None:
                         mt["schema"] = normalize_inline(mt["schema"], schemas)
 
 
+_WRITE_VERBS = ("put", "post", "patch")
+
+
+def _strip_readonly_from_write_body_required(spec: dict) -> int:
+    """Remove `readOnly: true` property names from `required:` lists inside
+    every write-body (PUT/POST/PATCH) schema.
+
+    Why: upstream Cloudflare specs (notably rulesets) mark response-side
+    fields like `id`, `version`, `last_updated` as `readOnly: true` AND list
+    them in the request body's `required:` array. stackql's request-body
+    `naive` translator then forces callers to supply those fields in the
+    SET / WHERE clause and serialises them into the JSON body, which the
+    Cloudflare API rejects with `invalid JSON: unknown field "id"`. Worse,
+    stackql's required-params dispatcher rejects `REPLACE ... WHERE ...`
+    statements that omit them, so the resource is unusable from SQL.
+
+    Strategy:
+      - Only mutate inline schemas under `requestBody.content[*].schema`.
+      - For $ref-based bodies, deep-copy the resolved component and
+        replace the $ref with the fixed copy (avoids cross-contaminating
+        responses that legitimately require these readOnly fields).
+      - Recurse into `properties`, `items`, `oneOf/anyOf/allOf` so nested
+        objects get the same treatment.
+
+    Returns the number of `(property name in required-list)` entries removed.
+    """
+    import copy as _copy
+    schemas = (spec.get("components") or {}).get("schemas") or {}
+    removed = 0
+
+    def resolve_ref(ref: str):
+        prefix = "#/components/schemas/"
+        if not ref.startswith(prefix):
+            return None
+        return schemas.get(ref[len(prefix):])
+
+    def fix(node):
+        nonlocal removed
+        if not isinstance(node, dict):
+            return
+        # $ref: pull in the target, deep-copy, fix the copy in place, and
+        # replace the $ref. Only do this if the resolved schema actually
+        # has the bug — otherwise we'd needlessly inline every body schema.
+        if "$ref" in node and isinstance(node["$ref"], str):
+            target = resolve_ref(node["$ref"])
+            if isinstance(target, dict) and _has_readonly_required(target, schemas, seen=set()):
+                inlined = _copy.deepcopy(target)
+                # Drop the $ref before recursing into the inlined object.
+                node.clear()
+                node.update(inlined)
+                fix(node)
+            return
+        # Strip readOnly entries from this level's `required:`.
+        req = node.get("required")
+        props = node.get("properties") or {}
+        if isinstance(req, list) and isinstance(props, dict):
+            kept = []
+            for name in req:
+                p = props.get(name)
+                if isinstance(p, dict) and _prop_is_read_only(p, schemas):
+                    removed += 1
+                    continue
+                kept.append(name)
+            if kept:
+                node["required"] = kept
+            else:
+                node.pop("required", None)
+        # Recurse.
+        for key in ("properties", "patternProperties"):
+            sub = node.get(key)
+            if isinstance(sub, dict):
+                for v in sub.values():
+                    fix(v)
+        for key in ("items", "additionalProperties"):
+            fix(node.get(key))
+        for key in ("allOf", "oneOf", "anyOf"):
+            arr = node.get(key)
+            if isinstance(arr, list):
+                for v in arr:
+                    fix(v)
+
+    for path, item in (spec.get("paths") or {}).items():
+        if not isinstance(item, dict):
+            continue
+        for verb in _WRITE_VERBS:
+            op = item.get(verb)
+            if not isinstance(op, dict):
+                continue
+            rb = op.get("requestBody") or {}
+            for mt in (rb.get("content") or {}).values():
+                if isinstance(mt, dict) and "schema" in mt:
+                    fix(mt["schema"])
+
+    return removed
+
+
+def _prop_is_read_only(prop: dict, schemas: dict) -> bool:
+    """A property is readOnly if it carries `readOnly: true` directly, or
+    its $ref target does (we follow one hop)."""
+    if prop.get("readOnly") is True:
+        return True
+    ref = prop.get("$ref")
+    if isinstance(ref, str):
+        prefix = "#/components/schemas/"
+        if ref.startswith(prefix):
+            target = schemas.get(ref[len(prefix):])
+            if isinstance(target, dict) and target.get("readOnly") is True:
+                return True
+    return False
+
+
+def _has_readonly_required(node: dict, schemas: dict, seen: set) -> bool:
+    """Recursively detect whether any nested object in `node` lists a
+    readOnly property name in its `required:` array. Used to decide
+    whether a $ref'd body schema needs to be inlined-and-fixed."""
+    if not isinstance(node, dict):
+        return False
+    nid = id(node)
+    if nid in seen:
+        return False
+    seen.add(nid)
+    req = node.get("required")
+    props = node.get("properties") or {}
+    if isinstance(req, list) and isinstance(props, dict):
+        for name in req:
+            p = props.get(name)
+            if isinstance(p, dict) and _prop_is_read_only(p, schemas):
+                return True
+    for key in ("properties", "patternProperties"):
+        sub = node.get(key)
+        if isinstance(sub, dict):
+            for v in sub.values():
+                if _has_readonly_required(v, schemas, seen):
+                    return True
+    for key in ("items", "additionalProperties"):
+        if _has_readonly_required(node.get(key), schemas, seen):
+            return True
+    for key in ("allOf", "oneOf", "anyOf"):
+        arr = node.get(key)
+        if isinstance(arr, list):
+            for v in arr:
+                if _has_readonly_required(v, schemas, seen):
+                    return True
+    return False
+
+
 _LIST_ENVELOPE_KEYS = ("result", "items", "data", "records")
 
 
@@ -376,6 +522,9 @@ def generate(only_service: str | None = None, refresh: bool = False, clean: bool
     _normalize_paths_inline(spec)
     logger.info("Dropping `required` from objects with no `properties`...")
     fix_required_without_properties(spec)
+    logger.info("Stripping readOnly properties from write-body `required:` lists...")
+    n = _strip_readonly_from_write_body_required(spec)
+    logger.info("  removed %d readOnly entries from write-body required lists", n)
     logger.info("Hoisting inline result.items objects to named component schemas...")
     n = _hoist_inline_list_items(spec)
     logger.info("  hoisted %d inline list-item schemas", n)

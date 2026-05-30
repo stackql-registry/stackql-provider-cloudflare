@@ -90,7 +90,78 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/hyperdriveHyperdriveConfig'
+              properties:
+                caching:
+                  $ref: '#/components/schemas/hyperdriveHyperdriveCaching'
+                created_on:
+                  description: Defines the creation time of the Hyperdrive configuration.
+                  format: date-time
+                  readOnly: true
+                  type: string
+                  x-auditable: true
+                id:
+                  $ref: '#/components/schemas/hyperdriveIdentifier'
+                modified_on:
+                  description: Defines the last modified time of the Hyperdrive configuration.
+                  format: date-time
+                  readOnly: true
+                  type: string
+                  x-auditable: true
+                mtls:
+                  $ref: '#/components/schemas/hyperdriveHyperdriveMtls'
+                name:
+                  $ref: '#/components/schemas/hyperdriveHyperdriveName'
+                origin:
+                  type: object
+                  title: Public Database
+                  properties:
+                    database:
+                      description: Set the name of your origin database.
+                      type: string
+                      x-auditable: true
+                    password:
+                      description: Set the password needed to access your origin database. The API never returns this write-only value.
+                      type: string
+                      writeOnly: true
+                      x-sensitive: true
+                    scheme:
+                      $ref: '#/components/schemas/hyperdriveHyperdriveScheme'
+                    user:
+                      description: Set the user of your origin database.
+                      type: string
+                      x-auditable: true
+                    host:
+                      description: Defines the host (hostname or IP) of your origin database.
+                      type: string
+                      x-auditable: true
+                    port:
+                      description: Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.
+                      type: integer
+                      x-auditable: true
+                    access_client_id:
+                      description: Defines the Client ID of the Access token to use when connecting to the origin database.
+                      type: string
+                      x-auditable: true
+                    access_client_secret:
+                      description: Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.
+                      type: string
+                      writeOnly: true
+                      x-sensitive: true
+                    service_id:
+                      description: The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.
+                      type: string
+                      x-auditable: true
+                  required:
+                  - database
+                  - password
+                  - scheme
+                  - user
+                origin_connection_limit:
+                  $ref: '#/components/schemas/hyperdriveHyperdriveOriginConnectionLimit'
+              required:
+              - name
+              - origin
+              type: object
       responses:
         '200':
           content:
@@ -358,7 +429,78 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/hyperdriveHyperdriveConfig'
+              properties:
+                caching:
+                  $ref: '#/components/schemas/hyperdriveHyperdriveCaching'
+                created_on:
+                  description: Defines the creation time of the Hyperdrive configuration.
+                  format: date-time
+                  readOnly: true
+                  type: string
+                  x-auditable: true
+                id:
+                  $ref: '#/components/schemas/hyperdriveIdentifier'
+                modified_on:
+                  description: Defines the last modified time of the Hyperdrive configuration.
+                  format: date-time
+                  readOnly: true
+                  type: string
+                  x-auditable: true
+                mtls:
+                  $ref: '#/components/schemas/hyperdriveHyperdriveMtls'
+                name:
+                  $ref: '#/components/schemas/hyperdriveHyperdriveName'
+                origin:
+                  type: object
+                  title: Public Database
+                  properties:
+                    database:
+                      description: Set the name of your origin database.
+                      type: string
+                      x-auditable: true
+                    password:
+                      description: Set the password needed to access your origin database. The API never returns this write-only value.
+                      type: string
+                      writeOnly: true
+                      x-sensitive: true
+                    scheme:
+                      $ref: '#/components/schemas/hyperdriveHyperdriveScheme'
+                    user:
+                      description: Set the user of your origin database.
+                      type: string
+                      x-auditable: true
+                    host:
+                      description: Defines the host (hostname or IP) of your origin database.
+                      type: string
+                      x-auditable: true
+                    port:
+                      description: Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.
+                      type: integer
+                      x-auditable: true
+                    access_client_id:
+                      description: Defines the Client ID of the Access token to use when connecting to the origin database.
+                      type: string
+                      x-auditable: true
+                    access_client_secret:
+                      description: Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.
+                      type: string
+                      writeOnly: true
+                      x-sensitive: true
+                    service_id:
+                      description: The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.
+                      type: string
+                      x-auditable: true
+                  required:
+                  - database
+                  - password
+                  - scheme
+                  - user
+                origin_connection_limit:
+                  $ref: '#/components/schemas/hyperdriveHyperdriveOriginConnectionLimit'
+              required:
+              - name
+              - origin
+              type: object
       responses:
         '200':
           content:

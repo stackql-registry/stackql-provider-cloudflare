@@ -135,14 +135,14 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create"><CopyableCode code="create" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-pattern"><code>pattern</code></a></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-pattern"><code>pattern</code></a></td>
     <td></td>
     <td>Creates a route that maps a URL pattern to a Worker.</td>
 </tr>
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-route_id"><code>route_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-pattern"><code>pattern</code></a></td>
+    <td><a href="#parameter-route_id"><code>route_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-pattern"><code>pattern</code></a></td>
     <td></td>
     <td>Updates the URL pattern or Worker associated with a route.</td>
 </tr>

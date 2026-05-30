@@ -1018,7 +1018,21 @@ paths:
                 policies:
                   description: Array of policies associated with this member.
                   items:
-                    $ref: '#/components/schemas/iamCreateMemberPolicy'
+                    properties:
+                      access:
+                        $ref: '#/components/schemas/iamAccess'
+                      id:
+                        $ref: '#/components/schemas/iamPolicyIdentifier'
+                      permission_groups:
+                        $ref: '#/components/schemas/iamMemberPermissionGroups'
+                      resource_groups:
+                        $ref: '#/components/schemas/iamMemberResourceGroups'
+                    required:
+                    - access
+                    - permission_groups
+                    - resource_groups
+                    title: create_member_policy
+                    type: object
                   type: array
               required:
               - email
@@ -1189,7 +1203,26 @@ paths:
                 roles:
                   description: Roles assigned to this member.
                   items:
-                    $ref: '#/components/schemas/iamRole'
+                    properties:
+                      description:
+                        description: Description of role's permissions.
+                        readOnly: true
+                        type: string
+                        x-auditable: true
+                      id:
+                        $ref: '#/components/schemas/iamRoleComponentsSchemasIdentifier'
+                      name:
+                        description: Role name.
+                        maxLength: 120
+                        readOnly: true
+                        type: string
+                        x-auditable: true
+                      permissions:
+                        $ref: '#/components/schemas/iamPermissions'
+                        readOnly: true
+                    required:
+                    - id
+                    type: object
                   type: array
                 status:
                   description: A member's status in the account.
@@ -1219,7 +1252,21 @@ paths:
                 policies:
                   description: Array of policies associated with this member.
                   items:
-                    $ref: '#/components/schemas/iamCreateMemberPolicy'
+                    properties:
+                      access:
+                        $ref: '#/components/schemas/iamAccess'
+                      id:
+                        $ref: '#/components/schemas/iamPolicyIdentifier'
+                      permission_groups:
+                        $ref: '#/components/schemas/iamMemberPermissionGroups'
+                      resource_groups:
+                        $ref: '#/components/schemas/iamMemberResourceGroups'
+                    required:
+                    - access
+                    - permission_groups
+                    - resource_groups
+                    title: create_member_policy
+                    type: object
                   type: array
               required:
               - policies
@@ -3511,23 +3558,6 @@ components:
       required:
       - name
       title: Create account
-      type: object
-    iamCreateMemberPolicy:
-      properties:
-        access:
-          $ref: '#/components/schemas/iamAccess'
-        id:
-          $ref: '#/components/schemas/iamPolicyIdentifier'
-        permission_groups:
-          $ref: '#/components/schemas/iamMemberPermissionGroups'
-        resource_groups:
-          $ref: '#/components/schemas/iamMemberResourceGroups'
-      required:
-      - id
-      - access
-      - permission_groups
-      - resource_groups
-      title: create_member_policy
       type: object
     iamCreatePayload:
       properties:

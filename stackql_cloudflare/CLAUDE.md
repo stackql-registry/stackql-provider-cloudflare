@@ -127,25 +127,37 @@ In order:
 10. **fix_required_without_properties**: drop `required` arrays where the
     sibling `properties` is missing (downstream tools assume `required[i]`
     has a matching property and crash otherwise).
-11. **Force `required: true` on every path parameter** so single-item GETs
+11. **strip_readonly_from_write_body_required**: walk every PUT/POST/PATCH
+    `requestBody.content[*].schema` and remove any `readOnly: true`
+    property names from each `required:` list. Upstream Cloudflare specs
+    (notably rulesets) mark response-side fields like `id`, `version`,
+    `last_updated` as `readOnly: true` AND list them in the write-body's
+    `required:` array. stackql's required-params dispatcher then forces
+    those fields into the SET/WHERE clause, and the `naive`
+    requestBodyTranslate serialises them into the JSON body — which
+    Cloudflare rejects with `invalid JSON: unknown field "id"`. Handles
+    both inline schemas (most cases) and `$ref`-based bodies (deep-copy +
+    inline so shared response schemas aren't mutated). Typically strips
+    ~100+ readOnly entries per build.
+12. **Force `required: true` on every path parameter** so single-item GETs
     look different from list GETs at the planner level.
-12. **Hoist inline `result.items` objects** into named component schemas
+13. **Hoist inline `result.items` objects** into named component schemas
     with synthesised names like `iamPermissionsGroupResponseCollection_result_item`.
     Fixes the "no columns in Fields table" pages where `result.items` was an
     inline `{type:object, properties:{...}}` rather than a `$ref`.
-13. **Normalize canonical path parameters** (`canonical_params.py`):
+14. **Normalize canonical path parameters** (`canonical_params.py`):
     rewrites every `account_id`, `zone_id`, etc. parameter to a standard
     shape `{name, in:path, required:true, schema:{type:string},
     description:"..."}`. ~3,485 rewrites per build.
-14. **Assign paths to services** via:
+15. **Assign paths to services** via:
     - exact (verb, path) SDK index match
-    - static capability map (in `split.py` — 100+ entries like
-      `ai` → `ai`, `cloudforce-one` → `cloudforce_one`, `dlp` → `zero_trust`)
-    - SDK longest-prefix (requiring ≥3 segments so the bare
+    - static capability map (in `split.py` - 100+ entries like
+      `ai` -> `ai`, `cloudforce-one` -> `cloudforce_one`, `dlp` -> `zero_trust`)
+    - SDK longest-prefix (requiring >=3 segments so the bare
       `/accounts/{id}` prefix doesn't drag everything into `accounts`)
-    - URL-prefix fallback through `_SERVICE_ALIASES` (e.g. `stream` →
+    - URL-prefix fallback through `_SERVICE_ALIASES` (e.g. `stream` ->
       `streams` to dodge the SQL reserved word).
-15. **Write per-service yamls** to `provider-dev/source/<service>.yaml` —
+16. **Write per-service yamls** to `provider-dev/source/<service>.yaml` -
     each is a self-contained OpenAPI 3.0 doc with only the transitively-
     referenced schemas and a snake-cased operationId on every operation
     (synthesised if upstream omitted one).
@@ -289,6 +301,34 @@ Then **`binary_responses.py`** runs as a post-pass. It:
 Result: users can `SELECT contents FROM cloudflare.addressing.loa_documents
 WHERE account_id = '...' AND loa_document_id = '...'` and get the raw PDF
 as a string column. ~38 endpoints currently wrapped across 17 services.
+
+Then **`request_body_transforms.py`** runs as a second post-pass. It:
+
+1. Walks every PUT/POST/PATCH op in the source yamls; for each one whose
+   JSON request-body schema has at least one array- or object-typed
+   property, builds a list of `(prop_name, kind)` pairs - filtering out
+   readOnly properties.
+2. Generates a Go template (type
+   `golang_template_json_v0.3.0`) that emits a JSON body containing only
+   the properties the user actually SET. Complex (array/object)
+   properties use a `kindOf`-based dual-mode branch
+   (`if eq (kindOf .x) "string" then .x else toJson .x end`) so both raw
+   string SET literals AND parsed slice/map values serialise correctly.
+   Scalar properties use plain `toJson` for proper quoting and escaping.
+3. Attaches the template under `request.transform` on each matching
+   resource method in the generated yamls (sibling to `config`,
+   `operation`, `response`).
+
+Why: stackql's `naive` requestBodyTranslate keeps SET values as the Go
+types they were parsed as. For string-typed fields `json.Marshal`
+round-trips correctly, but for array- or object-typed fields the SET
+literal is kept as a Go string and gets string-wrapped on the wire
+(`{"rules": "[{...}]"}`), which Cloudflare rejects with
+`'rules' cannot be a string`. The transform rebuilds the body so arrays
+and objects land as JSON values, not strings. ~560 methods currently
+get this transform across ~80 services. Methods whose body has only
+scalar properties are left alone - the naive translator handles those
+correctly.
 
 ---
 

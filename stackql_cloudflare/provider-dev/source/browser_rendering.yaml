@@ -236,7 +236,6 @@ paths:
                   description: 'Set the content of the page, eg: `<h1>Hello World!!</h1>`. Either `html` or `url` must be set.'
                   minLength: 1
                   type: string
-              required: []
       responses:
         '200':
           content:
@@ -2980,7 +2979,6 @@ paths:
                   description: URL to navigate to, eg. `https://example.com`.
                   format: uri
                   type: string
-              required: []
       responses:
         '200':
           content:
@@ -3376,7 +3374,6 @@ paths:
                   description: URL to navigate to, eg. `https://example.com`.
                   format: uri
                   type: string
-              required: []
       responses:
         '200':
           content:
@@ -3765,7 +3762,6 @@ paths:
                   description: 'Set the content of the page, eg: `<h1>Hello World!!</h1>`. Either `html` or `url` must be set.'
                   minLength: 1
                   type: string
-              required: []
       responses:
         '200':
           content:
@@ -4238,7 +4234,6 @@ paths:
                   description: URL to navigate to, eg. `https://example.com`.
                   format: uri
                   type: string
-              required: []
       responses:
         '200':
           content:
@@ -5102,7 +5097,6 @@ paths:
                   description: URL to navigate to, eg. `https://example.com`.
                   format: uri
                   type: string
-              required: []
       responses:
         '200':
           content:
@@ -5541,7 +5535,6 @@ paths:
                   description: URL to navigate to, eg. `https://example.com`.
                   format: uri
                   type: string
-              required: []
       responses:
         '200':
           content:

@@ -1041,7 +1041,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/secondaryDnsAcl'
+              properties:
+                id:
+                  $ref: '#/components/schemas/secondaryDnsComponentsSchemasIdentifier'
+                ip_range:
+                  $ref: '#/components/schemas/secondaryDnsIpRange'
+                name:
+                  $ref: '#/components/schemas/secondaryDnsAclComponentsSchemasName'
+              required:
+              - name
+              - ip_range
+              type: object
       responses:
         '200':
           content:
@@ -1471,7 +1481,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/secondaryDnsPeer'
+              properties:
+                id:
+                  $ref: '#/components/schemas/secondaryDnsComponentsSchemasIdentifier'
+                ip:
+                  $ref: '#/components/schemas/secondaryDnsIp'
+                ixfr_enable:
+                  $ref: '#/components/schemas/secondaryDnsIxfrEnable'
+                name:
+                  $ref: '#/components/schemas/secondaryDnsComponentsSchemasName'
+                port:
+                  $ref: '#/components/schemas/secondaryDnsPort'
+                tsig_id:
+                  $ref: '#/components/schemas/secondaryDnsTsigId'
+              required:
+              - name
+              type: object
       responses:
         '200':
           content:
@@ -1646,7 +1671,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/secondaryDnsTsig'
+              properties:
+                algo:
+                  $ref: '#/components/schemas/secondaryDnsAlgo'
+                id:
+                  $ref: '#/components/schemas/secondaryDnsSchemasIdentifier'
+                name:
+                  $ref: '#/components/schemas/secondaryDnsSchemasName'
+                secret:
+                  $ref: '#/components/schemas/secondaryDnsSecret'
+              required:
+              - name
+              - secret
+              - algo
+              type: object
       responses:
         '200':
           content:
@@ -1897,7 +1935,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/secondaryDnsTsig'
+              properties:
+                algo:
+                  $ref: '#/components/schemas/secondaryDnsAlgo'
+                id:
+                  $ref: '#/components/schemas/secondaryDnsSchemasIdentifier'
+                name:
+                  $ref: '#/components/schemas/secondaryDnsSchemasName'
+                secret:
+                  $ref: '#/components/schemas/secondaryDnsSecret'
+              required:
+              - name
+              - secret
+              - algo
+              type: object
       responses:
         '200':
           content:
@@ -4531,7 +4582,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/secondaryDnsDnsSecondarySecondaryZone'
+              properties:
+                auto_refresh_seconds:
+                  $ref: '#/components/schemas/secondaryDnsAutoRefreshSeconds'
+                id:
+                  $ref: '#/components/schemas/secondaryDnsIdentifier'
+                name:
+                  $ref: '#/components/schemas/secondaryDnsName'
+                peers:
+                  $ref: '#/components/schemas/secondaryDnsPeers'
+              required:
+              - name
+              - peers
+              - auto_refresh_seconds
+              type: object
       responses:
         '200':
           content:
@@ -4602,7 +4666,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/secondaryDnsDnsSecondarySecondaryZone'
+              properties:
+                auto_refresh_seconds:
+                  $ref: '#/components/schemas/secondaryDnsAutoRefreshSeconds'
+                id:
+                  $ref: '#/components/schemas/secondaryDnsIdentifier'
+                name:
+                  $ref: '#/components/schemas/secondaryDnsName'
+                peers:
+                  $ref: '#/components/schemas/secondaryDnsPeers'
+              required:
+              - name
+              - peers
+              - auto_refresh_seconds
+              type: object
       responses:
         '200':
           content:
@@ -4813,7 +4890,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/secondaryDnsSingleRequestOutgoing'
+              properties:
+                id:
+                  $ref: '#/components/schemas/secondaryDnsIdentifier'
+                name:
+                  $ref: '#/components/schemas/secondaryDnsName'
+                peers:
+                  $ref: '#/components/schemas/secondaryDnsPeers'
+              required:
+              - name
+              - peers
+              type: object
       responses:
         '200':
           content:
@@ -4884,7 +4971,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/secondaryDnsSingleRequestOutgoing'
+              properties:
+                id:
+                  $ref: '#/components/schemas/secondaryDnsIdentifier'
+                name:
+                  $ref: '#/components/schemas/secondaryDnsName'
+                peers:
+                  $ref: '#/components/schemas/secondaryDnsPeers'
+              required:
+              - name
+              - peers
+              type: object
       responses:
         '200':
           content:
@@ -7608,22 +7705,6 @@ components:
       example: Disabled
       type: string
       x-auditable: true
-    secondaryDnsDnsSecondarySecondaryZone:
-      properties:
-        auto_refresh_seconds:
-          $ref: '#/components/schemas/secondaryDnsAutoRefreshSeconds'
-        id:
-          $ref: '#/components/schemas/secondaryDnsIdentifier'
-        name:
-          $ref: '#/components/schemas/secondaryDnsName'
-        peers:
-          $ref: '#/components/schemas/secondaryDnsPeers'
-      required:
-      - id
-      - name
-      - peers
-      - auto_refresh_seconds
-      type: object
     secondaryDnsEnableTransferResponse:
       type: object
       properties:
@@ -7941,19 +8022,6 @@ components:
       example: caf79a7804b04337c9c66ccd7bef9190a1e1679b5dd03d8aa10f7ad45e1a9dab92b417896c15d4d007c7c14194538d2a5d0feffdecc5a7f0e1c570cfa700837c
       type: string
       x-sensitive: true
-    secondaryDnsSingleRequestOutgoing:
-      properties:
-        id:
-          $ref: '#/components/schemas/secondaryDnsIdentifier'
-        name:
-          $ref: '#/components/schemas/secondaryDnsName'
-        peers:
-          $ref: '#/components/schemas/secondaryDnsPeers'
-      required:
-      - id
-      - name
-      - peers
-      type: object
     secondaryDnsSingleResponse:
       type: object
       properties:

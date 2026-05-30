@@ -1405,8 +1405,8 @@ paths:
                           deleted:
                             $ref: '#/components/schemas/firewallDeleted'
                         required:
-                        - id
                         - deleted
+                        - id
                     enum:
                     - null
                   success:
@@ -1512,8 +1512,8 @@ paths:
                           deleted:
                             $ref: '#/components/schemas/firewallDeleted'
                         required:
-                        - id
                         - deleted
+                        - id
                     enum:
                     - null
                   success:
@@ -1577,8 +1577,6 @@ paths:
               properties:
                 id:
                   $ref: '#/components/schemas/firewallComponentsSchemasIdentifier'
-              required:
-              - id
               type: object
       responses:
         '200':
@@ -1667,7 +1665,6 @@ paths:
                 id:
                   $ref: '#/components/schemas/firewallComponentsSchemasIdentifier'
               required:
-              - id
               - filter
               - action
               type: object
@@ -1721,8 +1718,8 @@ paths:
                           deleted:
                             $ref: '#/components/schemas/firewallDeleted'
                         required:
-                        - id
                         - deleted
+                        - id
                     enum:
                     - null
                   success:
@@ -2182,7 +2179,6 @@ paths:
                 paused:
                   $ref: '#/components/schemas/firewallSchemasPaused'
               required:
-              - id
               - mode
               - configuration
               type: object
@@ -2953,9 +2949,9 @@ paths:
                 type: object
                 required:
                 - errors
-                - success
                 - result
                 - messages
+                - success
           description: Update a WAF package response
         4XX:
           content:
@@ -4486,7 +4482,51 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/firewallSchemasRule'
+              required:
+              - mode
+              - configuration
+              type: object
+              properties:
+                allowed_modes:
+                  description: The available actions that a rule can apply to a matched request.
+                  items:
+                    $ref: '#/components/schemas/firewallSchemasMode'
+                  readOnly: true
+                  type: array
+                configuration:
+                  $ref: '#/components/schemas/firewallConfiguration'
+                created_on:
+                  description: The timestamp of when the rule was created.
+                  format: date-time
+                  readOnly: true
+                  type: string
+                id:
+                  $ref: '#/components/schemas/firewallSchemasIdentifier'
+                mode:
+                  $ref: '#/components/schemas/firewallSchemasMode'
+                modified_on:
+                  description: The timestamp of when the rule was last modified.
+                  format: date-time
+                  readOnly: true
+                  type: string
+                notes:
+                  $ref: '#/components/schemas/firewallNotes'
+                scope:
+                  description: All zones owned by the user will have the rule applied.
+                  properties:
+                    email:
+                      $ref: '#/components/schemas/firewallEmail'
+                    id:
+                      $ref: '#/components/schemas/firewallIdentifier'
+                    type:
+                      description: Defines the scope of the rule.
+                      enum:
+                      - user
+                      - organization
+                      readOnly: true
+                      type: string
+                  readOnly: true
+                  type: object
       responses:
         '200':
           content:
@@ -4813,7 +4853,51 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/firewallSchemasRule'
+              required:
+              - mode
+              - configuration
+              type: object
+              properties:
+                allowed_modes:
+                  description: The available actions that a rule can apply to a matched request.
+                  items:
+                    $ref: '#/components/schemas/firewallSchemasMode'
+                  readOnly: true
+                  type: array
+                configuration:
+                  $ref: '#/components/schemas/firewallConfiguration'
+                created_on:
+                  description: The timestamp of when the rule was created.
+                  format: date-time
+                  readOnly: true
+                  type: string
+                id:
+                  $ref: '#/components/schemas/firewallSchemasIdentifier'
+                mode:
+                  $ref: '#/components/schemas/firewallSchemasMode'
+                modified_on:
+                  description: The timestamp of when the rule was last modified.
+                  format: date-time
+                  readOnly: true
+                  type: string
+                notes:
+                  $ref: '#/components/schemas/firewallNotes'
+                scope:
+                  description: All zones owned by the user will have the rule applied.
+                  properties:
+                    email:
+                      $ref: '#/components/schemas/firewallEmail'
+                    id:
+                      $ref: '#/components/schemas/firewallIdentifier'
+                    type:
+                      description: Defines the scope of the rule.
+                      enum:
+                      - user
+                      - organization
+                      readOnly: true
+                      type: string
+                  readOnly: true
+                  type: object
       responses:
         '200':
           content:
@@ -5171,8 +5255,8 @@ components:
             deleted:
               $ref: '#/components/schemas/firewallDeleted'
           required:
-          - id
           - deleted
+          - id
     firewallFilterRulesResponseCollection:
       type: object
       properties:
@@ -5517,9 +5601,9 @@ components:
           $ref: '#/components/schemas/firewallResultInfo'
       required:
       - errors
-      - success
       - result
       - messages
+      - success
     firewallPackageResponseSingle:
       type: object
       properties:
@@ -5537,9 +5621,9 @@ components:
           type: boolean
       required:
       - errors
-      - success
       - result
       - messages
+      - success
     firewallPaused:
       description: When true, indicates that the rule is currently paused.
       type: boolean

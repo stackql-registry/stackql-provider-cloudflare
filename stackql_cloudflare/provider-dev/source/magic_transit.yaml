@@ -9542,7 +9542,7 @@ components:
         k:
           description: Kind
           type: string
-        n:
+        'n':
           description: Sequence number, used to order events with the same timestamp
           type: number
         t:
@@ -9551,7 +9551,7 @@ components:
       required:
       - a
       - t
-      - n
+      - 'n'
       - k
       type: object
     mconnNone:
@@ -9562,7 +9562,7 @@ components:
       properties:
         e:
           $ref: '#/components/schemas/mconnEvent'
-        n:
+        'n':
           description: Sequence number, used to order events with the same timestamp
           type: number
         t:
@@ -9573,7 +9573,7 @@ components:
           type: string
       required:
       - t
-      - n
+      - 'n'
       - e
       type: object
     mconnSnapshot:

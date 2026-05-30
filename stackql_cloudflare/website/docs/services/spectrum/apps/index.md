@@ -245,14 +245,14 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create"><CopyableCode code="create" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-created_on"><code>created_on</code></a>, <a href="#parameter-dns"><code>dns</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-modified_on"><code>modified_on</code></a>, <a href="#parameter-protocol"><code>protocol</code></a></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-dns"><code>dns</code></a>, <a href="#parameter-protocol"><code>protocol</code></a></td>
     <td></td>
     <td>Creates a new Spectrum application from a configuration using a name for the origin.</td>
 </tr>
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-app_id"><code>app_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-created_on"><code>created_on</code></a>, <a href="#parameter-dns"><code>dns</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-modified_on"><code>modified_on</code></a>, <a href="#parameter-protocol"><code>protocol</code></a></td>
+    <td><a href="#parameter-app_id"><code>app_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-dns"><code>dns</code></a>, <a href="#parameter-protocol"><code>protocol</code></a></td>
     <td></td>
     <td>Updates a previously existing application's configuration that uses a name for the origin.</td>
 </tr>

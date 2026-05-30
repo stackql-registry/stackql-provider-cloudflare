@@ -1304,7 +1304,7 @@ components:
         kid: 38013f13-c266-4eec-a72a-92ec92779f21
         kty: EC
         x: KN53JRwN3wCjm2o39bvZUX2VdrsHzS8pxOAGjm8m7EQ
-        y: lnkkzIxaveggz-HFhcMWW15nxvOj0Z_uQsXbpK0GFcY
+        'y': lnkkzIxaveggz-HFhcMWW15nxvOj0Z_uQsXbpK0GFcY
       type: object
       properties:
         kid:
@@ -1332,7 +1332,7 @@ components:
           - RSA
           type: string
           x-auditable: true
-        n:
+        'n':
           description: RSA modulus
           type: string
           x-auditable: false
@@ -1340,7 +1340,7 @@ components:
           description: X EC coordinate
           type: string
           x-auditable: false
-        y:
+        'y':
           description: Y EC coordinate
           type: string
           x-auditable: false

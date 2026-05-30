@@ -4,6 +4,16 @@ This directory contains the tooling and source artefacts needed to generate the 
 
 The service hierarchy mirrors the Python SDK's `src/cloudflare/resources/` layout (109+ services such as `zones`, `dns`, `workers`, `zero_trust`, `accounts`).
 
+## Table of contents
+
+- [Layout](#layout) - directory + file tour of the generator + outputs.
+- [Prerequisites](#prerequisites) - Python, Node, SDK checkout.
+- [End-to-end - path to production](#end-to-end---path-to-production) - the 7-step pipeline (table below).
+- [One-liner](#one-liner) - codegen-only chain for steps 1-3.
+- [Analytics resources](#analytics-resources) - notes on the 10 GraphQL-backed analytics resources.
+- [Updating to a new upstream spec](#updating-to-a-new-upstream-spec) - what to do when Cloudflare bumps the SDK.
+- [Design notes](#design-notes) - the "why" behind the non-obvious decisions.
+
 ## Layout
 
 ```
@@ -49,15 +59,28 @@ stackql_cloudflare/
   (The `.npmrc` configures the JSR registry needed by a transitive dep.)
 - The Cloudflare Python SDK source must be present in the parent `src/cloudflare/` directory of this repository (it already is in this repo).
 
-## End-to-end generation
+## End-to-end - path to production
 
-Run the four steps from the directory `stackql_cloudflare/`. Each step is idempotent and can be re-run as the upstream spec evolves.
+Run from the directory `stackql_cloudflare/`. The pipeline is seven steps: four code-generation steps (1, 2, 3, 6), two test/UAT gates (4, 5), and a final publish stage with two independent sub-targets (7a provider registry, 7b docs microsite). Each step is idempotent and can be re-run as the upstream spec evolves.
+
+| #  | Summary                                                            | Description                                                                                                                                                |
+| -- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1  | [OpenAPI gen](#step-1---generate_openapi_specs)                    | Download upstream Cloudflare OpenAPI, normalize polymorphism, split into per-service yamls under `provider-dev/source/`.                                   |
+| 2  | [Route assignment](#step-2---assign_resource_names)                | Walk the source yamls and write/refresh `provider-dev/config/all_services.csv` mapping every operation to a stackql resource / method / verb / object key. |
+| 3  | [Provider gen](#step-3---generate_provider)                        | Run `@stackql/provider-utils` to emit the final provider tree (`provider.yaml` + per-service yamls with `x-stackQL-resources` blocks).                     |
+| 4  | [Meta route test](#step-4---meta_route_test)                       | Start local stackql server and walk every `SHOW METHODS / DESCRIBE` route - catches spec issues that only surface at SQL plan time. No API token needed.   |
+| 5  | [Live smoke / UAT](#step-5---live_smoke_uat)                       | Open `stackql shell` against the local registry, export `CLOUDFLARE_API_TOKEN`, run the canned UAT queries to confirm real API calls succeed.              |
+| 6  | [Doc gen + pre-flight](#step-6---generate_webdocs)                 | Generate Docusaurus markdown under `website/docs/`, then `yarn build` + `yarn serve` from `website/` to confirm the site compiles and pages look right.    |
+| 7a | [Publish provider](#step-7a---publish_provider-stackql-provider-registry) | Copy the generated provider tree to `stackql-provider-registry/providers/src/cloudflare/`, PR to `dev`, smoke-test against `registry-dev.stackql.app`, then PR `dev` -> `main` to promote to the prod registry. |
+| 7b | [Publish docs](#step-7b---publish_docs-netlify)                    | PR to `main` in this repo - Netlify builds a preview deploy on the PR; merging publishes to `https://cloudflare-provider.stackql.io/`.                     |
 
 ### Step 1 - GENERATE_OPENAPI_SPECS
 
 ```bash
-python -m stackql_cloudflare_provider.generate_specs --clean
+npm run generate-specs -- --clean
 ```
+
+(equivalent to `python -m stackql_cloudflare_provider.generate_specs --clean`)
 
 This:
 
@@ -79,8 +102,10 @@ Flags:
 ### Step 2 - ASSIGN_RESOURCE_NAMES
 
 ```bash
-python -m stackql_cloudflare_provider.assign_resource_names
+npm run assign-resource-names
 ```
+
+(equivalent to `python -m stackql_cloudflare_provider.assign_resource_names`)
 
 Walks every `provider-dev/source/*.yaml` and ensures every operation has a row in `provider-dev/config/all_services.csv` with sensible default StackQL resource/method/verb/object_key values.
 
@@ -161,7 +186,68 @@ Provider config injected:
 
 When multiple HTTP operations are exposed under the same SQL verb (e.g. `SELECT` can dispatch to either `get` on `/zones/{zone_id}` or `list` on `/zones`), `provider-utils.generate` sorts each `sqlVerbs.<verb>` list by required path-param count descending so the most-specific method is picked first. That's sufficient for the Cloudflare API - no extra sort step is needed.
 
-### Step 4 - GENERATE_WEBDOCS
+### Step 4 - META_ROUTE_TEST
+
+Start a local stackql server backed by the freshly-built registry, then walk every documented service / resource through `SHOW METHODS / DESCRIBE`. Surfaces spec issues that only show up at SQL plan time.
+
+Run from Linux, macOS, or WSL (the bash scripts assume `pgrep` / `ps` and a POSIX shell):
+
+```bash
+npm run start-server                # Starts stackql on tcp/5444 with this registry mounted
+npm run server-status               # Check it's up
+npm run test-meta-routes            # Walk every SHOW METHODS / DESCRIBE route
+npm run stop-server                 # Tear it down
+```
+
+Step 4 does NOT need a Cloudflare API token - meta routes are answered from the registry, not from a live API call.
+
+### Step 5 - LIVE_SMOKE_UAT
+
+Manual. Confirms the generated provider actually executes against `api.cloudflare.com`. Requires a Cloudflare API token scoped to whatever endpoints you want to hit (the four canned queries below need `Account Settings:Read`, `Zone:Read`, `Pages:Read`, `Workers Scripts:Read`).
+
+```bash
+export CLOUDFLARE_API_TOKEN=...
+```
+
+Then open an interactive `stackql shell` against the local registry (no server needed - point `--registry` at the directory containing `src/`). Run from the provider root so `$PWD` resolves correctly:
+
+```bash
+REG_ROOT="$(pwd)/provider-dev/openapi"
+REG="{\"url\":\"file://${REG_ROOT}\",\"localDocRoot\":\"${REG_ROOT}\",\"verifyConfig\":{\"nopVerify\":true}}"
+./stackql --registry="${REG}" shell
+```
+
+Sanity-check the registry shape first:
+
+```sql
+SHOW PROVIDERS;
+SHOW SERVICES IN cloudflare;
+SHOW RESOURCES IN cloudflare.zones;
+```
+
+Then run the UAT queries (substitute your own account ID where shown):
+
+```sql
+-- 1. Show account info
+SELECT id, name, type, created_on FROM cloudflare.accounts.accounts;
+
+-- 2. Cloudflare-wide IP ranges (no auth required)
+SELECT 'ipv4' AS ip_version, j.value AS cidr, etag
+FROM cloudflare.ips.ips, JSON_EACH(ipv4_cidrs) j
+UNION ALL
+SELECT 'ipv6' AS ip_version, j.value AS cidr, etag
+FROM cloudflare.ips.ips, JSON_EACH(ipv6_cidrs) j;
+
+-- 3. List projects in an account
+SELECT id, name, JSON_EXTRACT(canonical_deployment, '$.aliases[0]') as alias, JSON_EXTRACT(source, '$.url') as url FROM cloudflare.pages.projects WHERE account_id = '<your-account-id>';
+
+-- 4. List workers in an account
+SELECT id, name FROM cloudflare.workers.workers WHERE account_id = '<your-account-id>';
+```
+
+If anything errors or returns an unexpected shape, fix at the source (steps 1-3) and re-run before moving on.
+
+### Step 6 - GENERATE_WEBDOCS
 
 ```bash
 npm run generate-docs
@@ -185,82 +271,86 @@ Re-run the sanitiser by itself any time you edit the generated markdown by hand:
 python -m stackql_cloudflare_provider.sanitize_docs --verbose
 ```
 
+#### Pre-flight - build and serve the site locally
+
+Before opening the docs PR (step 7b) you should compile the site and eyeball it. These are NOT wired into `generate-docs` - run them after by hand. They catch (a) MDX/markdown errors that would fail the Netlify build and (b) visually-broken pages that pass the build but read wrong:
+
+```bash
+cd website
+yarn build       # Compile the site - fails loudly on MDX issues
+yarn serve       # Serve the build at http://localhost:3000
+```
+
+Click through the resources you touched, plus the landing page. Stop the server with Ctrl+C. If `yarn build` fails, the Netlify PR build will also fail - fix locally first.
+
+### Step 7a - PUBLISH_PROVIDER (stackql-provider-registry)
+
+The generated provider tree lives at `stackql_cloudflare/provider-dev/openapi/src/cloudflare/`. Publishing it is a two-stage PR flow through the `stackql/stackql-provider-registry` repo: `dev` first for live testing against the dev registry, then `dev` -> `main` for promotion to production.
+
+1. **Clone the registry repo locally** (or update your existing checkout):
+   ```bash
+   git clone https://github.com/stackql/stackql-provider-registry.git
+   cd stackql-provider-registry
+   git checkout dev
+   git pull
+   ```
+
+2. **Copy the generated provider tree into `providers/src/`**:
+   ```bash
+   rsync -av --delete \
+     /path/to/stackql_cloudflare/provider-dev/openapi/src/cloudflare/ \
+     providers/src/cloudflare/
+   ```
+   (Lands as `providers/src/cloudflare/v00.00.00000/{provider.yaml,services/*.yaml}`.)
+
+3. **Branch, commit, push, raise a PR targeting `dev`**:
+   ```bash
+   git checkout -b cloudflare-<release-tag>
+   git add providers/src/cloudflare
+   git commit -m "cloudflare: <summary of changes>"
+   git push -u origin cloudflare-<release-tag>
+   gh pr create --base dev --title "cloudflare: <summary>" --body "..."
+   ```
+
+4. **Wait for the PR to merge into `dev`**, then live-test against the dev registry:
+   ```bash
+   export CLOUDFLARE_API_TOKEN=...
+   export DEV_REG="{ \"url\": \"https://registry-dev.stackql.app/providers\" }"
+   ./stackql --registry="${DEV_REG}" shell
+   ```
+   Re-run the step-5 UAT queries against the dev registry to confirm the published artefact works end-to-end.
+
+5. **Promote to production** by raising a PR from `dev` to `main` in `stackql-provider-registry`. Merging that PR is the path-to-production checkpoint - the public prod registry picks up the change automatically once it lands on `main`.
+
+### Step 7b - PUBLISH_DOCS (Netlify)
+
+The docs microsite at `https://cloudflare-provider.stackql.io/` is built by Netlify from the `website/` directory of this repo on every PR to `main`.
+
+1. **Branch, commit, and push the regenerated `website/docs/` tree** (along with any other in-repo changes from this run - `provider-dev/source/`, `provider-dev/openapi/`, `provider-dev/config/all_services.csv`, etc.):
+   ```bash
+   git checkout -b cloudflare-docs-<release-tag>
+   git add stackql_cloudflare/
+   git commit -m "cloudflare: regenerate docs + provider for <summary>"
+   git push -u origin cloudflare-docs-<release-tag>
+   ```
+
+2. **Raise a PR to `main`** of this repo. Netlify will build a preview deploy and post the URL on the PR. Click through the preview the same way you did for the local pre-flight in step 6 - confirm the pages you touched render correctly and the site builds without warnings.
+
+3. **Merge the PR** once the Netlify preview passes review. The merge triggers a production deploy to `https://cloudflare-provider.stackql.io/`.
+
+Steps 7a and 7b are independent and can be raised in either order - the provider works without the docs, and the docs work against either the dev or prod registry.
+
 ## One-liner
 
-```bash
-python -m stackql_cloudflare_provider.generate_specs --clean \
-  && python -m stackql_cloudflare_provider.assign_resource_names \
-  && npm run generate-provider \
-  && npm run generate-docs
-```
-
-## Local UAT - start a stackql server and run queries
-
-After generation, set your API token and start a local stackql server backed by the freshly-built registry. Run these from Linux, macOS, or WSL (the bash scripts assume `pgrep` / `ps` and a POSIX shell):
+The first three steps (pure codegen, no I/O against external systems) can be chained:
 
 ```bash
-export CLOUDFLARE_API_TOKEN=...
-
-npm run start-server                # Starts stackql on tcp/5444 with this registry mounted
-npm run server-status               # Check it's up
+npm run generate-specs -- --clean \
+  && npm run assign-resource-names \
+  && npm run generate-provider
 ```
 
-### Smoke test - meta routes
-
-```bash
-npm run test-meta-routes
-```
-
-This walks every documented service / resource and runs the `SHOW METHODS / DESCRIBE` route against the live server, surfacing any spec issues that only show up at SQL plan time.
-
-```bash
-npm run stop-server                 # Tear it down
-npm run server-status               # Check it's down
-```
-
-### Interactive shell against the local registry
-
-To poke around with `stackql shell` directly (no server, no psql client needed), point `--registry` at the directory containing `src/`. Run from the provider root so `$PWD` resolves to the right place:
-
-```bash
-REG_ROOT="$(pwd)/provider-dev/openapi"
-REG="{\"url\":\"file://${REG_ROOT}\",\"localDocRoot\":\"${REG_ROOT}\",\"verifyConfig\":{\"nopVerify\":true}}"
-./stackql --registry="${REG}" shell
-```
-
-Once in the shell:
-
-```sql
-SHOW PROVIDERS;
-SHOW SERVICES IN cloudflare;
-SHOW RESOURCES IN cloudflare.zones;
-```
-
-### UAT queries
-
-```sql
--- 1. Show account info
-SELECT id, name, type, created_on FROM cloudflare.accounts.accounts;
-
--- 2. Cloudflare-wide IP ranges (no auth required)
-SELECT 'ipv4' AS ip_version, j.value AS cidr, etag
-FROM cloudflare.ips.ips, JSON_EACH(ipv4_cidrs) j
-UNION ALL
-SELECT 'ipv6' AS ip_version, j.value AS cidr, etag
-FROM cloudflare.ips.ips, JSON_EACH(ipv6_cidrs) j;
-
--- 3. List projects in an account
-SELECT id, name, JSON_EXTRACT(canonical_deployment, '$.aliases[0]') as alias, JSON_EXTRACT(source, '$.url') as url FROM cloudflare.pages.projects WHERE account_id = '7dcc2c02e3445ee046a699f2e89e9285';
-
--- 4. List workers in an account
-SELECT id, name FROM cloudflare.workers.workers WHERE account_id = '7dcc2c02e3445ee046a699f2e89e9285';
-```
-
-To stop the local server:
-
-```bash
-npm run stop-server
-```
+Steps 4-7 should be run individually so the gates (meta route test, live UAT, docs pre-flight, PR reviews) can actually do their job.
 
 ## Analytics resources
 
@@ -268,15 +358,13 @@ The provider exposes a curated set of 10 analytics resources covering HTTP reque
 
 ## Updating to a new upstream spec
 
-When the Cloudflare Python SDK is bumped:
+When the Cloudflare Python SDK is bumped, walk the full 7-step path-to-production above with two adjustments at the front end:
 
 1. `git pull` the new SDK into `src/cloudflare/` (the parent repo).
-2. `python -m stackql_cloudflare_provider.generate_specs --refresh --clean`
-3. `python -m stackql_cloudflare_provider.assign_resource_names` (preserves your manual CSV edits).
-4. `npm run generate-provider`
-5. `npm run generate-docs`
-6. Review the diff in `provider-dev/source/` and `provider-dev/config/all_services.csv`.
-7. Commit.
+2. Run step 1 with `--refresh` to re-download the upstream OpenAPI: `npm run generate-specs -- --refresh --clean`.
+3. Run step 2: `npm run assign-resource-names` - preserves your manual CSV edits and logs any newly-discovered operations so you can spot-check them.
+4. Review the diff in `provider-dev/source/` and `provider-dev/config/all_services.csv` before proceeding.
+5. Continue with steps 3-7 (provider gen -> meta route test -> live UAT -> doc gen + pre-flight -> publish provider + docs).
 
 ## Design notes
 

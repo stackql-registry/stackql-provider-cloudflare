@@ -165,7 +165,7 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create"><CopyableCode code="create" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-origin"><code>origin</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-origin"><code>origin</code></a></td>
     <td></td>
     <td>Creates and returns a new Hyperdrive configuration.</td>
 </tr>
@@ -179,7 +179,7 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-hyperdrive_id"><code>hyperdrive_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-origin"><code>origin</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-hyperdrive_id"><code>hyperdrive_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-origin"><code>origin</code></a></td>
     <td></td>
     <td>Updates and returns the specified Hyperdrive configuration.</td>
 </tr>

@@ -349,8 +349,8 @@ paths:
                     type: array
                 required:
                 - errors
-                - success
                 - messages
+                - success
           description: Disable Email Routing response
       security:
       - api_email: []

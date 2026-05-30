@@ -6996,10 +6996,10 @@ components:
       items:
         type: string
       required:
-      - cache_by_device_type
-      - wp_plugin
       - wordpress
       - hostnames
+      - cache_by_device_type
+      - wp_plugin
       - enabled
       - cf
     zonesSslRecommenderEnabled:

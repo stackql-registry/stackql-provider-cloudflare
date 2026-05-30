@@ -74,7 +74,7 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#firewall_rules_update_priority_of_a_firewall_rule"><CopyableCode code="firewall_rules_update_priority_of_a_firewall_rule" /></a></td>
     <td><CopyableCode code="update" /></td>
-    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a></td>
+    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a></td>
     <td></td>
     <td>Updates the priority of an existing firewall rule.</td>
 </tr>
@@ -95,7 +95,7 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-filter"><code>filter</code></a>, <a href="#parameter-action"><code>action</code></a></td>
+    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-filter"><code>filter</code></a>, <a href="#parameter-action"><code>action</code></a></td>
     <td></td>
     <td>Updates an existing firewall rule.</td>
 </tr>

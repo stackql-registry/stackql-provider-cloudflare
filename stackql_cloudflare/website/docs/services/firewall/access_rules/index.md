@@ -327,14 +327,14 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#edit_by_account"><CopyableCode code="edit_by_account" /></a></td>
     <td><CopyableCode code="update" /></td>
-    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-mode"><code>mode</code></a>, <a href="#parameter-allowed_modes"><code>allowed_modes</code></a>, <a href="#parameter-configuration"><code>configuration</code></a></td>
+    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-mode"><code>mode</code></a>, <a href="#parameter-configuration"><code>configuration</code></a></td>
     <td></td>
     <td>Updates an IP Access rule defined. Note: This operation will affect all zones in the account or zone.</td>
 </tr>
 <tr>
     <td><a href="#edit_by_zone"><CopyableCode code="edit_by_zone" /></a></td>
     <td><CopyableCode code="update" /></td>
-    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-mode"><code>mode</code></a>, <a href="#parameter-allowed_modes"><code>allowed_modes</code></a>, <a href="#parameter-configuration"><code>configuration</code></a></td>
+    <td><a href="#parameter-rule_id"><code>rule_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-mode"><code>mode</code></a>, <a href="#parameter-configuration"><code>configuration</code></a></td>
     <td></td>
     <td>Updates an IP Access rule defined. Note: This operation will affect all zones in the account or zone.</td>
 </tr>

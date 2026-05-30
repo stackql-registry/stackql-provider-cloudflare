@@ -3635,8 +3635,8 @@ paths:
                                   handles_view_only:
                                     type: boolean
                                 required:
-                                - access_control
                                 - handles_view_only
+                                - access_control
                             required:
                             - can_close
                             - can_start
@@ -4122,8 +4122,8 @@ paths:
                                   handles_view_only:
                                     type: boolean
                                 required:
-                                - access_control
                                 - handles_view_only
+                                - access_control
                             required:
                             - can_close
                             - can_start
@@ -4608,8 +4608,8 @@ paths:
                                   handles_view_only:
                                     type: boolean
                                 required:
-                                - access_control
                                 - handles_view_only
+                                - access_control
                             required:
                             - can_close
                             - can_start
@@ -5099,8 +5099,8 @@ paths:
                                   handles_view_only:
                                     type: boolean
                                 required:
-                                - access_control
                                 - handles_view_only
+                                - access_control
                             required:
                             - can_close
                             - can_start
@@ -8551,8 +8551,8 @@ components:
                     handles_view_only:
                       type: boolean
                   required:
-                  - access_control
                   - handles_view_only
+                  - access_control
               required:
               - can_close
               - can_start

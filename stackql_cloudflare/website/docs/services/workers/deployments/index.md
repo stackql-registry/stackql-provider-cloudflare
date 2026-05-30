@@ -175,7 +175,7 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create"><CopyableCode code="create" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-script_name"><code>script_name</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-source"><code>source</code></a>, <a href="#parameter-strategy"><code>strategy</code></a>, <a href="#parameter-versions"><code>versions</code></a>, <a href="#parameter-created_on"><code>created_on</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-script_name"><code>script_name</code></a>, <a href="#parameter-strategy"><code>strategy</code></a>, <a href="#parameter-versions"><code>versions</code></a></td>
     <td><a href="#parameter-force"><code>force</code></a></td>
     <td>Deployments configure how [Worker Versions](https://developers.cloudflare.com/api/operations/worker-versions-list-versions) are deployed to traffic. A deployment can consist of one or two versions of a Worker.</td>
 </tr>

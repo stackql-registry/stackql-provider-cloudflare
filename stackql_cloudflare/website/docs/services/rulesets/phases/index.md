@@ -185,14 +185,14 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#update_by_account"><CopyableCode code="update_by_account" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-ruleset_phase"><code>ruleset_phase</code></a>, <a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-version"><code>version</code></a>, <a href="#parameter-last_updated"><code>last_updated</code></a></td>
+    <td><a href="#parameter-ruleset_phase"><code>ruleset_phase</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
     <td>Updates an account or zone entry point ruleset, creating a new version.</td>
 </tr>
 <tr>
     <td><a href="#update_by_zone"><CopyableCode code="update_by_zone" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-ruleset_phase"><code>ruleset_phase</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-version"><code>version</code></a>, <a href="#parameter-last_updated"><code>last_updated</code></a></td>
+    <td><a href="#parameter-ruleset_phase"><code>ruleset_phase</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a></td>
     <td></td>
     <td>Updates an account or zone entry point ruleset, creating a new version.</td>
 </tr>

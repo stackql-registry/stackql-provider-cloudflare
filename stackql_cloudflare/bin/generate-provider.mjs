@@ -117,6 +117,22 @@ if (bin.status !== 0) {
   process.exit(bin.status ?? 1);
 }
 
+// Post-process: attach `request.transform` blocks to write methods whose
+// body schemas have array- or object-typed properties. Under stackql's
+// `naive` requestBodyTranslate, those values arrive as Go strings and
+// get string-wrapped on the wire (e.g. `{"rules": "[{...}]"}`), which
+// Cloudflare rejects. The transform re-emits the body with `kindOf`-based
+// branching: parsed slice/map -> toJson; raw string -> splat verbatim.
+console.log(`[generate-provider] attaching request.transform for array/object body properties...`);
+const reqtx = spawnSync(pythonBin, ['-m', 'stackql_cloudflare_provider.request_body_transforms'], {
+  cwd: BASE_DIR,
+  stdio: 'inherit',
+});
+if (reqtx.status !== 0) {
+  console.error(`[generate-provider] request_body_transforms failed with exit ${reqtx.status}`);
+  process.exit(reqtx.status ?? 1);
+}
+
 // Post-process: shim hand-authored Cloudflare GraphQL operations into
 // the matching service yamls. Source manifest + per-op specs live under
 // provider-dev/source-graphql/. The merge script is idempotent and only

@@ -215,21 +215,21 @@ The following methods are available for this resource:
 <tr>
     <td><a href="#create"><CopyableCode code="create" /></a></td>
     <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-tags"><code>tags</code></a>, <a href="#parameter-subdomain"><code>subdomain</code></a>, <a href="#parameter-observability"><code>observability</code></a>, <a href="#parameter-logpush"><code>logpush</code></a>, <a href="#parameter-tail_consumers"><code>tail_consumers</code></a>, <a href="#parameter-created_on"><code>created_on</code></a>, <a href="#parameter-updated_on"><code>updated_on</code></a>, <a href="#parameter-references"><code>references</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-tags"><code>tags</code></a>, <a href="#parameter-subdomain"><code>subdomain</code></a>, <a href="#parameter-observability"><code>observability</code></a>, <a href="#parameter-logpush"><code>logpush</code></a>, <a href="#parameter-tail_consumers"><code>tail_consumers</code></a></td>
     <td></td>
     <td>Create a new Worker.</td>
 </tr>
 <tr>
     <td><a href="#edit"><CopyableCode code="edit" /></a></td>
     <td><CopyableCode code="update" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-worker_id"><code>worker_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-tags"><code>tags</code></a>, <a href="#parameter-subdomain"><code>subdomain</code></a>, <a href="#parameter-observability"><code>observability</code></a>, <a href="#parameter-logpush"><code>logpush</code></a>, <a href="#parameter-tail_consumers"><code>tail_consumers</code></a>, <a href="#parameter-created_on"><code>created_on</code></a>, <a href="#parameter-updated_on"><code>updated_on</code></a>, <a href="#parameter-references"><code>references</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-worker_id"><code>worker_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-tags"><code>tags</code></a>, <a href="#parameter-subdomain"><code>subdomain</code></a>, <a href="#parameter-observability"><code>observability</code></a>, <a href="#parameter-logpush"><code>logpush</code></a>, <a href="#parameter-tail_consumers"><code>tail_consumers</code></a></td>
     <td></td>
     <td>Perform a partial update on a Worker, where omitted properties are left unchanged from their current values.</td>
 </tr>
 <tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-worker_id"><code>worker_id</code></a>, <a href="#parameter-id"><code>id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-tags"><code>tags</code></a>, <a href="#parameter-subdomain"><code>subdomain</code></a>, <a href="#parameter-observability"><code>observability</code></a>, <a href="#parameter-logpush"><code>logpush</code></a>, <a href="#parameter-tail_consumers"><code>tail_consumers</code></a>, <a href="#parameter-created_on"><code>created_on</code></a>, <a href="#parameter-updated_on"><code>updated_on</code></a>, <a href="#parameter-references"><code>references</code></a></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-worker_id"><code>worker_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-tags"><code>tags</code></a>, <a href="#parameter-subdomain"><code>subdomain</code></a>, <a href="#parameter-observability"><code>observability</code></a>, <a href="#parameter-logpush"><code>logpush</code></a>, <a href="#parameter-tail_consumers"><code>tail_consumers</code></a></td>
     <td></td>
     <td>Perform a complete replacement of a Worker, where omitted properties are set to their default values. This is the exact same as the Create Worker endpoint, but operates on an existing Worker. To perform a partial update instead, use the Edit Worker endpoint.</td>
 </tr>

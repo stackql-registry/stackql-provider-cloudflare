@@ -527,20 +527,10 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  items:
-                    properties:
-                      type:
-                        type: string
-                    required:
-                    - type
-                    type: object
-                  type:
-                    type: string
-                required:
-                - type
-                - items
                 type: object
+                properties:
+                  contents:
+                    type: string
           description: Returns a list of attackers.
         '400':
           content:
@@ -604,30 +594,10 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  properties:
-                    killChain:
-                      type: number
-                    mitreAttack:
-                      items:
-                        type: string
-                      type: array
-                    mitreCapec:
-                      items:
-                        type: string
-                      type: array
-                    name:
-                      type: string
-                    shortname:
-                      type: string
-                    uuid:
-                      type: string
-                  required:
-                  - uuid
-                  - name
-                  - killChain
-                  type: object
-                type: array
+                type: object
+                properties:
+                  contents:
+                    type: string
           description: Returns a list of categories.
         '400':
           content:
@@ -1202,27 +1172,10 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  properties:
-                    result:
-                      items:
-                        properties:
-                          alpha3:
-                            type: string
-                          name:
-                            type: string
-                        required:
-                        - name
-                        - alpha3
-                        type: object
-                      type: array
-                    success:
-                      type: string
-                  required:
-                  - success
-                  - result
-                  type: object
-                type: array
+                type: object
+                properties:
+                  contents:
+                    type: string
           description: Returns the long and short country code for every country.
         '400':
           content:
@@ -1856,20 +1809,10 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  properties:
-                    isPublic:
-                      type: boolean
-                    name:
-                      type: string
-                    uuid:
-                      type: string
-                  required:
-                  - uuid
-                  - name
-                  - isPublic
-                  type: object
-                type: array
+                type: object
+                properties:
+                  contents:
+                    type: string
           description: Returns a list of dataset in an account.
         '400':
           content:
@@ -3732,10 +3675,10 @@ paths:
           content:
             application/json:
               schema:
-                description: Array of mirror tag rows
-                items:
-                  type: object
-                type: array
+                type: object
+                properties:
+                  contents:
+                    type: string
           description: Returns an array of mirrored tags.
         '400':
           content:
@@ -5663,20 +5606,10 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  items:
-                    properties:
-                      type:
-                        type: string
-                    required:
-                    - type
-                    type: object
-                  type:
-                    type: string
-                required:
-                - type
-                - items
                 type: object
+                properties:
+                  contents:
+                    type: string
           description: Returns a list of indicator types.
         '400':
           content:
@@ -8113,20 +8046,10 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  items:
-                    properties:
-                      type:
-                        type: string
-                    required:
-                    - type
-                    type: object
-                  type:
-                    type: string
-                required:
-                - type
-                - items
                 type: object
+                properties:
+                  contents:
+                    type: string
           description: Returns a list of target industries.
         '400':
           content:
@@ -13302,7 +13225,10 @@ components:
           response:
             mediaType: application/json
             openAPIDocKey: '200'
-            objectKey: $.result
+            overrideMediaType: application/json
+            transform:
+              body: '[{"contents": {{ toJson .result }}}]'
+              type: golang_template_json_v0.3.0
       sqlVerbs:
         select:
         - $ref: '#/components/x-stackQL-resources/attackers/methods/list'
@@ -13321,7 +13247,10 @@ components:
           response:
             mediaType: application/json
             openAPIDocKey: '200'
-            objectKey: $.result
+            overrideMediaType: application/json
+            transform:
+              body: '[{"contents": {{ toJson .result }}}]'
+              type: golang_template_json_v0.3.0
       sqlVerbs:
         select:
         - $ref: '#/components/x-stackQL-resources/events_categories/methods/list'
@@ -13504,7 +13433,10 @@ components:
           response:
             mediaType: application/json
             openAPIDocKey: '200'
-            objectKey: $.result
+            overrideMediaType: application/json
+            transform:
+              body: '[{"contents": {{ toJson .result }}}]'
+              type: golang_template_json_v0.3.0
       sqlVerbs:
         select:
         - $ref: '#/components/x-stackQL-resources/countries/methods/list'
@@ -13657,7 +13589,10 @@ components:
           response:
             mediaType: application/json
             openAPIDocKey: '200'
-            objectKey: $.result
+            overrideMediaType: application/json
+            transform:
+              body: '[{"contents": {{ toJson .result }}}]'
+              type: golang_template_json_v0.3.0
         create:
           config:
             requestBodyTranslate:
@@ -14167,6 +14102,10 @@ components:
           response:
             mediaType: application/json
             openAPIDocKey: '200'
+            overrideMediaType: application/json
+            transform:
+              body: '[{"contents": {{ toJson .result }}}]'
+              type: golang_template_json_v0.3.0
       sqlVerbs:
         select:
         - $ref: '#/components/x-stackQL-resources/indicators_tags/methods/list_by_account'
@@ -14308,7 +14247,10 @@ components:
           response:
             mediaType: application/json
             openAPIDocKey: '200'
-            objectKey: $.result
+            overrideMediaType: application/json
+            transform:
+              body: '[{"contents": {{ toJson .result }}}]'
+              type: golang_template_json_v0.3.0
       sqlVerbs:
         select:
         - $ref: '#/components/x-stackQL-resources/indicator_types_indicator_types/methods/list'
@@ -14639,7 +14581,10 @@ components:
           response:
             mediaType: application/json
             openAPIDocKey: '200'
-            objectKey: $.result
+            overrideMediaType: application/json
+            transform:
+              body: '[{"contents": {{ toJson .result }}}]'
+              type: golang_template_json_v0.3.0
       sqlVerbs:
         select:
         - $ref: '#/components/x-stackQL-resources/events_target_industries/methods/list_by_account'

@@ -32,8 +32,39 @@ Creates, updates, deletes, gets or lists a <code>namespaces_search</code> resour
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="search"
+    values={[
+        { label: 'search', value: 'search' }
+    ]}
+>
+<TabItem value="search">
 
+Returns the merged search results from all instances.
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="result" /></td>
+    <td><code>object</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="success" /></td>
+    <td><code>boolean</code></td>
+    <td></td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -52,8 +83,8 @@ The following methods are available for this resource:
 <tbody>
 <tr>
     <td><a href="#search"><CopyableCode code="search" /></a></td>
-    <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-ai_search_options"><code>ai_search_options</code></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-name"><code>name</code></a></td>
     <td></td>
     <td></td>
 </tr>
@@ -86,86 +117,26 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tbody>
 </table>
 
-## `INSERT` examples
+## `SELECT` examples
 
 <Tabs
     defaultValue="search"
     values={[
-        { label: 'search', value: 'search' },
-        { label: 'Manifest', value: 'manifest' }
+        { label: 'search', value: 'search' }
     ]}
 >
 <TabItem value="search">
 
-No description available.
+Returns the merged search results from all instances.
 
 ```sql
-INSERT INTO cloudflare.aisearch.namespaces_search (
-ai_search_options,
-messages,
-query,
-account_id,
-name
-)
-SELECT 
-'{{ ai_search_options }}' /* required */,
-'{{ messages }}',
-'{{ query }}',
-'{{ account_id }}',
-'{{ name }}'
-RETURNING
+SELECT
 result,
 success
+FROM cloudflare.aisearch.namespaces_search
+WHERE account_id = '{{ account_id }}' -- required
+AND name = '{{ name }}' -- required
 ;
 ```
-</TabItem>
-<TabItem value="manifest">
-
-<CodeBlock language="yaml">{`# Description fields are for documentation purposes
-- name: namespaces_search
-  props:
-    - name: account_id
-      value: "{{ account_id }}"
-      description: Required parameter for the namespaces_search resource.
-    - name: name
-      value: "{{ name }}"
-      description: Required parameter for the namespaces_search resource.
-    - name: ai_search_options
-      value:
-        cache:
-          cache_threshold: "{{ cache_threshold }}"
-          enabled: {{ enabled }}
-        instance_ids:
-          - "{{ instance_ids }}"
-        query_rewrite:
-          enabled: {{ enabled }}
-          model: "{{ model }}"
-          rewrite_prompt: "{{ rewrite_prompt }}"
-        reranking:
-          enabled: {{ enabled }}
-          match_threshold: {{ match_threshold }}
-          model: "{{ model }}"
-        retrieval:
-          boost_by:
-            - direction: "{{ direction }}"
-              field: "{{ field }}"
-          context_expansion: {{ context_expansion }}
-          filters: "{{ filters }}"
-          fusion_method: "{{ fusion_method }}"
-          keyword_match_mode: "{{ keyword_match_mode }}"
-          match_threshold: {{ match_threshold }}
-          max_num_results: {{ max_num_results }}
-          retrieval_type: "{{ retrieval_type }}"
-          return_on_failure: {{ return_on_failure }}
-    - name: messages
-      value:
-        - content: "{{ content }}"
-          role: "{{ role }}"
-    - name: query
-      value: "{{ query }}"
-      description: |
-        A simple text query string. Alternative to 'messages' — provide either this or 'messages', not both.
-`}</CodeBlock>
-
 </TabItem>
 </Tabs>

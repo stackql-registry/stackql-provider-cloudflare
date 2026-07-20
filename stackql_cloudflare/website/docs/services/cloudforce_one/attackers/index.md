@@ -51,6 +51,11 @@ Returns a list of attackers.
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -121,7 +126,7 @@ Returns a list of attackers.
 
 ```sql
 SELECT
-*
+contents
 FROM cloudflare.cloudforce_one.attackers
 WHERE account_id = '{{ account_id }}' -- required
 AND datasetIds = '{{ datasetIds }}'

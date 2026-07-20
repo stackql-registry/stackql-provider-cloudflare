@@ -213,6 +213,48 @@ The following methods are available for this resource:
     <td></td>
     <td>Delete a particular address map owned by the account. An Address Map must be disabled before it can be deleted.</td>
 </tr>
+<tr>
+    <td><a href="#remove_account"><CopyableCode code="remove_account" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-address_map_id"><code>address_map_id</code></a></td>
+    <td></td>
+    <td>Remove an account as a member of a particular address map.</td>
+</tr>
+<tr>
+    <td><a href="#add_account"><CopyableCode code="add_account" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-address_map_id"><code>address_map_id</code></a></td>
+    <td></td>
+    <td>Add an account as a member of a particular address map.</td>
+</tr>
+<tr>
+    <td><a href="#remove_ip"><CopyableCode code="remove_ip" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-ip_address"><code>ip_address</code></a>, <a href="#parameter-address_map_id"><code>address_map_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Remove an IP from a particular address map.</td>
+</tr>
+<tr>
+    <td><a href="#add_ip"><CopyableCode code="add_ip" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-ip_address"><code>ip_address</code></a>, <a href="#parameter-address_map_id"><code>address_map_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Add an IP from a prefix owned by the account to a particular address map.</td>
+</tr>
+<tr>
+    <td><a href="#remove_zone"><CopyableCode code="remove_zone" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-address_map_id"><code>address_map_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Remove a zone as a member of a particular address map.</td>
+</tr>
+<tr>
+    <td><a href="#add_zone"><CopyableCode code="add_zone" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-address_map_id"><code>address_map_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Add a zone as a member of a particular address map.</td>
+</tr>
 </tbody>
 </table>
 
@@ -238,6 +280,16 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
     <td><CopyableCode code="address_map_id" /></td>
     <td><code>string</code></td>
     <td></td>
+</tr>
+<tr id="parameter-ip_address">
+    <td><CopyableCode code="ip_address" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
+<tr id="parameter-zone_id">
+    <td><CopyableCode code="zone_id" /></td>
+    <td><code>string</code></td>
+    <td>The Cloudflare zone ID.</td>
 </tr>
 </tbody>
 </table>
@@ -409,6 +461,92 @@ Delete a particular address map owned by the account. An Address Map must be dis
 DELETE FROM cloudflare.addressing.address_maps
 WHERE address_map_id = '{{ address_map_id }}' --required
 AND account_id = '{{ account_id }}' --required
+;
+```
+</TabItem>
+</Tabs>
+
+
+## Lifecycle Methods
+
+<Tabs
+    defaultValue="remove_account"
+    values={[
+        { label: 'remove_account', value: 'remove_account' },
+        { label: 'add_account', value: 'add_account' },
+        { label: 'remove_ip', value: 'remove_ip' },
+        { label: 'add_ip', value: 'add_ip' },
+        { label: 'remove_zone', value: 'remove_zone' },
+        { label: 'add_zone', value: 'add_zone' }
+    ]}
+>
+<TabItem value="remove_account">
+
+Remove an account as a member of a particular address map.
+
+```sql
+EXEC cloudflare.addressing.address_maps.remove_account 
+@account_id='{{ account_id }}' --required, 
+@address_map_id='{{ address_map_id }}' --required
+;
+```
+</TabItem>
+<TabItem value="add_account">
+
+Add an account as a member of a particular address map.
+
+```sql
+EXEC cloudflare.addressing.address_maps.add_account 
+@account_id='{{ account_id }}' --required, 
+@address_map_id='{{ address_map_id }}' --required
+;
+```
+</TabItem>
+<TabItem value="remove_ip">
+
+Remove an IP from a particular address map.
+
+```sql
+EXEC cloudflare.addressing.address_maps.remove_ip 
+@ip_address='{{ ip_address }}' --required, 
+@address_map_id='{{ address_map_id }}' --required, 
+@account_id='{{ account_id }}' --required
+;
+```
+</TabItem>
+<TabItem value="add_ip">
+
+Add an IP from a prefix owned by the account to a particular address map.
+
+```sql
+EXEC cloudflare.addressing.address_maps.add_ip 
+@ip_address='{{ ip_address }}' --required, 
+@address_map_id='{{ address_map_id }}' --required, 
+@account_id='{{ account_id }}' --required
+;
+```
+</TabItem>
+<TabItem value="remove_zone">
+
+Remove a zone as a member of a particular address map.
+
+```sql
+EXEC cloudflare.addressing.address_maps.remove_zone 
+@zone_id='{{ zone_id }}' --required, 
+@address_map_id='{{ address_map_id }}' --required, 
+@account_id='{{ account_id }}' --required
+;
+```
+</TabItem>
+<TabItem value="add_zone">
+
+Add a zone as a member of a particular address map.
+
+```sql
+EXEC cloudflare.addressing.address_maps.add_zone 
+@zone_id='{{ zone_id }}' --required, 
+@address_map_id='{{ address_map_id }}' --required, 
+@account_id='{{ account_id }}' --required
 ;
 ```
 </TabItem>

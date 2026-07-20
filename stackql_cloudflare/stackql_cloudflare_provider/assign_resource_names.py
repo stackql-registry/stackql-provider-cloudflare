@@ -1075,6 +1075,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reset", action="store_true",
                         help="Reset all four stackql_* columns to their defaults, discarding manual edits.")
+    parser.add_argument("--strict", action="store_true",
+                        help="Exit non-zero if any source operation has no existing mapping row in the "
+                             "CSV. Default rows ARE still written for the new operations, so review "
+                             "them (tighten resource/method/verb if needed) and re-run.")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -1135,6 +1139,13 @@ def main(argv: list[str] | None = None) -> int:
     write_csv(out_rows)
     logger.info("Wrote %d rows to %s (new=%d preserved=%d reset=%d dropped=%d)",
                 len(out_rows), CSV_PATH, added, preserved, updated, len(removed_keys))
+    if args.strict and added:
+        logger.error(
+            "--strict: %d operation(s) had no mapping row in the CSV. Default rows were "
+            "written (grep the log above for 'new op found') - review and curate the "
+            "stackql_resource_name / stackql_method_name / stackql_verb / stackql_object_key "
+            "columns, then re-run.", added)
+        return 2
     return 0
 
 

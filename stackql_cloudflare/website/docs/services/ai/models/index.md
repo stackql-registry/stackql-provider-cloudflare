@@ -51,6 +51,46 @@ Returns a list of models
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="id" /></td>
+    <td><code>string</code></td>
+    <td>Model identifier (UUID).</td>
+</tr>
+<tr>
+    <td><CopyableCode code="name" /></td>
+    <td><code>string</code></td>
+    <td>Model name, e.g. @cf/meta/llama-3.2-1b-instruct - use as model_name in the ai task-family resources.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="created_at" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="description" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="properties" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="source" /></td>
+    <td><code>number</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="tags" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="task" /></td>
+    <td><code>object</code></td>
+    <td>Task grouping: id, name (e.g. Text Generation), description.</td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -151,7 +191,14 @@ Searches Workers AI models by name or description.
 
 ```sql
 SELECT
-*
+id,
+name,
+created_at,
+description,
+properties,
+source,
+tags,
+task
 FROM cloudflare.ai.models
 WHERE account_id = '{{ account_id }}' -- required
 AND per_page = '{{ per_page }}'

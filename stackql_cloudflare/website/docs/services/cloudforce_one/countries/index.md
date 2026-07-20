@@ -52,12 +52,7 @@ Returns the long and short country code for every country.
 </thead>
 <tbody>
 <tr>
-    <td><CopyableCode code="result" /></td>
-    <td><code>array</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="success" /></td>
+    <td><CopyableCode code="contents" /></td>
     <td><code>string</code></td>
     <td></td>
 </tr>
@@ -126,8 +121,7 @@ Returns the long and short country code for every country.
 
 ```sql
 SELECT
-result,
-success
+contents
 FROM cloudflare.cloudforce_one.countries
 WHERE account_id = '{{ account_id }}' -- required
 ;

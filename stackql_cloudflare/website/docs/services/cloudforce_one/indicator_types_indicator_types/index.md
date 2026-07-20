@@ -51,6 +51,11 @@ Returns a list of indicator types.
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -116,7 +121,7 @@ This Method is deprecated. Please use /events/dataset/:dataset_id/indicatorTypes
 
 ```sql
 SELECT
-*
+contents
 FROM cloudflare.cloudforce_one.indicator_types_indicator_types
 WHERE account_id = '{{ account_id }}' -- required
 ;

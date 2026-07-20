@@ -32,8 +32,49 @@ Creates, updates, deletes, gets or lists a <code>diagnostics</code> resource.
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="create_traceroute"
+    values={[
+        { label: 'create_traceroute', value: 'create_traceroute' }
+    ]}
+>
+<TabItem value="create_traceroute">
 
+Traceroute response.
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="errors" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="messages" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="result" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="success" /></td>
+    <td><code>boolean</code></td>
+    <td>Whether the API call was successful. (true)</td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -52,8 +93,8 @@ The following methods are available for this resource:
 <tbody>
 <tr>
     <td><a href="#create_traceroute"><CopyableCode code="create_traceroute" /></a></td>
-    <td><CopyableCode code="exec" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-targets"><code>targets</code></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
     <td>Run traceroutes from Cloudflare colos.</td>
 </tr>
@@ -81,7 +122,7 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tbody>
 </table>
 
-## Lifecycle Methods
+## `SELECT` examples
 
 <Tabs
     defaultValue="create_traceroute"
@@ -94,14 +135,13 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 Run traceroutes from Cloudflare colos.
 
 ```sql
-EXEC cloudflare.diagnostics.diagnostics.create_traceroute 
-@account_id='{{ account_id }}' --required 
-@@json=
-'{
-"colos": "{{ colos }}", 
-"options": "{{ options }}", 
-"targets": "{{ targets }}"
-}'
+SELECT
+errors,
+messages,
+result,
+success
+FROM cloudflare.diagnostics.diagnostics
+WHERE account_id = '{{ account_id }}' -- required
 ;
 ```
 </TabItem>

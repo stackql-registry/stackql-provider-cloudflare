@@ -18,7 +18,7 @@ queues service documentation.
 
 :::info[Service Summary]
 
-total resources: __7__  
+total resources: __5__  
 
 :::
 
@@ -26,12 +26,10 @@ total resources: __7__
 <div class="row">
 <div class="providerDocColumn">
 <a href="/services/queues/consumers/">consumers</a><br />
-<a href="/services/queues/messages_ack/">messages_ack</a><br />
 <a href="/services/queues/metrics/">metrics</a><br />
-<a href="/services/queues/preview_ack/">preview_ack</a>
+<a href="/services/queues/purge/">purge</a>
 </div>
 <div class="providerDocColumn">
-<a href="/services/queues/purge/">purge</a><br />
 <a href="/services/queues/queues/">queues</a><br />
 <a href="/services/queues/subscriptions/">subscriptions</a>
 </div>

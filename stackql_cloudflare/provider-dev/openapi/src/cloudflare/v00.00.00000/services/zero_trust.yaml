@@ -10218,26 +10218,10 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  errors:
-                    items:
-                      $ref: '#/components/schemas/teamsDevicesV4ResponseMessage'
-                    type: array
-                  messages:
-                    items:
-                      $ref: '#/components/schemas/teamsDevicesV4ResponseMessage'
-                    type: array
-                  result:
-                    $ref: '#/components/schemas/teamsDevicesOverrideCodes'
-                  success:
-                    description: Whether the API call was successful.
-                    type: boolean
-                required:
-                - result
-                - success
-                - errors
-                - messages
                 type: object
+                properties:
+                  contents:
+                    type: string
           description: Get admin override codes for a registration response.
       security:
       - api_token: []
@@ -10981,7 +10965,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/teamsDevicesOverrideCodesResponse'
+                type: object
+                properties:
+                  contents:
+                    type: string
           description: Get an admin override code for a device response.
         4XX:
           content:
@@ -46334,6 +46321,22 @@ components:
       readOnly: true
       type: string
       x-stainless-terraform-configurability: computed
+    stackqlDlpDatasetsUploadVersionBody:
+      type: object
+      required:
+      - value
+      properties:
+        value:
+          format: binary
+          type: string
+    stackqlDlpDatasetsUploadDatasetColumnBody:
+      type: object
+      required:
+      - value
+      properties:
+        value:
+          format: binary
+          type: string
   securitySchemes:
     api_email:
       in: header
@@ -48695,7 +48698,10 @@ components:
           response:
             mediaType: application/json
             openAPIDocKey: '200'
-            objectKey: $.result
+            overrideMediaType: application/json
+            transform:
+              body: '[{"contents": {{ toJson .result }}}]'
+              type: golang_template_json_v0.3.0
       sqlVerbs:
         select:
         - $ref: '#/components/x-stackQL-resources/registrations_override_codes/methods/list_by_account'
@@ -48809,7 +48815,10 @@ components:
           response:
             mediaType: application/json
             openAPIDocKey: '200'
-            objectKey: $.result
+            overrideMediaType: application/json
+            transform:
+              body: '[{"contents": {{ toJson .result }}}]'
+              type: golang_template_json_v0.3.0
       sqlVerbs:
         select:
         - $ref: '#/components/x-stackQL-resources/devices_override_codes/methods/list_by_account'
@@ -49406,11 +49415,17 @@ components:
             mediaType: application/json
             openAPIDocKey: '200'
         edit:
-          config:
-            requestBodyTranslate:
-              algorithm: naive
           operation:
             $ref: '#/paths/~1accounts~1{account_id}~1dlp~1datasets~1{dataset_id}~1upload~1{version}/post'
+          request:
+            mediaType: application/octet-stream
+            required:
+            - value
+            schema_override:
+              $ref: '#/components/schemas/stackqlDlpDatasetsUploadVersionBody'
+            transform:
+              type: golang_template_json_v0.1.0
+              body: '{{ .value }}'
           response:
             mediaType: application/json
             openAPIDocKey: '200'
@@ -49428,11 +49443,17 @@ components:
       title: Entries
       methods:
         create:
-          config:
-            requestBodyTranslate:
-              algorithm: naive
           operation:
             $ref: '#/paths/~1accounts~1{account_id}~1dlp~1datasets~1{dataset_id}~1versions~1{version}~1entries~1{entry_id}/post'
+          request:
+            mediaType: application/octet-stream
+            required:
+            - value
+            schema_override:
+              $ref: '#/components/schemas/stackqlDlpDatasetsUploadDatasetColumnBody'
+            transform:
+              type: golang_template_json_v0.1.0
+              body: '{{ .value }}'
           response:
             mediaType: application/json
             openAPIDocKey: '200'

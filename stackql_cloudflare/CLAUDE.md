@@ -44,6 +44,11 @@ stackql_cloudflare/                    # ← project root
 │   ├── fanout.py                      # Explode dual-scope /{accounts_or_zones}/... paths
 │   ├── rename.py                      # Schema→camelCase, path-params→snake_case
 │   ├── canonical_params.py            # Standardise common path-param definitions
+│   ├── octet_stream_requests.py       # Step 3 post-pass: octet-stream request bodies
+│   ├── ai_task_families.py            # Step 3 post-pass: collapse Workers AI models into task families
+│   ├── select_response_fixes.py       # Step 3 post-pass: fix empty-column select response shapes
+│   ├── octet_stream_docs.py           # Step 4 post-pass: data__ prefixes in doc examples
+│   ├── ai_docs_enhance.py             # Step 4 post-pass: model admonitions + runnable AI select examples
 │   ├── normalize.py                   # Schema flattener (kills allOf/oneOf/anyOf/additionalProperties)
 │   └── fold_singletons.py             # One-shot CSV mutation (already applied)
 ├── bin/
@@ -52,7 +57,8 @@ stackql_cloudflare/                    # ← project root
 │   ├── start-server.sh                # Local stackql server (Linux/macOS/WSL only)
 │   ├── stop-server.sh
 │   ├── server-status.sh
-│   └── test-meta-routes.cjs           # Smoke-test every SHOW/DESCRIBE route
+│   ├── test-meta-routes.cjs           # Smoke-test every SHOW/DESCRIBE route
+│   └── smoke-test-kv.cjs              # Full-cycle KV smoke test (live API)
 ├── provider-dev/
 │   ├── downloads/cloudflare-openapi.json   # Cached upstream spec (~17 MB)
 │   ├── source/<service>.yaml          # Step 1 output (108 service files)
@@ -68,6 +74,15 @@ stackql_cloudflare/                    # ← project root
 ---
 
 ## Pipeline (run from the project root)
+
+The whole chain is wrapped in a `Makefile` (run from WSL/Linux/macOS):
+`make all` = specs -> mappings (strict gate: fails on unmapped operations)
+-> provider (incl. all post-passes) -> meta-test (go/no-go SHOW/DESCRIBE
+walk via a local server) -> docs (incl. post-passes). Individual targets:
+`make specs`, `make specs-refresh`, `make mappings`, `make provider`,
+`make meta-test`, `make docs`, `make smoke-test-kv` (live API, needs
+CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID, deliberately NOT in `all`),
+`make help`. The underlying step commands:
 
 ```bash
 # Step 1: download + transform upstream OpenAPI into per-service yamls
@@ -186,7 +201,9 @@ op_description
 **Identity key**: `(filename, path, verb)`. On re-run, the four columns
 `stackql_resource_name`, `stackql_method_name`, `stackql_verb`,
 `stackql_object_key` are **preserved verbatim** if the user has edited them
-(non-default value). `--reset` forces re-defaulting.
+(non-default value). `--reset` forces re-defaulting. `--strict` (used by
+`make mappings`) exits non-zero when any operation has no existing CSV row -
+default rows are still written so the user can curate them and re-run.
 
 ### Verb classification (`_refine_stackql_verb`)
 
@@ -330,6 +347,68 @@ get this transform across ~80 services. Methods whose body has only
 scalar properties are left alone - the naive translator handles those
 correctly.
 
+Then **`octet_stream_requests.py`** runs as a third post-pass. It
+targets the handful of write endpoints whose request body is
+`application/octet-stream` (KV value PUT, 5 Workers AI binary-input
+models, 2 DLP dataset uploads - 8 methods total). The whole body is the
+raw payload, so JSON body translation makes no sense: the pass drops
+the `naive` requestBodyTranslate from those methods ONLY, injects a
+`stackql`-prefixed wrapper schema (e.g. `stackqlWorkersKvValueBody`)
+exposing a single required `value` column via `request.schema_override`,
+and splats it verbatim onto the wire:
+
+```yaml
+request:
+  mediaType: application/octet-stream
+  required:
+    - value
+  schema_override:
+    $ref: '#/components/schemas/stackqlWorkersKvValueBody'
+  transform:
+    type: golang_template_json_v0.1.0
+    body: '{{ .value }}'
+```
+
+Because naive translation is off for these methods, callers MUST use
+the `data__` prefix:
+
+```sql
+REPLACE cloudflare.kv.values
+SET data__value = 'my-raw-value'
+WHERE account_id = '...' AND namespace_id = '...' AND key_name = '...';
+```
+
+Then **`ai_task_families.py`** runs as a fourth post-pass. Driven by
+`provider-dev/config/ai_task_families.yaml`, it collapses the ~93
+per-model Workers AI run resources into 9 task-family SELECT resources
+(`ai.text_generation`, `ai.text_embeddings`, `ai.text_to_image`,
+`ai.speech_to_text`, `ai.text_to_speech`, `ai.text_classification`,
+`ai.translation`, `ai.summarization`, `ai.reranking`), all riding the
+generic `POST /accounts/{account_id}/ai/run/{model_name}` operation with
+`model_name` as the discriminator (slash-containing values substitute
+literally into the URL - verified live). Mechanics:
+
+- SELECT WHERE params bind to request-body properties with UNPREFIXED
+  names (`WHERE prompt = '...'`); `data__` does NOT apply to SELECT.
+- The generic op's 200 response is rewritten to a typed union envelope
+  (`stackqlAiRunResponseEnvelope`); object-mode families project
+  `objectKey: $.result` (typed columns like `response`, `usage`, `data`,
+  `shape`); contents-mode families (image/audio/array results) wrap the
+  raw response as a `contents` column.
+- Per-family `request.schema_override` -> `stackqlAi<Family>RunInput`
+  (union of member body schemas) + a `request.transform` that
+  serialises exactly the provided WHERE params.
+- Member models' per-model paths and resources are DROPPED from the
+  generated ai.yaml (ai went from ~123 resources to 30). The 5
+  octet-stream-input models (whisper x2, resnet x2, detr) are excluded
+  and keep their per-model insert resources.
+- Generic `ai.run` stays as the escape hatch for unlisted models.
+
+Example: `SELECT response FROM cloudflare.ai.text_generation WHERE
+account_id = '...' AND model_name = '@cf/meta/llama-3.2-1b-instruct'
+AND prompt = '...'` - each SELECT executes (and bills) an inference
+call.
+
 ---
 
 ## Step 4 — docs generation
@@ -356,6 +435,15 @@ Then **`sanitize_docs.py`** runs as a post-pass. It:
 4. Unwraps orphan `[label](#some-anchor)` links whose anchors aren't ones
    the generator actually emits (keeps `#methods`, `#parameter-*`,
    `#get*`/`#list*`/CRUD method anchors).
+
+Then **`octet_stream_docs.py`** runs as a second post-pass. It discovers
+every resource method carrying `request.mediaType:
+application/octet-stream` in the generated provider yamls (attached by
+`octet_stream_requests.py`, so the two passes can't drift) and rewrites
+that method's SQL example on the matching docs page to show the body
+column `data__`-prefixed (`SET data__value = '{{ value }}'`, or
+`data__value` first in the INSERT column list). Only the matched
+TabItem's sql block is touched. Idempotent.
 
 ---
 
@@ -539,6 +627,61 @@ cd website && yarn start
 
 ## What's been done recently
 
+- AI service cleanup round 2: the 5 octet-input models folded into
+  `ai.run` as exec methods (CSV; data__value request blocks follow the
+  paths); `tomarkdown`/`to_markdown` unified into `to_markdown`
+  (converter, select) + `to_markdown_supported` (formats list, select) -
+  they cannot share one resource because both selects would have the
+  identical required-param signature; `ai.run` is select-only now (the
+  same method under insert AND select rendered duplicate doc examples).
+  Added `ai_docs_enhance.py` (generate-docs post-pass): supported-model
+  admonitions (CopyableCode per model, grouped by family on the run
+  page) and runnable SELECT examples (family result columns + model
+  input WHERE params that docgen cannot derive from
+  request.schema_override). ai service = 24 resources.
+- Executed the non-selectable remap plan (see `NON_SELECTABLE_ANALYSIS.md`):
+  non-selectable resources now 73/1171 (6.2%), was 221/1267 (17.4%).
+  Meta-route gate passes. Three mechanisms:
+  1. CSV verb/resource edits in `all_services.csv` - read-like POSTs
+     (d1 query, autorag/aisearch search, vectorize v2 query, traceroute,
+     domain-check, ssl analyze, logs SQL, billing query) remapped to
+     select; browser_rendering split into per-render select resources;
+     24 rows folded into noun parents as exec (addressing validate +
+     address-map members, logpush validators, email move, queue acks,
+     autorag sync, vectorize v1 index update).
+  2. `select_response_fixes.py` (Step 3 post-pass) + config
+     `provider-dev/config/select_response_fixes.yaml` - 26 response-shape
+     fixes: typed item schemas (ai.models/tasks), scalar-array-to-rows,
+     contents wraps. GOTCHA: response transforms that access `.result`
+     MUST be `golang_template_json_v0.3.0` (parsed input); the
+     `golang_template_text_v0.3.0` type receives the RAW body string and
+     only suits `{{ toJson . }}` whole-body wraps.
+  3. `ai_task_families.py` (below).
+- Added `ai_task_families.py` (Step 3 post-pass) + config
+  `provider-dev/config/ai_task_families.yaml`: collapsed 93 per-model
+  Workers AI resources into 9 task-family SELECT resources riding the
+  generic `/ai/run/{model_name}` op. Verified live (text_generation,
+  text_embeddings typed columns; text_to_image contents). Non-selectable
+  resources dropped from 220/1267 (17%) to 126/1183 (10.7%). Remaining
+  phases of the remap plan are in `NON_SELECTABLE_ANALYSIS.md`.
+- Fixed `sanitize_docs.py` to write LF (`newline='\n'`) - on Windows it
+  was rewriting every touched doc page to CRLF (whole-file git churn).
+  Note: the generated provider yamls are CRLF in git (historical,
+  generated on Windows); the python passes' text-mode writes are
+  consistent with that. Docs are LF.
+- Added `octet_stream_requests.py` (Step 3 post-pass) +
+  `octet_stream_docs.py` (Step 4 post-pass) for the 8 write methods with
+  `application/octet-stream` request bodies: naive requestBodyTranslate
+  dropped for those methods only, a `stackql*Body` wrapper schema exposes
+  a single required `value` column, and the raw body is sent verbatim.
+  Callers must use `data__value` for these methods; doc examples are
+  patched accordingly. Verified live via `npm run smoke-test-kv`.
+- Added `bin/smoke-test-kv.cjs` (`npm run smoke-test-kv`): full-cycle KV
+  lifecycle against the live API through a local server - create
+  namespace, REPLACE value via `data__value`, read back and assert
+  round-trip, list keys, delete value, confirm gone, delete namespace.
+  Needs `CLOUDFLARE_ACCOUNT_ID` env + a server started with a token
+  carrying account-level "Workers KV Storage: Edit".
 - Folded 193 singleton non-SELECT resources into sibling parents
   (`fold_singletons.py`).
 - Added `binary_responses.py` post-pass to make 38 binary-download

@@ -310,6 +310,13 @@ The following methods are available for this resource:
     <td></td>
     <td>Delete an unapproved prefix owned by the account.</td>
 </tr>
+<tr>
+    <td><a href="#validate_prefix"><CopyableCode code="validate_prefix" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-prefix_id"><code>prefix_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Triggers a new prefix validation. The checks are run asynchronously and include IRR, RPKI, and prefix ownership.</td>
+</tr>
 </tbody>
 </table>
 
@@ -546,6 +553,28 @@ Delete an unapproved prefix owned by the account.
 DELETE FROM cloudflare.addressing.prefixes
 WHERE prefix_id = '{{ prefix_id }}' --required
 AND account_id = '{{ account_id }}' --required
+;
+```
+</TabItem>
+</Tabs>
+
+
+## Lifecycle Methods
+
+<Tabs
+    defaultValue="validate_prefix"
+    values={[
+        { label: 'validate_prefix', value: 'validate_prefix' }
+    ]}
+>
+<TabItem value="validate_prefix">
+
+Triggers a new prefix validation. The checks are run asynchronously and include IRR, RPKI, and prefix ownership.
+
+```sql
+EXEC cloudflare.addressing.prefixes.validate_prefix 
+@prefix_id='{{ prefix_id }}' --required, 
+@account_id='{{ account_id }}' --required
 ;
 ```
 </TabItem>

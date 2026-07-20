@@ -51,6 +51,11 @@ List tag keys response.
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="key" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -121,7 +126,7 @@ Lists all distinct tag keys used across resources in an account.
 
 ```sql
 SELECT
-*
+key
 FROM cloudflare.resource_tagging.keys
 WHERE account_id = '{{ account_id }}' -- required
 AND cursor = '{{ cursor }}'

@@ -4,84 +4,78 @@ This directory contains the tooling and source artefacts needed to generate the 
 
 The service hierarchy mirrors the Python SDK's `src/cloudflare/resources/` layout (109+ services such as `zones`, `dns`, `workers`, `zero_trust`, `accounts`).
 
+## Quick start - make all
+
+The whole generate -> test -> docs chain is wrapped in a `Makefile`. Run from the `stackql_cloudflare/` directory on Linux, macOS, or WSL (the server lifecycle scripts need a POSIX shell with `pgrep`/`ps`).
+
+One-time setup (Python 3.10+, Node 18+; the Cloudflare Python SDK source must be present in the parent `src/cloudflare/` directory, which it is in this repo):
+
+```bash
+pip install pyyaml
+npm install          # .npmrc configures the JSR registry needed by a transitive dep
+```
+
+Then:
+
+```bash
+make all
+```
+
+`make all` runs the following targets in order, stopping on the first failure:
+
+| Target      | Step | Wraps                                                          | Description                                                                                                             |
+| ----------- | ---- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `specs`     | 1    | `npm run generate-specs -- --clean`                            | Upstream OpenAPI -> `provider-dev/source/*.yaml` (cached download; `make specs-refresh` re-pulls the spec first).       |
+| `mappings`  | 2    | `assign_resource_names --strict`                               | Refresh `all_services.csv`. **Fails if any operation has no existing mapping row** - curate the defaulted rows, re-run. |
+| `provider`  | 3    | `npm run generate-provider`                                    | Generate the provider tree plus all post-gen passes.                                                                    |
+| `meta-test` | 4    | `start-server` -> `test-meta-routes` -> `stop-server`          | Go/no-go gate: walk every SHOW/DESCRIBE meta route. Non-zero exit stops the build. No API token needed.                 |
+| `docs`      | 6    | `npm run generate-docs`                                        | Generate Docusaurus markdown plus the sanitize, octet-stream example, and AI page enhancement post-passes.              |
+
+Live smoke tests are deliberately NOT part of `make all` - they execute against `api.cloudflare.com` and need credentials. Run them separately after `make all` passes:
+
+```bash
+export CLOUDFLARE_API_TOKEN=...     # account-level "Workers KV Storage:Edit"
+export CLOUDFLARE_ACCOUNT_ID=...
+make smoke-test-kv                  # wraps server start -> bin/smoke-test-kv.cjs -> server stop
+```
+
+Step 5 (manual live UAT + smoke tests) and step 7 (publish PRs) remain human-driven so the gates can actually do their job. `make help` lists every target; each can be run individually (`make provider`, `make meta-test`, ...).
+
 ## Table of contents
 
-- [Layout](#layout) - directory + file tour of the generator + outputs.
-- [Prerequisites](#prerequisites) - Python, Node, SDK checkout.
-- [End-to-end - path to production](#end-to-end---path-to-production) - the 7-step pipeline (table below).
-- [One-liner](#one-liner) - codegen-only chain for steps 1-3.
+- [Quick start - make all](#quick-start---make-all)
+- [Pipeline steps](#pipeline-steps)
+  - [Step 1 - Generate OpenAPI specs](#step-1---generate_openapi_specs) (`make specs`)
+  - [Step 2 - Assign resource names](#step-2---assign_resource_names) (`make mappings`)
+  - [Step 3 - Generate provider](#step-3---generate_provider) (`make provider`)
+  - [Step 4 - Meta route test](#step-4---meta_route_test) (`make meta-test`)
+  - [Step 5 - Live smoke / UAT](#step-5---live_smoke_uat) (manual + `make smoke-test-kv`)
+  - [Step 6 - Generate web docs](#step-6---generate_webdocs) (`make docs`)
+  - [Step 7a - Publish provider](#step-7a---publish_provider-stackql-provider-registry) (manual PR flow)
+  - [Step 7b - Publish docs](#step-7b---publish_docs-netlify) (manual PR flow)
 - [Analytics resources](#analytics-resources) - notes on the 10 GraphQL-backed analytics resources.
 - [Updating to a new upstream spec](#updating-to-a-new-upstream-spec) - what to do when Cloudflare bumps the SDK.
 - [Design notes](#design-notes) - the "why" behind the non-obvious decisions.
 - [Addendum - upstream sync + regeneration](#addendum---upstream-sync--regeneration) - syncing this fork from `cloudflare/cloudflare-python`, plus the `gh` workflow that sidesteps the fork-network PR enumeration.
 
-## Layout
+## Pipeline steps
 
-```
-stackql_cloudflare/
-├── stackql_cloudflare_provider/      # Python package - spec generation
-│   ├── generate_specs.py             # Step 1: pull upstream OpenAPI, normalize, split per service
-│   ├── assign_resource_names.py     # Step 2: write/update all_services.csv
-│   ├── binary_responses.py           # Step 3 post-pass: wrap non-JSON responses (PDFs, images, raw text) with a `contents` column transform
-│   ├── sanitize_docs.py              # Step 4 post-pass: scrub MDX-hostile chars + rewrite Cloudflare-relative links
-│   ├── sdk_index.py                  # Walks src/cloudflare/resources/ -> (verb, path) -> service map
-│   ├── split.py                      # Service splitter + path -> service resolver
-│   ├── fanout.py                     # Explode dual-scope /{accounts_or_zones}/... paths
-│   ├── rename.py                     # Schema -> camelCase + path params -> snake_case
-│   ├── canonical_params.py           # Standardise common path-param definitions (account_id, zone_id, ...)
-│   ├── normalize.py                  # Schema normalizer (kills allOf/oneOf/anyOf/additionalProperties)
-│   └── fold_singletons.py            # One-shot CSV mutation: fold singleton non-SELECT resources into sibling parents as exec methods
-├── bin/
-│   ├── generate-provider.mjs         # Step 3: provider-utils.generate wrapper
-│   ├── generate-docs.mjs             # Step 4: provider-utils.generateDocs wrapper
-│   ├── start-server.sh               # Starts a local stackql server against the generated registry
-│   ├── stop-server.sh
-│   ├── server-status.sh
-│   └── test-meta-routes.cjs          # Smoke-test all SHOW/DESCRIBE routes
-├── provider-dev/
-│   ├── downloads/                    # Cached upstream OpenAPI spec (~17 MB)
-│   ├── source/                       # Per-service yamls (step 1 output)
-│   ├── config/all_services.csv       # Resource/method/verb assignments (step 2 output)
-│   ├── docgen/provider-data/         # headerContent1.txt + headerContent2.txt for the website
-│   └── openapi/src/cloudflare/v00.00.00000/  # Final provider (step 3 output)
-└── website/docs/                     # Docusaurus markdown (step 4 output)
-```
-
-## Prerequisites
-
-- Python 3.10+
-  ```bash
-  pip install pyyaml
-  ```
-- Node.js 18+
-  ```bash
-  npm install
-  ```
-  (The `.npmrc` configures the JSR registry needed by a transitive dep.)
-- The Cloudflare Python SDK source must be present in the parent `src/cloudflare/` directory of this repository (it already is in this repo).
-
-## End-to-end - path to production
-
-Run from the directory `stackql_cloudflare/`. The pipeline is seven steps: four code-generation steps (1, 2, 3, 6), two test/UAT gates (4, 5), and a final publish stage with two independent sub-targets (7a provider registry, 7b docs microsite). Each step is idempotent and can be re-run as the upstream spec evolves.
-
-| #  | Summary                                                            | Description                                                                                                                                                |
-| -- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1  | [OpenAPI gen](#step-1---generate_openapi_specs)                    | Download upstream Cloudflare OpenAPI, normalize polymorphism, split into per-service yamls under `provider-dev/source/`.                                   |
-| 2  | [Route assignment](#step-2---assign_resource_names)                | Walk the source yamls and write/refresh `provider-dev/config/all_services.csv` mapping every operation to a stackql resource / method / verb / object key. |
-| 3  | [Provider gen](#step-3---generate_provider)                        | Run `@stackql/provider-utils` to emit the final provider tree (`provider.yaml` + per-service yamls with `x-stackQL-resources` blocks).                     |
-| 4  | [Meta route test](#step-4---meta_route_test)                       | Start local stackql server and walk every `SHOW METHODS / DESCRIBE` route - catches spec issues that only surface at SQL plan time. No API token needed.   |
-| 5  | [Live smoke / UAT](#step-5---live_smoke_uat)                       | Open `stackql shell` against the local registry, export `CLOUDFLARE_API_TOKEN`, run the canned UAT queries to confirm real API calls succeed.              |
-| 6  | [Doc gen + pre-flight](#step-6---generate_webdocs)                 | Generate Docusaurus markdown under `website/docs/`, then `yarn build` + `yarn serve` from `website/` to confirm the site compiles and pages look right.    |
-| 7a | [Publish provider](#step-7a---publish_provider-stackql-provider-registry) | Copy the generated provider tree to `stackql-provider-registry/providers/src/cloudflare/`, PR to `dev`, smoke-test against `registry-dev.stackql.app`, then PR `dev` -> `main` to promote to the prod registry. |
-| 7b | [Publish docs](#step-7b---publish_docs-netlify)                    | PR to `main` in this repo - Netlify builds a preview deploy on the PR; merging publishes to `https://cloudflare-provider.stackql.io/`.                     |
+The pipeline is seven steps: four code-generation steps (1, 2, 3, 6), two test/UAT gates (4, 5), and a final publish stage with two independent sub-targets (7a provider registry, 7b docs microsite). Each step is idempotent and can be re-run as the upstream spec evolves. Steps 1-4 and 6 are automated end-to-end by [`make all`](#quick-start---make-all).
 
 ### Step 1 - GENERATE_OPENAPI_SPECS
 
+Download the upstream Cloudflare OpenAPI spec, normalize polymorphism, and split it into per-service yamls under `provider-dev/source/`.
+
 ```bash
-npm run generate-specs -- --clean
+make specs             # or: make specs-refresh (re-downloads the upstream spec first)
 ```
 
-(equivalent to `python -m stackql_cloudflare_provider.generate_specs --clean`)
+Underlying command:
+
+```bash
+npm run generate-specs -- --clean
+# = python -m stackql_cloudflare_provider.generate_specs --clean
+```
 
 This:
 
@@ -102,11 +96,19 @@ Flags:
 
 ### Step 2 - ASSIGN_RESOURCE_NAMES
 
+Walk the source yamls and write/refresh `provider-dev/config/all_services.csv`, mapping every operation to a stackql resource / method / verb / object key.
+
 ```bash
-npm run assign-resource-names
+make mappings          # runs with --strict: fails on any unmapped operation
 ```
 
-(equivalent to `python -m stackql_cloudflare_provider.assign_resource_names`)
+Underlying command:
+
+```bash
+npm run assign-resource-names
+# = python -m stackql_cloudflare_provider.assign_resource_names
+# make adds --strict (see below)
+```
 
 Walks every `provider-dev/source/*.yaml` and ensures every operation has a row in `provider-dev/config/all_services.csv` with sensible default StackQL resource/method/verb/object_key values.
 
@@ -124,6 +126,8 @@ On subsequent runs (e.g. after refreshing the upstream spec):
 - The final summary line reports the counts: `Wrote N rows to ... (new=A preserved=P reset=U dropped=D)`.
 
 Use `--reset` to discard all user edits and re-default the entire CSV from scratch (rare; useful only when the defaulter logic itself has changed and you want to re-baseline).
+
+Use `--strict` (what `make mappings` runs) to turn "new op found" into a hard failure: the command exits non-zero if any operation had no existing mapping row. The default rows ARE still written, so the workflow is: review the new rows in the CSV, tighten resource/method/verb where the defaults are wrong, and re-run.
 
 CSV columns:
 
@@ -164,8 +168,17 @@ Flags:
 
 ### Step 3 - GENERATE_PROVIDER
 
+Run `@stackql/provider-utils` to emit the final provider tree (`provider.yaml` + per-service yamls with `x-stackQL-resources` blocks), then apply all post-gen passes.
+
+```bash
+make provider
+```
+
+Underlying command:
+
 ```bash
 npm run generate-provider
+# = node ./bin/generate-provider.mjs (plus the post-passes listed below)
 ```
 
 Wraps `@stackql/provider-utils` `providerdev.generate`. Reads `provider-dev/source/` plus the CSV mapping and writes the StackQL provider tree to:
@@ -187,11 +200,25 @@ Provider config injected:
 
 When multiple HTTP operations are exposed under the same SQL verb (e.g. `SELECT` can dispatch to either `get` on `/zones/{zone_id}` or `list` on `/zones`), `provider-utils.generate` sorts each `sqlVerbs.<verb>` list by required path-param count descending so the most-specific method is picked first. That's sufficient for the Cloudflare API - no extra sort step is needed.
 
+`generate-provider` then runs five post-passes automatically (each is idempotent and can also be run standalone via `python -m stackql_cloudflare_provider.<module>`):
+
+1. `binary_responses` - wraps non-JSON success responses (PDFs, images, raw text, octet-stream) into a `{contents: string}` shape with a `response.transform`, so binary-download endpoints are SELECT-able as a `contents` column.
+2. `request_body_transforms` - attaches a `request.transform` to write methods whose JSON body has array/object properties (the naive translator would string-wrap them on the wire).
+3. `octet_stream_requests` - rewrites the handful of write methods whose request body is `application/octet-stream` (KV value PUT, Workers AI binary-input models, DLP dataset uploads). For these methods ONLY, the naive `requestBodyTranslate` is dropped; an injected `stackql*Body` wrapper schema exposes a single required `value` column via `request.schema_override`, and a `request.transform` sends it verbatim as the raw body. Callers MUST use the `data__` prefix for these methods, e.g. `REPLACE cloudflare.kv.values SET data__value = '...' WHERE ...`.
+4. `ai_task_families` - collapses the ~93 per-model Workers AI run resources into 9 task-family SELECT resources (`ai.text_generation`, `ai.text_embeddings`, `ai.text_to_image`, ...) riding the generic `POST /ai/run/{model_name}` operation with `model_name` as the discriminator. WHERE params bind to body properties with unprefixed names (`WHERE model_name = '@cf/meta/llama-3.2-1b-instruct' AND prompt = '...'`), and each SELECT executes (and bills) an inference call. Config: `provider-dev/config/ai_task_families.yaml`. The generic `ai.run` resource remains as the select-only escape hatch for unlisted models, and also carries the 5 octet-stream-input models (whisper x2, resnet x2, detr) as exec methods with the `data__value` raw-body path (folded via `all_services.csv` - binary input cannot be a SELECT WHERE param).
+5. `select_response_fixes` - fixes response shapes for resources whose SELECT would return no columns (untyped `result.items`, scalar arrays, raw text bodies, dynamic objects): typed item schemas for the ai model catalog, scalar-array-to-rows transforms, and `contents` wraps. Config: `provider-dev/config/select_response_fixes.yaml`.
+
+(A final post-pass, `graphql_merge`, shims the hand-authored GraphQL operations from `provider-dev/source-graphql/` into the matching service yamls.)
+
 ### Step 4 - META_ROUTE_TEST
 
-Start a local stackql server backed by the freshly-built registry, then walk every documented service / resource through `SHOW METHODS / DESCRIBE`. Surfaces spec issues that only show up at SQL plan time.
+Go/no-go gate. Start a local stackql server backed by the freshly-built registry, then walk every documented service / resource through `SHOW METHODS / DESCRIBE`. Surfaces spec issues that only show up at SQL plan time.
 
-Run from Linux, macOS, or WSL (the bash scripts assume `pgrep` / `ps` and a POSIX shell):
+```bash
+make meta-test         # server start -> test -> server stop, exit status preserved
+```
+
+Underlying commands (run from Linux, macOS, or WSL - the bash scripts assume `pgrep` / `ps` and a POSIX shell):
 
 ```bash
 npm run start-server                # Starts stackql on tcp/5444 with this registry mounted
@@ -204,7 +231,9 @@ Step 4 does NOT need a Cloudflare API token - meta routes are answered from the 
 
 ### Step 5 - LIVE_SMOKE_UAT
 
-Manual. Confirms the generated provider actually executes against `api.cloudflare.com`. Requires a Cloudflare API token scoped to whatever endpoints you want to hit (the four canned queries below need `Account Settings:Read`, `Zone:Read`, `Pages:Read`, `Workers Scripts:Read`).
+Confirms the generated provider actually executes against `api.cloudflare.com`. Deliberately NOT part of `make all` - it needs live credentials. Two parts: the manual UAT queries below, and the automated full-cycle KV smoke test (`make smoke-test-kv`).
+
+The manual part requires a Cloudflare API token scoped to whatever endpoints you want to hit (the four canned queries below need `Account Settings:Read`, `Zone:Read`, `Pages:Read`, `Workers Scripts:Read`).
 
 ```bash
 export CLOUDFLARE_API_TOKEN=...
@@ -248,10 +277,39 @@ SELECT id, name FROM cloudflare.workers.workers WHERE account_id = '<your-accoun
 
 If anything errors or returns an unexpected shape, fix at the source (steps 1-3) and re-run before moving on.
 
+#### Automated full-cycle KV smoke test
+
+In addition to the manual UAT queries, `smoke-test-kv.cjs` exercises a complete create/write/read/delete lifecycle against the live API - including the `application/octet-stream` request-body path (`data__value`) on `cloudflare.kv.values`:
+
+```bash
+export CLOUDFLARE_API_TOKEN=...     # Account-level "Workers KV Storage:Edit"
+export CLOUDFLARE_ACCOUNT_ID=...    # Or pass --account
+make smoke-test-kv                  # Wraps server start -> test -> server stop
+```
+
+Or with the server lifecycle managed by hand:
+
+```bash
+npm run start-server
+npm run smoke-test-kv
+npm run stop-server
+```
+
+The token needs account-level `Workers KV Storage:Edit`. The test creates a scratch namespace (`stackql-smoke-<runid>`), REPLACEs a value via `data__value`, reads it back and asserts the round-trip, lists keys, deletes the value, confirms it is gone, and deletes the namespace (cleanup runs even on failure; `--keep` skips it). Non-zero exit on any failure.
+
 ### Step 6 - GENERATE_WEBDOCS
+
+Generate Docusaurus markdown under `website/docs/` plus three post-passes (MDX sanitize, octet-stream `data__` examples, Workers AI page enhancement), then build and eyeball the site locally before raising the docs PR.
+
+```bash
+make docs
+```
+
+Underlying command:
 
 ```bash
 npm run generate-docs
+# = node ./bin/generate-docs.mjs (plus the post-passes listed below)
 ```
 
 Wraps `@stackql/provider-utils` `docgen.generateDocs` and emits Docusaurus markdown under `website/docs/`. Header content for the provider landing page comes from `provider-dev/docgen/provider-data/headerContent{1,2}.txt`.
@@ -271,6 +329,16 @@ Re-run the sanitiser by itself any time you edit the generated markdown by hand:
 ```bash
 python -m stackql_cloudflare_provider.sanitize_docs --verbose
 ```
+
+A second post-step then runs automatically:
+
+```bash
+python -m stackql_cloudflare_provider.octet_stream_docs
+```
+
+This finds every resource method carrying `request.mediaType: application/octet-stream` in the generated provider yamls (attached by the `octet_stream_requests` post-pass in step 3, so the two can't drift) and rewrites that method's SQL example on the matching docs page to show the body column `data__`-prefixed (`SET data__value = '{{ value }}'`, or `data__value` first in the INSERT column list). Naive body translation is off for those methods, so the unprefixed form docgen emits would not execute. Only the matched method's sql block is touched. Idempotent.
+
+A third post-step, `ai_docs_enhance`, then rewrites the Workers AI task-family pages plus the generic `run` page: a `Supported models` admonition listing every valid `model_name` as copyable code (grouped by family on the run page), and runnable SELECT examples with the family's typed result columns and the model input WHERE params (prompt, text, audio, ...) that docgen cannot derive from `request.schema_override`. Driven by `provider-dev/config/ai_task_families.yaml`. Idempotent.
 
 #### Pre-flight - build and serve the site locally
 
@@ -341,31 +409,19 @@ The docs microsite at `https://cloudflare-provider.stackql.io/` is built by Netl
 
 Steps 7a and 7b are independent and can be raised in either order - the provider works without the docs, and the docs work against either the dev or prod registry.
 
-## One-liner
-
-The first three steps (pure codegen, no I/O against external systems) can be chained:
-
-```bash
-npm run generate-specs -- --clean \
-  && npm run assign-resource-names \
-  && npm run generate-provider
-```
-
-Steps 4-7 should be run individually so the gates (meta route test, live UAT, docs pre-flight, PR reviews) can actually do their job.
-
 ## Analytics resources
 
 The provider exposes a curated set of 10 analytics resources covering HTTP request rollups, DNS query analytics, firewall events, Workers invocations, R2 / D1 / CDN-network metrics, and more. They require a broader API token scope than the typical REST endpoints (`Account -> Analytics -> Read`) and take a mandatory `since` / `until` time window. Example queries are in [examples/analytics/](examples/analytics/); maintainer-facing detail on the underlying dispatch is in [GRAPHQL.md](GRAPHQL.md).
 
 ## Updating to a new upstream spec
 
-When the Cloudflare Python SDK is bumped, walk the full 7-step path-to-production above with two adjustments at the front end:
+When the Cloudflare Python SDK is bumped, walk the full 7-step [pipeline](#pipeline-steps) above with two adjustments at the front end:
 
 1. `git pull` the new SDK into `src/cloudflare/` (the parent repo).
-2. Run step 1 with `--refresh` to re-download the upstream OpenAPI: `npm run generate-specs -- --refresh --clean`.
-3. Run step 2: `npm run assign-resource-names` - preserves your manual CSV edits and logs any newly-discovered operations so you can spot-check them.
-4. Review the diff in `provider-dev/source/` and `provider-dev/config/all_services.csv` before proceeding.
-5. Continue with steps 3-7 (provider gen -> meta route test -> live UAT -> doc gen + pre-flight -> publish provider + docs).
+2. Run step 1 with `--refresh` to re-download the upstream OpenAPI: `make specs-refresh` (or `npm run generate-specs -- --refresh --clean`).
+3. Run step 2: `make mappings` - preserves your manual CSV edits and fails on any newly-discovered operation so you can curate the auto-defaulted rows before proceeding.
+4. Review the diff in `provider-dev/source/` and `provider-dev/config/all_services.csv`, then re-run `make all` (skips nothing - specs are regenerated from the now-refreshed cache and the strict gate re-checks the CSV).
+5. Continue with steps 5-7 (live UAT + smoke tests -> docs pre-flight -> publish provider + docs).
 
 ## Design notes
 
@@ -449,7 +505,7 @@ git merge main
 # Resolve any conflicts - typically only .stats.yml and src/cloudflare/ touch points; stackql_cloudflare/ should be conflict-free unless you've hand-edited generated artefacts.
 ```
 
-Then run steps 1-6 of the [path-to-production pipeline](#end-to-end---path-to-production) on the feature branch. Step 2 (`assign-resource-names`) logs every newly-discovered upstream operation; skim that log and tighten the CSV defaults if any new row landed on the wrong stackql resource / method / verb. See [Updating to a new upstream spec](#updating-to-a-new-upstream-spec) for the short form.
+Then run steps 1-6 of the [pipeline](#pipeline-steps) on the feature branch (`make all` covers steps 1-4 and 6). Step 2 (`make mappings`) fails on every newly-discovered upstream operation; curate the auto-defaulted CSV rows if any landed on the wrong stackql resource / method / verb, then re-run. See [Updating to a new upstream spec](#updating-to-a-new-upstream-spec) for the short form.
 
 ### Raising the PR back to `stackql-provider`
 
@@ -477,4 +533,4 @@ git config alias.pr-url '!f() { echo "https://github.com/stackql-registry/stackq
 git pr-url   # prints the URL to click
 ```
 
-Once the upstream-sync PR merges into `stackql-provider`, continue with step 7 of the path-to-production pipeline (publish provider + docs).
+Once the upstream-sync PR merges into `stackql-provider`, continue with step 7 of the [pipeline](#pipeline-steps) (publish provider + docs).

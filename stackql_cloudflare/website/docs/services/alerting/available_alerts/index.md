@@ -51,6 +51,11 @@ Get Alert Types response
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -116,7 +121,7 @@ Gets a list of all alert types for which an account is eligible.
 
 ```sql
 SELECT
-*
+contents
 FROM cloudflare.alerting.available_alerts
 WHERE account_id = '{{ account_id }}' -- required
 ;

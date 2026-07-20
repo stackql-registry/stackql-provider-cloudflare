@@ -423,11 +423,25 @@ The following methods are available for this resource:
     <td>Returns information for each email that matches the search parameter(s).</td>
 </tr>
 <tr>
+    <td><a href="#bulk_move"><CopyableCode code="bulk_move" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-destination"><code>destination</code></a></td>
+    <td></td>
+    <td>Moves multiple messages to a specified mailbox folder (Inbox, JunkEmail, DeletedItems, RecoverableItemsDeletions, or RecoverableItemsPurges). Requires active integration.</td>
+</tr>
+<tr>
     <td><a href="#release"><CopyableCode code="release" /></a></td>
     <td><CopyableCode code="exec" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
     <td>Releases one or more quarantined messages, delivering them to the intended recipients. Use when a message was incorrectly quarantined. Returns delivery status for each recipient.</td>
+</tr>
+<tr>
+    <td><a href="#move_message"><CopyableCode code="move_message" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-investigate_id"><code>investigate_id</code></a>, <a href="#parameter-destination"><code>destination</code></a></td>
+    <td></td>
+    <td>Moves a single message to a specified mailbox folder (Inbox, JunkEmail, DeletedItems, RecoverableItemsDeletions, or RecoverableItemsPurges). Requires active integration.</td>
 </tr>
 <tr>
     <td><a href="#reclassify"><CopyableCode code="reclassify" /></a></td>
@@ -675,12 +689,30 @@ AND page = '{{ page }}'
 ## Lifecycle Methods
 
 <Tabs
-    defaultValue="release"
+    defaultValue="bulk_move"
     values={[
+        { label: 'bulk_move', value: 'bulk_move' },
         { label: 'release', value: 'release' },
+        { label: 'move_message', value: 'move_message' },
         { label: 'reclassify', value: 'reclassify' }
     ]}
 >
+<TabItem value="bulk_move">
+
+Moves multiple messages to a specified mailbox folder (Inbox, JunkEmail, DeletedItems, RecoverableItemsDeletions, or RecoverableItemsPurges). Requires active integration.
+
+```sql
+EXEC cloudflare.email_security.investigate.bulk_move 
+@account_id='{{ account_id }}' --required 
+@@json=
+'{
+"destination": "{{ destination }}", 
+"ids": "{{ ids }}", 
+"postfix_ids": "{{ postfix_ids }}"
+}'
+;
+```
+</TabItem>
 <TabItem value="release">
 
 Releases one or more quarantined messages, delivering them to the intended recipients. Use when a message was incorrectly quarantined. Returns delivery status for each recipient.
@@ -688,6 +720,21 @@ Releases one or more quarantined messages, delivering them to the intended recip
 ```sql
 EXEC cloudflare.email_security.investigate.release 
 @account_id='{{ account_id }}' --required
+;
+```
+</TabItem>
+<TabItem value="move_message">
+
+Moves a single message to a specified mailbox folder (Inbox, JunkEmail, DeletedItems, RecoverableItemsDeletions, or RecoverableItemsPurges). Requires active integration.
+
+```sql
+EXEC cloudflare.email_security.investigate.move_message 
+@account_id='{{ account_id }}' --required, 
+@investigate_id='{{ investigate_id }}' --required 
+@@json=
+'{
+"destination": "{{ destination }}"
+}'
 ;
 ```
 </TabItem>

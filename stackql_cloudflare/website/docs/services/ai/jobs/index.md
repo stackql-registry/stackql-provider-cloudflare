@@ -162,6 +162,13 @@ The following methods are available for this resource:
     <td><a href="#parameter-page"><code>page</code></a>, <a href="#parameter-per_page"><code>per_page</code></a></td>
     <td></td>
 </tr>
+<tr>
+    <td><a href="#sync"><CopyableCode code="sync" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-id"><code>id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 
@@ -251,6 +258,28 @@ WHERE id = '{{ id }}' -- required
 AND account_id = '{{ account_id }}' -- required
 AND page = '{{ page }}'
 AND per_page = '{{ per_page }}'
+;
+```
+</TabItem>
+</Tabs>
+
+
+## Lifecycle Methods
+
+<Tabs
+    defaultValue="sync"
+    values={[
+        { label: 'sync', value: 'sync' }
+    ]}
+>
+<TabItem value="sync">
+
+Returns the autorag sync status
+
+```sql
+EXEC cloudflare.ai.jobs.sync 
+@id='{{ id }}' --required, 
+@account_id='{{ account_id }}' --required
 ;
 ```
 </TabItem>

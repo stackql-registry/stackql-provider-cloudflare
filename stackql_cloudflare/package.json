@@ -11,7 +11,8 @@
     "start-server": "bash ./bin/start-server.sh",
     "stop-server": "bash ./bin/stop-server.sh",
     "server-status": "bash ./bin/server-status.sh",
-    "test-meta-routes": "node ./bin/test-meta-routes.cjs cloudflare"
+    "test-meta-routes": "node ./bin/test-meta-routes.cjs cloudflare",
+    "smoke-test-kv": "node ./bin/smoke-test-kv.cjs"
   },
   "dependencies": {
     "@stackql/pgwire-lite": "^1.0.1",

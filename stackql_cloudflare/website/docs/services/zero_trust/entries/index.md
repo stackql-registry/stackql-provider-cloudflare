@@ -125,12 +125,14 @@ This is used for multi-column EDMv2 datasets. The EDMv2 format can only be creat
 
 ```sql
 INSERT INTO cloudflare.zero_trust.entries (
+data__value,
 account_id,
 dataset_id,
 version,
 entry_id
 )
 SELECT 
+'{{ value }}' /* required */,
 '{{ account_id }}',
 '{{ dataset_id }}',
 '{{ version }}',

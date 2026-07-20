@@ -52,32 +52,7 @@ Returns a list of categories.
 </thead>
 <tbody>
 <tr>
-    <td><CopyableCode code="name" /></td>
-    <td><code>string</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="killChain" /></td>
-    <td><code>number</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="mitreAttack" /></td>
-    <td><code>array</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="mitreCapec" /></td>
-    <td><code>array</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="shortname" /></td>
-    <td><code>string</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="uuid" /></td>
+    <td><CopyableCode code="contents" /></td>
     <td><code>string</code></td>
     <td></td>
 </tr>
@@ -151,12 +126,7 @@ Returns a list of categories.
 
 ```sql
 SELECT
-name,
-killChain,
-mitreAttack,
-mitreCapec,
-shortname,
-uuid
+contents
 FROM cloudflare.cloudforce_one.events_categories
 WHERE account_id = '{{ account_id }}' -- required
 AND datasetIds = '{{ datasetIds }}'

@@ -32,8 +32,34 @@ Creates, updates, deletes, gets or lists a <code>ssl</code> resource.
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="create_analyze"
+    values={[
+        { label: 'create_analyze', value: 'create_analyze' }
+    ]}
+>
+<TabItem value="create_analyze">
 
+Analyze Certificate response
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -52,7 +78,7 @@ The following methods are available for this resource:
 <tbody>
 <tr>
     <td><a href="#create_analyze"><CopyableCode code="create_analyze" /></a></td>
-    <td><CopyableCode code="exec" /></td>
+    <td><CopyableCode code="select" /></td>
     <td><a href="#parameter-zone_id"><code>zone_id</code></a></td>
     <td></td>
     <td>Returns the set of hostnames, the signature algorithm, and the expiration date of the certificate.</td>
@@ -81,7 +107,7 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tbody>
 </table>
 
-## Lifecycle Methods
+## `SELECT` examples
 
 <Tabs
     defaultValue="create_analyze"
@@ -94,13 +120,10 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 Returns the set of hostnames, the signature algorithm, and the expiration date of the certificate.
 
 ```sql
-EXEC cloudflare.ssl.ssl.create_analyze 
-@zone_id='{{ zone_id }}' --required 
-@@json=
-'{
-"bundle_method": "{{ bundle_method }}", 
-"certificate": "{{ certificate }}"
-}'
+SELECT
+contents
+FROM cloudflare.ssl.ssl
+WHERE zone_id = '{{ zone_id }}' -- required
 ;
 ```
 </TabItem>

@@ -181,7 +181,7 @@ Write a value identified by a key. Use URL-encoding to use special characters (f
 ```sql
 REPLACE cloudflare.kv.values
 SET 
--- No updatable properties
+data__value = '{{ value }}'
 WHERE 
 key_name = '{{ key_name }}' --required
 AND namespace_id = '{{ namespace_id }}' --required

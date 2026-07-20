@@ -114,11 +114,13 @@ This is used for single-column EDMv1 and Custom Word Lists. The EDM format can o
 
 ```sql
 INSERT INTO cloudflare.zero_trust.upload (
+data__value,
 account_id,
 dataset_id,
 version
 )
 SELECT 
+'{{ value }}' /* required */,
 '{{ account_id }}',
 '{{ dataset_id }}',
 '{{ version }}'

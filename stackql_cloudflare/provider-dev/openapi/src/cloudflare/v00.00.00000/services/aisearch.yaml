@@ -15855,9 +15855,9 @@ components:
 
                 '
       sqlVerbs:
-        select: []
-        insert:
+        select:
         - $ref: '#/components/x-stackQL-resources/instances_search/methods/search_by_account'
+        insert: []
         update: []
         delete: []
         replace: []
@@ -16389,9 +16389,9 @@ components:
 
                 '
       sqlVerbs:
-        select: []
-        insert:
+        select:
         - $ref: '#/components/x-stackQL-resources/namespaces_instance_search/methods/search_by_account'
+        insert: []
         update: []
         delete: []
         replace: []
@@ -16446,9 +16446,9 @@ components:
 
                 '
       sqlVerbs:
-        select: []
-        insert:
+        select:
         - $ref: '#/components/x-stackQL-resources/namespaces_search/methods/search'
+        insert: []
         update: []
         delete: []
         replace: []

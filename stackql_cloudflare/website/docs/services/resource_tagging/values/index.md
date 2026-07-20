@@ -51,6 +51,11 @@ List tag values response.
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="value" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -131,7 +136,7 @@ Lists all distinct values for a given tag key, optionally filtered by resource t
 
 ```sql
 SELECT
-*
+value
 FROM cloudflare.resource_tagging.values
 WHERE account_id = '{{ account_id }}' -- required
 AND tag_key = '{{ tag_key }}' -- required

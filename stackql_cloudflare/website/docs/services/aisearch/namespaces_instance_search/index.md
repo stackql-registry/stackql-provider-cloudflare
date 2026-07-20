@@ -32,8 +32,39 @@ Creates, updates, deletes, gets or lists a <code>namespaces_instance_search</cod
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="search_by_account"
+    values={[
+        { label: 'search_by_account', value: 'search_by_account' }
+    ]}
+>
+<TabItem value="search_by_account">
 
+Returns the search results.
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="result" /></td>
+    <td><code>object</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="success" /></td>
+    <td><code>boolean</code></td>
+    <td></td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -52,7 +83,7 @@ The following methods are available for this resource:
 <tbody>
 <tr>
     <td><a href="#search_by_account"><CopyableCode code="search_by_account" /></a></td>
-    <td><CopyableCode code="insert" /></td>
+    <td><CopyableCode code="select" /></td>
     <td><a href="#parameter-id"><code>id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-name"><code>name</code></a></td>
     <td></td>
     <td>Executes a semantic search query against an AI Search instance to find relevant indexed content.</td>
@@ -91,13 +122,12 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tbody>
 </table>
 
-## `INSERT` examples
+## `SELECT` examples
 
 <Tabs
     defaultValue="search_by_account"
     values={[
-        { label: 'search_by_account', value: 'search_by_account' },
-        { label: 'Manifest', value: 'manifest' }
+        { label: 'search_by_account', value: 'search_by_account' }
     ]}
 >
 <TabItem value="search_by_account">
@@ -105,75 +135,14 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 Executes a semantic search query against an AI Search instance to find relevant indexed content.
 
 ```sql
-INSERT INTO cloudflare.aisearch.namespaces_instance_search (
-ai_search_options,
-messages,
-query,
-id,
-account_id,
-name
-)
-SELECT 
-'{{ ai_search_options }}',
-'{{ messages }}',
-'{{ query }}',
-'{{ id }}',
-'{{ account_id }}',
-'{{ name }}'
-RETURNING
+SELECT
 result,
 success
+FROM cloudflare.aisearch.namespaces_instance_search
+WHERE id = '{{ id }}' -- required
+AND account_id = '{{ account_id }}' -- required
+AND name = '{{ name }}' -- required
 ;
 ```
-</TabItem>
-<TabItem value="manifest">
-
-<CodeBlock language="yaml">{`# Description fields are for documentation purposes
-- name: namespaces_instance_search
-  props:
-    - name: id
-      value: "{{ id }}"
-      description: Required parameter for the namespaces_instance_search resource.
-    - name: account_id
-      value: "{{ account_id }}"
-      description: Required parameter for the namespaces_instance_search resource.
-    - name: name
-      value: "{{ name }}"
-      description: Required parameter for the namespaces_instance_search resource.
-    - name: ai_search_options
-      value:
-        cache:
-          cache_threshold: "{{ cache_threshold }}"
-          enabled: {{ enabled }}
-        query_rewrite:
-          enabled: {{ enabled }}
-          model: "{{ model }}"
-          rewrite_prompt: "{{ rewrite_prompt }}"
-        reranking:
-          enabled: {{ enabled }}
-          match_threshold: {{ match_threshold }}
-          model: "{{ model }}"
-        retrieval:
-          boost_by:
-            - direction: "{{ direction }}"
-              field: "{{ field }}"
-          context_expansion: {{ context_expansion }}
-          filters: "{{ filters }}"
-          fusion_method: "{{ fusion_method }}"
-          keyword_match_mode: "{{ keyword_match_mode }}"
-          match_threshold: {{ match_threshold }}
-          max_num_results: {{ max_num_results }}
-          retrieval_type: "{{ retrieval_type }}"
-          return_on_failure: {{ return_on_failure }}
-    - name: messages
-      value:
-        - content: "{{ content }}"
-          role: "{{ role }}"
-    - name: query
-      value: "{{ query }}"
-      description: |
-        A simple text query string. Alternative to 'messages' — provide either this or 'messages', not both.
-`}</CodeBlock>
-
 </TabItem>
 </Tabs>

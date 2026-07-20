@@ -49,6 +49,51 @@ The following fields are returned by `SELECT` queries:
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="id" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="name" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="gateway_id" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="account_tag" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="created_at" /></td>
+    <td><code>string (date-time)</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="deployment" /></td>
+    <td><code>object</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="elements" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="modified_at" /></td>
+    <td><code>string (date-time)</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="version" /></td>
+    <td><code>object</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -145,7 +190,15 @@ List all AI Gateway Dynamic Routes.
 
 ```sql
 SELECT
-*
+id,
+name,
+gateway_id,
+account_tag,
+created_at,
+deployment,
+elements,
+modified_at,
+version
 FROM cloudflare.ai_gateway.dynamic_routing
 WHERE account_id = '{{ account_id }}' -- required
 AND gateway_id = '{{ gateway_id }}' -- required

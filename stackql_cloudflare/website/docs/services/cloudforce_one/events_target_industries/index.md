@@ -51,6 +51,11 @@ Returns a list of target industries.
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -121,7 +126,7 @@ Returns a list of target industries.
 
 ```sql
 SELECT
-*
+contents
 FROM cloudflare.cloudforce_one.events_target_industries
 WHERE account_id = '{{ account_id }}' -- required
 AND datasetIds = '{{ datasetIds }}'

@@ -18,19 +18,17 @@ addressing service documentation.
 
 :::info[Service Summary]
 
-total resources: __15__  
+total resources: __11__  
 
 :::
 
 ## Resources
 <div class="row">
 <div class="providerDocColumn">
-<a href="/services/addressing/accounts/">accounts</a><br />
 <a href="/services/addressing/address_maps/">address_maps</a><br />
 <a href="/services/addressing/advertisement_status/">advertisement_status</a><br />
 <a href="/services/addressing/bgp_prefixes/">bgp_prefixes</a><br />
 <a href="/services/addressing/delegations/">delegations</a><br />
-<a href="/services/addressing/ips/">ips</a><br />
 <a href="/services/addressing/leases/">leases</a><br />
 <a href="/services/addressing/loa_documents/">loa_documents</a>
 </div>
@@ -39,8 +37,6 @@ total resources: __15__
 <a href="/services/addressing/regional_hostnames/">regional_hostnames</a><br />
 <a href="/services/addressing/regions/">regions</a><br />
 <a href="/services/addressing/service_bindings/">service_bindings</a><br />
-<a href="/services/addressing/services/">services</a><br />
-<a href="/services/addressing/validate/">validate</a><br />
-<a href="/services/addressing/zones/">zones</a>
+<a href="/services/addressing/services/">services</a>
 </div>
 </div>

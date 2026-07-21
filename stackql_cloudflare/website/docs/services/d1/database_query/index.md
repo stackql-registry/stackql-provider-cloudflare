@@ -32,8 +32,49 @@ Creates, updates, deletes, gets or lists a <code>database_query</code> resource.
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="query"
+    values={[
+        { label: 'query', value: 'query' }
+    ]}
+>
+<TabItem value="query">
 
+Query response
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="errors" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="messages" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="result" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="success" /></td>
+    <td><code>boolean</code></td>
+    <td>Whether the API call was successful (true)</td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -52,7 +93,7 @@ The following methods are available for this resource:
 <tbody>
 <tr>
     <td><a href="#query"><CopyableCode code="query" /></a></td>
-    <td><CopyableCode code="insert" /></td>
+    <td><CopyableCode code="select" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-database_id"><code>database_id</code></a></td>
     <td></td>
     <td>Returns the query result as an object.</td>
@@ -86,13 +127,12 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tbody>
 </table>
 
-## `INSERT` examples
+## `SELECT` examples
 
 <Tabs
     defaultValue="query"
     values={[
-        { label: 'query', value: 'query' },
-        { label: 'Manifest', value: 'manifest' }
+        { label: 'query', value: 'query' }
     ]}
 >
 <TabItem value="query">
@@ -100,50 +140,15 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 Returns the query result as an object.
 
 ```sql
-INSERT INTO cloudflare.d1.database_query (
-params,
-sql,
-batch,
-account_id,
-database_id
-)
-SELECT 
-'{{ params }}',
-'{{ sql }}',
-'{{ batch }}',
-'{{ account_id }}',
-'{{ database_id }}'
-RETURNING
+SELECT
 errors,
 messages,
 result,
 success
+FROM cloudflare.d1.database_query
+WHERE account_id = '{{ account_id }}' -- required
+AND database_id = '{{ database_id }}' -- required
 ;
 ```
-</TabItem>
-<TabItem value="manifest">
-
-<CodeBlock language="yaml">{`# Description fields are for documentation purposes
-- name: database_query
-  props:
-    - name: account_id
-      value: "{{ account_id }}"
-      description: Required parameter for the database_query resource.
-    - name: database_id
-      value: "{{ database_id }}"
-      description: Required parameter for the database_query resource.
-    - name: params
-      value:
-        - "{{ params }}"
-    - name: sql
-      value: "{{ sql }}"
-      description: |
-        Your SQL query. Supports multiple statements, joined by semicolons, which will be executed as a batch.
-    - name: batch
-      value:
-        - params: "{{ params }}"
-          sql: "{{ sql }}"
-`}</CodeBlock>
-
 </TabItem>
 </Tabs>

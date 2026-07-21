@@ -294,6 +294,76 @@ The following methods are available for this resource:
     <td></td>
     <td>Deletes a Logpush job.</td>
 </tr>
+<tr>
+    <td><a href="#get_ownership_challenge_by_account"><CopyableCode code="get_ownership_challenge_by_account" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-destination_conf"><code>destination_conf</code></a></td>
+    <td></td>
+    <td>Gets a new ownership challenge sent to your destination.</td>
+</tr>
+<tr>
+    <td><a href="#get_ownership_challenge_by_zone"><CopyableCode code="get_ownership_challenge_by_zone" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-destination_conf"><code>destination_conf</code></a></td>
+    <td></td>
+    <td>Gets a new ownership challenge sent to your destination.</td>
+</tr>
+<tr>
+    <td><a href="#validate_ownership_challenge_by_account"><CopyableCode code="validate_ownership_challenge_by_account" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-destination_conf"><code>destination_conf</code></a>, <a href="#parameter-ownership_challenge"><code>ownership_challenge</code></a></td>
+    <td></td>
+    <td>Validates ownership challenge of the destination.</td>
+</tr>
+<tr>
+    <td><a href="#validate_ownership_challenge_by_zone"><CopyableCode code="validate_ownership_challenge_by_zone" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-destination_conf"><code>destination_conf</code></a>, <a href="#parameter-ownership_challenge"><code>ownership_challenge</code></a></td>
+    <td></td>
+    <td>Validates ownership challenge of the destination.</td>
+</tr>
+<tr>
+    <td><a href="#validate_destination_by_account"><CopyableCode code="validate_destination_by_account" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-destination_conf"><code>destination_conf</code></a></td>
+    <td></td>
+    <td>Validates destination.</td>
+</tr>
+<tr>
+    <td><a href="#validate_destination_by_zone"><CopyableCode code="validate_destination_by_zone" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-destination_conf"><code>destination_conf</code></a></td>
+    <td></td>
+    <td>Validates destination.</td>
+</tr>
+<tr>
+    <td><a href="#destination_exists_by_account"><CopyableCode code="destination_exists_by_account" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-destination_conf"><code>destination_conf</code></a></td>
+    <td></td>
+    <td>Checks if there is an existing job with a destination.</td>
+</tr>
+<tr>
+    <td><a href="#destination_exists_by_zone"><CopyableCode code="destination_exists_by_zone" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-destination_conf"><code>destination_conf</code></a></td>
+    <td></td>
+    <td>Checks if there is an existing job with a destination.</td>
+</tr>
+<tr>
+    <td><a href="#validate_origin_by_account"><CopyableCode code="validate_origin_by_account" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-logpull_options"><code>logpull_options</code></a></td>
+    <td></td>
+    <td>Validates logpull origin with logpull_options.</td>
+</tr>
+<tr>
+    <td><a href="#validate_origin_by_zone"><CopyableCode code="validate_origin_by_zone" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-logpull_options"><code>logpull_options</code></a></td>
+    <td></td>
+    <td>Validates logpull origin with logpull_options.</td>
+</tr>
 </tbody>
 </table>
 
@@ -683,6 +753,168 @@ Deletes a Logpush job.
 DELETE FROM cloudflare.logpush.jobs
 WHERE job_id = '{{ job_id }}' --required
 AND zone_id = '{{ zone_id }}' --required
+;
+```
+</TabItem>
+</Tabs>
+
+
+## Lifecycle Methods
+
+<Tabs
+    defaultValue="get_ownership_challenge_by_account"
+    values={[
+        { label: 'get_ownership_challenge_by_account', value: 'get_ownership_challenge_by_account' },
+        { label: 'get_ownership_challenge_by_zone', value: 'get_ownership_challenge_by_zone' },
+        { label: 'validate_ownership_challenge_by_account', value: 'validate_ownership_challenge_by_account' },
+        { label: 'validate_ownership_challenge_by_zone', value: 'validate_ownership_challenge_by_zone' },
+        { label: 'validate_destination_by_account', value: 'validate_destination_by_account' },
+        { label: 'validate_destination_by_zone', value: 'validate_destination_by_zone' },
+        { label: 'destination_exists_by_account', value: 'destination_exists_by_account' },
+        { label: 'destination_exists_by_zone', value: 'destination_exists_by_zone' },
+        { label: 'validate_origin_by_account', value: 'validate_origin_by_account' },
+        { label: 'validate_origin_by_zone', value: 'validate_origin_by_zone' }
+    ]}
+>
+<TabItem value="get_ownership_challenge_by_account">
+
+Gets a new ownership challenge sent to your destination.
+
+```sql
+EXEC cloudflare.logpush.jobs.get_ownership_challenge_by_account 
+@account_id='{{ account_id }}' --required 
+@@json=
+'{
+"destination_conf": "{{ destination_conf }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="get_ownership_challenge_by_zone">
+
+Gets a new ownership challenge sent to your destination.
+
+```sql
+EXEC cloudflare.logpush.jobs.get_ownership_challenge_by_zone 
+@zone_id='{{ zone_id }}' --required 
+@@json=
+'{
+"destination_conf": "{{ destination_conf }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="validate_ownership_challenge_by_account">
+
+Validates ownership challenge of the destination.
+
+```sql
+EXEC cloudflare.logpush.jobs.validate_ownership_challenge_by_account 
+@account_id='{{ account_id }}' --required 
+@@json=
+'{
+"destination_conf": "{{ destination_conf }}", 
+"ownership_challenge": "{{ ownership_challenge }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="validate_ownership_challenge_by_zone">
+
+Validates ownership challenge of the destination.
+
+```sql
+EXEC cloudflare.logpush.jobs.validate_ownership_challenge_by_zone 
+@zone_id='{{ zone_id }}' --required 
+@@json=
+'{
+"destination_conf": "{{ destination_conf }}", 
+"ownership_challenge": "{{ ownership_challenge }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="validate_destination_by_account">
+
+Validates destination.
+
+```sql
+EXEC cloudflare.logpush.jobs.validate_destination_by_account 
+@account_id='{{ account_id }}' --required 
+@@json=
+'{
+"destination_conf": "{{ destination_conf }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="validate_destination_by_zone">
+
+Validates destination.
+
+```sql
+EXEC cloudflare.logpush.jobs.validate_destination_by_zone 
+@zone_id='{{ zone_id }}' --required 
+@@json=
+'{
+"destination_conf": "{{ destination_conf }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="destination_exists_by_account">
+
+Checks if there is an existing job with a destination.
+
+```sql
+EXEC cloudflare.logpush.jobs.destination_exists_by_account 
+@account_id='{{ account_id }}' --required 
+@@json=
+'{
+"destination_conf": "{{ destination_conf }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="destination_exists_by_zone">
+
+Checks if there is an existing job with a destination.
+
+```sql
+EXEC cloudflare.logpush.jobs.destination_exists_by_zone 
+@zone_id='{{ zone_id }}' --required 
+@@json=
+'{
+"destination_conf": "{{ destination_conf }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="validate_origin_by_account">
+
+Validates logpull origin with logpull_options.
+
+```sql
+EXEC cloudflare.logpush.jobs.validate_origin_by_account 
+@account_id='{{ account_id }}' --required 
+@@json=
+'{
+"logpull_options": "{{ logpull_options }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="validate_origin_by_zone">
+
+Validates logpull origin with logpull_options.
+
+```sql
+EXEC cloudflare.logpush.jobs.validate_origin_by_zone 
+@zone_id='{{ zone_id }}' --required 
+@@json=
+'{
+"logpull_options": "{{ logpull_options }}"
+}'
 ;
 ```
 </TabItem>

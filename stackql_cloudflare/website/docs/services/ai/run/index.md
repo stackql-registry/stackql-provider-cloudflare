@@ -28,12 +28,260 @@ Creates, updates, deletes, gets or lists a <code>run</code> resource.
 <tr><td><b>Id</b></td><td><CopyableCode code="cloudflare.ai.run" /></td></tr>
 </tbody></table>
 
+<br />
+
+:::info[Supported models]
+
+Set `model_name` to one of the following models:
+
+<details>
+<summary>Text Generation (55 models)</summary>
+
+<CopyableCode code="@cf/aisingapore/gemma-sea-lion-v4-27b-it" /><br />
+<CopyableCode code="@cf/deepseek-ai/deepseek-math-7b-instruct" /><br />
+<CopyableCode code="@cf/deepseek-ai/deepseek-r1-distill-qwen-32b" /><br />
+<CopyableCode code="@cf/defog/sqlcoder-7b-2" /><br />
+<CopyableCode code="@cf/fblgit/una-cybertron-7b-v2-bf16" /><br />
+<CopyableCode code="@cf/google/gemma-2b-it-lora" /><br />
+<CopyableCode code="@cf/google/gemma-3-12b-it" /><br />
+<CopyableCode code="@cf/google/gemma-7b-it-lora" /><br />
+<CopyableCode code="@cf/ibm-granite/granite-4.0-h-micro" /><br />
+<CopyableCode code="@cf/meta-llama/llama-2-7b-chat-hf-lora" /><br />
+<CopyableCode code="@cf/meta/llama-2-7b-chat-fp16" /><br />
+<CopyableCode code="@cf/meta/llama-2-7b-chat-int8" /><br />
+<CopyableCode code="@cf/meta/llama-3-8b-instruct" /><br />
+<CopyableCode code="@cf/meta/llama-3-8b-instruct-awq" /><br />
+<CopyableCode code="@cf/meta/llama-3.1-70b-instruct-fp8-fast" /><br />
+<CopyableCode code="@cf/meta/llama-3.1-8b-instruct-awq" /><br />
+<CopyableCode code="@cf/meta/llama-3.1-8b-instruct-fp8" /><br />
+<CopyableCode code="@cf/meta/llama-3.1-8b-instruct-fp8-fast" /><br />
+<CopyableCode code="@cf/meta/llama-3.2-11b-vision-instruct" /><br />
+<CopyableCode code="@cf/meta/llama-3.2-1b-instruct" /><br />
+<CopyableCode code="@cf/meta/llama-3.2-3b-instruct" /><br />
+<CopyableCode code="@cf/meta/llama-3.3-70b-instruct-fp8-fast" /><br />
+<CopyableCode code="@cf/meta/llama-4-scout-17b-16e-instruct" /><br />
+<CopyableCode code="@cf/meta/llama-guard-3-8b" /><br />
+<CopyableCode code="@cf/microsoft/phi-2" /><br />
+<CopyableCode code="@cf/mistral/mistral-7b-instruct-v0.1" /><br />
+<CopyableCode code="@cf/mistral/mistral-7b-instruct-v0.2-lora" /><br />
+<CopyableCode code="@cf/mistralai/mistral-small-3.1-24b-instruct" /><br />
+<CopyableCode code="@cf/moonshotai/kimi-k2.5" /><br />
+<CopyableCode code="@cf/nvidia/nemotron-3-120b-a12b" /><br />
+<CopyableCode code="@cf/openai/gpt-oss-120b" /><br />
+<CopyableCode code="@cf/openai/gpt-oss-20b" /><br />
+<CopyableCode code="@cf/openchat/openchat-3.5-0106" /><br />
+<CopyableCode code="@cf/qwen/qwen1.5-0.5b-chat" /><br />
+<CopyableCode code="@cf/qwen/qwen1.5-1.8b-chat" /><br />
+<CopyableCode code="@cf/qwen/qwen1.5-14b-chat-awq" /><br />
+<CopyableCode code="@cf/qwen/qwen1.5-7b-chat-awq" /><br />
+<CopyableCode code="@cf/qwen/qwen2.5-coder-32b-instruct" /><br />
+<CopyableCode code="@cf/qwen/qwen3-30b-a3b-fp8" /><br />
+<CopyableCode code="@cf/qwen/qwq-32b" /><br />
+<CopyableCode code="@cf/thebloke/discolm-german-7b-v1-awq" /><br />
+<CopyableCode code="@cf/tiiuae/falcon-7b-instruct" /><br />
+<CopyableCode code="@cf/tinyllama/tinyllama-1.1b-chat-v1.0" /><br />
+<CopyableCode code="@cf/zai-org/glm-4.7-flash" /><br />
+<CopyableCode code="@hf/google/gemma-7b-it" /><br />
+<CopyableCode code="@hf/mistral/mistral-7b-instruct-v0.2" /><br />
+<CopyableCode code="@hf/nexusflow/starling-lm-7b-beta" /><br />
+<CopyableCode code="@hf/nousresearch/hermes-2-pro-mistral-7b" /><br />
+<CopyableCode code="@hf/thebloke/deepseek-coder-6.7b-base-awq" /><br />
+<CopyableCode code="@hf/thebloke/deepseek-coder-6.7b-instruct-awq" /><br />
+<CopyableCode code="@hf/thebloke/llama-2-13b-chat-awq" /><br />
+<CopyableCode code="@hf/thebloke/mistral-7b-instruct-v0.1-awq" /><br />
+<CopyableCode code="@hf/thebloke/neural-chat-7b-v3-1-awq" /><br />
+<CopyableCode code="@hf/thebloke/openhermes-2.5-mistral-7b-awq" /><br />
+<CopyableCode code="@hf/thebloke/zephyr-7b-beta-awq" /><br />
+
+</details>
+
+<details>
+<summary>Text Embeddings (12 models)</summary>
+
+<CopyableCode code="@cf/baai/bge-base-en-v1.5" /><br />
+<CopyableCode code="@cf/baai/bge-large-en-v1.5" /><br />
+<CopyableCode code="@cf/baai/bge-m3" /><br />
+<CopyableCode code="@cf/baai/bge-small-en-v1.5" /><br />
+<CopyableCode code="@cf/baai/nonomni-bge-base-en-v1.5" /><br />
+<CopyableCode code="@cf/baai/nonomni-bge-large-en-v1.5" /><br />
+<CopyableCode code="@cf/baai/nonomni-bge-m3" /><br />
+<CopyableCode code="@cf/baai/nonomni-bge-small-en-v1.5" /><br />
+<CopyableCode code="@cf/google/embeddinggemma-300m" /><br />
+<CopyableCode code="@cf/google/nonomni-embeddinggemma-300m" /><br />
+<CopyableCode code="@cf/pfnet/plamo-embedding-1b" /><br />
+<CopyableCode code="@cf/qwen/qwen3-embedding-0.6b" /><br />
+
+</details>
+
+<details>
+<summary>Speech to Text (3 models)</summary>
+
+<CopyableCode code="@cf/deepgram/flux" /><br />
+<CopyableCode code="@cf/deepgram/nova-3" /><br />
+<CopyableCode code="@cf/openai/whisper-large-v3-turbo" /><br />
+
+</details>
+
+<details>
+<summary>Translation (3 models)</summary>
+
+<CopyableCode code="@cf/ai4bharat/indictrans2-en-indic-1B" /><br />
+<CopyableCode code="@cf/ai4bharat/nonomni-indictrans2-en-indic-1b" /><br />
+<CopyableCode code="@cf/meta/m2m100-1.2b" /><br />
+
+</details>
+
+<details>
+<summary>Summarization (2 models)</summary>
+
+<CopyableCode code="@cf/facebook/bart-large-cnn" /><br />
+<CopyableCode code="@cf/facebook/nonomni-bart-large-cnn" /><br />
+
+</details>
+
+<details>
+<summary>Text to Image (11 models)</summary>
+
+<CopyableCode code="@cf/black-forest-labs/flux-1-schnell" /><br />
+<CopyableCode code="@cf/black-forest-labs/flux-2-dev" /><br />
+<CopyableCode code="@cf/black-forest-labs/flux-2-klein-4b" /><br />
+<CopyableCode code="@cf/black-forest-labs/flux-2-klein-9b" /><br />
+<CopyableCode code="@cf/bytedance/stable-diffusion-xl-lightning" /><br />
+<CopyableCode code="@cf/leonardo/lucid-origin" /><br />
+<CopyableCode code="@cf/leonardo/phoenix-1.0" /><br />
+<CopyableCode code="@cf/lykon/dreamshaper-8-lcm" /><br />
+<CopyableCode code="@cf/runwayml/stable-diffusion-v1-5-img2img" /><br />
+<CopyableCode code="@cf/runwayml/stable-diffusion-v1-5-inpainting" /><br />
+<CopyableCode code="@cf/stabilityai/stable-diffusion-xl-base-1.0" /><br />
+
+</details>
+
+<details>
+<summary>Text to Speech (4 models)</summary>
+
+<CopyableCode code="@cf/deepgram/aura-1" /><br />
+<CopyableCode code="@cf/deepgram/aura-2-en" /><br />
+<CopyableCode code="@cf/deepgram/aura-2-es" /><br />
+<CopyableCode code="@cf/myshell-ai/melotts" /><br />
+
+</details>
+
+<details>
+<summary>Text Classification (2 models)</summary>
+
+<CopyableCode code="@cf/huggingface/distilbert-sst-2-int8" /><br />
+<CopyableCode code="@cf/huggingface/nonomni-distilbert-sst-2-int8" /><br />
+
+</details>
+
+<details>
+<summary>Reranking (1 model)</summary>
+
+<CopyableCode code="@cf/baai/bge-reranker-base" /><br />
+
+</details>
+
+The task-family resources above give these models typed result columns - prefer them over `run` where one exists. Binary-input models (`@cf/facebook/nonomni-detr-resnet-50`, `@cf/microsoft/nonomni-resnet-50`, `@cf/microsoft/resnet-50`, `@cf/openai/whisper`, `@cf/openai/whisper-tiny-en`) take a raw request body and are exposed as exec methods on this resource instead of SELECT.
+
+:::
+
 ## Fields
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="run"
+    values={[
+        { label: 'run', value: 'run' }
+    ]}
+>
+<TabItem value="run">
 
+Model response
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="data" /></td>
+    <td><code>array</code></td>
+    <td>Embedding vectors, one per input text.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="model" /></td>
+    <td><code>string</code></td>
+    <td>Echo of the model name, where reported.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="pooling" /></td>
+    <td><code>string</code></td>
+    <td>Pooling method used (cls or mean), where applicable.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="response" /></td>
+    <td><code>string</code></td>
+    <td>The generated text response from the model.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="shape" /></td>
+    <td><code>array</code></td>
+    <td>Dimensions of the returned embedding matrix.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="summary" /></td>
+    <td><code>string</code></td>
+    <td>The summarized text.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="text" /></td>
+    <td><code>string</code></td>
+    <td>The transcribed text.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="tool_calls" /></td>
+    <td><code>array</code></td>
+    <td>Tool call requests emitted by the model, if tools were provided.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="transcription_info" /></td>
+    <td><code>object</code></td>
+    <td>Model/language detail, where reported.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="translated_text" /></td>
+    <td><code>string</code></td>
+    <td>The translated text.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="usage" /></td>
+    <td><code>object</code></td>
+    <td>Token usage counts (prompt_tokens, completion_tokens, total_tokens).</td>
+</tr>
+<tr>
+    <td><CopyableCode code="vtt" /></td>
+    <td><code>string</code></td>
+    <td>WebVTT formatted transcription, where reported.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="word_count" /></td>
+    <td><code>number</code></td>
+    <td>Number of words in the transcription, where reported.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="words" /></td>
+    <td><code>array</code></td>
+    <td>Per-word timing detail, where reported.</td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -52,10 +300,45 @@ The following methods are available for this resource:
 <tbody>
 <tr>
     <td><a href="#run"><CopyableCode code="run" /></a></td>
-    <td><CopyableCode code="insert" /></td>
+    <td><CopyableCode code="select" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-model_name"><code>model_name</code></a></td>
     <td></td>
     <td>This endpoint provides users with the capability to run specific AI models on-demand. By submitting the required input data, users can receive real-time predictions or results generated by the chosen AI model. The endpoint supports various AI model types, ensuring flexibility and adaptability for diverse use cases. Model specific inputs available in [Cloudflare Docs](https://developers.cloudflare.com/workers-ai/models/).</td>
+</tr>
+<tr>
+    <td><a href="#nonomni_detr_resnet_50"><CopyableCode code="nonomni_detr_resnet_50" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td><a href="#parameter-queueRequest"><code>queueRequest</code></a>, <a href="#parameter-tags"><code>tags</code></a></td>
+    <td>Runs inference on the @cf/facebook/nonomni-detr-resnet-50 model.</td>
+</tr>
+<tr>
+    <td><a href="#nonomni_resnet_50"><CopyableCode code="nonomni_resnet_50" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td><a href="#parameter-queueRequest"><code>queueRequest</code></a>, <a href="#parameter-tags"><code>tags</code></a></td>
+    <td>Runs inference on the @cf/microsoft/nonomni-resnet-50 model.</td>
+</tr>
+<tr>
+    <td><a href="#resnet_50"><CopyableCode code="resnet_50" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td><a href="#parameter-queueRequest"><code>queueRequest</code></a>, <a href="#parameter-tags"><code>tags</code></a></td>
+    <td>Runs inference on the @cf/microsoft/resnet-50 model.</td>
+</tr>
+<tr>
+    <td><a href="#whisper"><CopyableCode code="whisper" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td><a href="#parameter-queueRequest"><code>queueRequest</code></a>, <a href="#parameter-tags"><code>tags</code></a></td>
+    <td>Runs inference on the @cf/openai/whisper model.</td>
+</tr>
+<tr>
+    <td><a href="#whisper_tiny_en"><CopyableCode code="whisper_tiny_en" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td><a href="#parameter-queueRequest"><code>queueRequest</code></a>, <a href="#parameter-tags"><code>tags</code></a></td>
+    <td>Runs inference on the @cf/openai/whisper-tiny-en model.</td>
 </tr>
 </tbody>
 </table>
@@ -83,16 +366,25 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
     <td><code>string</code></td>
     <td></td>
 </tr>
+<tr id="parameter-queueRequest">
+    <td><CopyableCode code="queueRequest" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
+<tr id="parameter-tags">
+    <td><CopyableCode code="tags" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 
-## `INSERT` examples
+## `SELECT` examples
 
 <Tabs
     defaultValue="run"
     values={[
-        { label: 'run', value: 'run' },
-        { label: 'Manifest', value: 'manifest' }
+        { label: 'run', value: 'run' }
     ]}
 >
 <TabItem value="run">
@@ -100,258 +392,94 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 This endpoint provides users with the capability to run specific AI models on-demand. By submitting the required input data, users can receive real-time predictions or results generated by the chosen AI model. The endpoint supports various AI model types, ensuring flexibility and adaptability for diverse use cases. Model specific inputs available in [Cloudflare Docs](https://developers.cloudflare.com/workers-ai/models/).
 
 ```sql
-INSERT INTO cloudflare.ai.run (
+SELECT
+response,
+usage,
+data,
+shape,
 text,
-guidance,
-height,
-image,
-image_b64,
-mask,
-negative_prompt,
-num_steps,
-prompt,
-seed,
-strength,
-width,
-lang,
-audio,
-source_lang,
-target_lang,
-frequency_penalty,
-lora,
-max_tokens,
-presence_penalty,
-raw,
-repetition_penalty,
-response_format,
-stream,
-temperature,
-top_k,
-top_p,
-functions,
-messages,
-tools,
-input_text,
-max_length,
-ignore_eos,
-account_id,
-model_name
-)
-SELECT 
-'{{ text }}',
-{{ guidance }},
-{{ height }},
-'{{ image }}',
-'{{ image_b64 }}',
-'{{ mask }}',
-'{{ negative_prompt }}',
-{{ num_steps }},
-'{{ prompt }}',
-{{ seed }},
-{{ strength }},
-{{ width }},
-'{{ lang }}',
-'{{ audio }}',
-'{{ source_lang }}',
-'{{ target_lang }}',
-{{ frequency_penalty }},
-'{{ lora }}',
-{{ max_tokens }},
-{{ presence_penalty }},
-{{ raw }},
-{{ repetition_penalty }},
-'{{ response_format }}',
-{{ stream }},
-{{ temperature }},
-{{ top_k }},
-{{ top_p }},
-'{{ functions }}',
-'{{ messages }}',
-'{{ tools }}',
-'{{ input_text }}',
-{{ max_length }},
-{{ ignore_eos }},
-'{{ account_id }}',
-'{{ model_name }}'
-RETURNING
-result
+translated_text,
+summary
+FROM cloudflare.ai.run
+WHERE account_id = '{{ account_id }}' -- required
+AND model_name = '{{ model_name }}' -- required
+AND prompt = '{{ prompt }}' -- model input
 ;
 ```
 </TabItem>
-<TabItem value="manifest">
+</Tabs>
 
-<CodeBlock language="yaml">{`# Description fields are for documentation purposes
-- name: run
-  props:
-    - name: account_id
-      value: "{{ account_id }}"
-      description: Required parameter for the run resource.
-    - name: model_name
-      value: "{{ model_name }}"
-      description: Required parameter for the run resource.
-    - name: text
-      value: "{{ text }}"
-      description: |
-        The text that you want to classify
-    - name: guidance
-      value: {{ guidance }}
-      description: |
-        Controls how closely the generated image should adhere to the prompt; higher values make the image more aligned with the prompt
-      default: 7.5
-    - name: height
-      value: {{ height }}
-      description: |
-        The height of the generated image in pixels
-    - name: image
-      value:
-        - {{ image }}
-      description: |
-        For use with img2img tasks. An array of integers that represent the image data constrained to 8-bit unsigned integer values
-    - name: image_b64
-      value: "{{ image_b64 }}"
-      description: |
-        For use with img2img tasks. A base64-encoded string of the input image
-    - name: mask
-      value:
-        - {{ mask }}
-      description: |
-        An array representing An array of integers that represent mask image data for inpainting constrained to 8-bit unsigned integer values
-    - name: negative_prompt
-      value: "{{ negative_prompt }}"
-      description: |
-        Text describing elements to avoid in the generated image
-    - name: num_steps
-      value: {{ num_steps }}
-      description: |
-        The number of diffusion steps; higher values can improve quality but take longer
-      default: 20
-    - name: prompt
-      value: "{{ prompt }}"
-      description: |
-        A text description of the image you want to generate
-    - name: seed
-      value: {{ seed }}
-      description: |
-        Random seed for reproducibility of the image generation
-    - name: strength
-      value: {{ strength }}
-      description: |
-        A value between 0 and 1 indicating how strongly to apply the transformation during img2img tasks; lower values make the output closer to the input image
-      default: 1
-    - name: width
-      value: {{ width }}
-      description: |
-        The width of the generated image in pixels
-    - name: lang
-      value: "{{ lang }}"
-      description: |
-        The speech language (e.g., 'en' for English, 'fr' for French). Defaults to 'en' if not specified
-      default: en
-    - name: audio
-      value:
-        - {{ audio }}
-      description: |
-        An array of integers that represent the audio data constrained to 8-bit unsigned integer values
-    - name: source_lang
-      value: "{{ source_lang }}"
-      description: |
-        The language of the recorded audio
-    - name: target_lang
-      value: "{{ target_lang }}"
-      description: |
-        The language to translate the transcription into. Currently only English is supported.
-    - name: frequency_penalty
-      value: {{ frequency_penalty }}
-      description: |
-        Decreases the likelihood of the model repeating the same lines verbatim.
-    - name: lora
-      value: "{{ lora }}"
-      description: |
-        Name of the LoRA (Low-Rank Adaptation) model to fine-tune the base model.
-    - name: max_tokens
-      value: {{ max_tokens }}
-      description: |
-        The maximum number of tokens to generate in the response.
-      default: 256
-    - name: presence_penalty
-      value: {{ presence_penalty }}
-      description: |
-        Increases the likelihood of the model introducing new topics.
-    - name: raw
-      value: {{ raw }}
-      description: |
-        If true, a chat template is not applied and you must adhere to the specific model's expected formatting.
-      default: false
-    - name: repetition_penalty
-      value: {{ repetition_penalty }}
-      description: |
-        Penalty for repeated tokens; higher values discourage repetition.
-    - name: response_format
-      value:
-        json_schema: "{{ json_schema }}"
-        type: "{{ type }}"
-    - name: stream
-      value: {{ stream }}
-      description: |
-        If true, the response will be streamed back incrementally using SSE, Server Sent Events.
-      default: false
-    - name: temperature
-      value: {{ temperature }}
-      description: |
-        Controls the randomness of the output; higher values produce more random results.
-      default: 0.6
-    - name: top_k
-      value: {{ top_k }}
-      description: |
-        Limits the AI to choose from the top 'k' most probable words. Lower values make responses more focused; higher values introduce more variety and potential surprises.
-    - name: top_p
-      value: {{ top_p }}
-      description: |
-        Adjusts the creativity of the AI's responses by controlling how many possible words it considers. Lower values make outputs more predictable; higher values allow for more varied and creative responses.
-    - name: functions
-      value:
-        - code: "{{ code }}"
-          name: "{{ name }}"
-    - name: messages
-      description: |
-        An array of message objects representing the conversation history.
-      value:
-        - content: "{{ content }}"
-          role: "{{ role }}"
-    - name: tools
-      description: |
-        A list of tools available for the assistant to use.
-      value:
-        - description: "{{ description }}"
-          name: "{{ name }}"
-          parameters:
-            properties: "{{ properties }}"
-            required:
-              - "{{ required }}"
-            type: "{{ type }}"
-          function:
-            description: "{{ description }}"
-            name: "{{ name }}"
-            parameters:
-              properties: "{{ properties }}"
-              required:
-                - "{{ required }}"
-              type: "{{ type }}"
-          type: "{{ type }}"
-    - name: input_text
-      value: "{{ input_text }}"
-      description: |
-        The text that you want the model to summarize
-    - name: max_length
-      value: {{ max_length }}
-      description: |
-        The maximum length of the generated summary in tokens
-      default: 1024
-    - name: ignore_eos
-      value: {{ ignore_eos }}
-      description: |
-        Whether to ignore the EOS token and continue generating tokens after the EOS token is generated.
-`}</CodeBlock>
 
+## Lifecycle Methods
+
+<Tabs
+    defaultValue="nonomni_detr_resnet_50"
+    values={[
+        { label: 'nonomni_detr_resnet_50', value: 'nonomni_detr_resnet_50' },
+        { label: 'nonomni_resnet_50', value: 'nonomni_resnet_50' },
+        { label: 'resnet_50', value: 'resnet_50' },
+        { label: 'whisper', value: 'whisper' },
+        { label: 'whisper_tiny_en', value: 'whisper_tiny_en' }
+    ]}
+>
+<TabItem value="nonomni_detr_resnet_50">
+
+Runs inference on the @cf/facebook/nonomni-detr-resnet-50 model.
+
+```sql
+EXEC cloudflare.ai.run.nonomni_detr_resnet_50 
+@account_id='{{ account_id }}' --required, 
+@queueRequest='{{ queueRequest }}', 
+@tags='{{ tags }}'
+;
+```
+</TabItem>
+<TabItem value="nonomni_resnet_50">
+
+Runs inference on the @cf/microsoft/nonomni-resnet-50 model.
+
+```sql
+EXEC cloudflare.ai.run.nonomni_resnet_50 
+@account_id='{{ account_id }}' --required, 
+@queueRequest='{{ queueRequest }}', 
+@tags='{{ tags }}'
+;
+```
+</TabItem>
+<TabItem value="resnet_50">
+
+Runs inference on the @cf/microsoft/resnet-50 model.
+
+```sql
+EXEC cloudflare.ai.run.resnet_50 
+@account_id='{{ account_id }}' --required, 
+@queueRequest='{{ queueRequest }}', 
+@tags='{{ tags }}'
+;
+```
+</TabItem>
+<TabItem value="whisper">
+
+Runs inference on the @cf/openai/whisper model.
+
+```sql
+EXEC cloudflare.ai.run.whisper 
+@account_id='{{ account_id }}' --required, 
+@queueRequest='{{ queueRequest }}', 
+@tags='{{ tags }}'
+;
+```
+</TabItem>
+<TabItem value="whisper_tiny_en">
+
+Runs inference on the @cf/openai/whisper-tiny-en model.
+
+```sql
+EXEC cloudflare.ai.run.whisper_tiny_en 
+@account_id='{{ account_id }}' --required, 
+@queueRequest='{{ queueRequest }}', 
+@tags='{{ tags }}'
+;
+```
 </TabItem>
 </Tabs>

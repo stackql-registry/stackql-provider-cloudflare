@@ -210,6 +210,20 @@ The following methods are available for this resource:
     <td>Delete a zone token validation rule.</td>
 </tr>
 <tr>
+    <td><a href="#bulk_edit"><CopyableCode code="bulk_edit" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a></td>
+    <td></td>
+    <td>Edit token validation rules. A request can update multiple Token Validation Rules. Rules can be re-ordered using the `position` field. Returns all updated rules.</td>
+</tr>
+<tr>
+    <td><a href="#bulk_create"><CopyableCode code="bulk_create" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a></td>
+    <td></td>
+    <td>Create zone token validation rules. A request can create multiple Token Validation Rules.</td>
+</tr>
+<tr>
     <td><a href="#preview"><CopyableCode code="preview" /></a></td>
     <td><CopyableCode code="exec" /></td>
     <td><a href="#parameter-zone_id"><code>zone_id</code></a></td>
@@ -509,11 +523,33 @@ AND rule_id = '{{ rule_id }}' --required
 ## Lifecycle Methods
 
 <Tabs
-    defaultValue="preview"
+    defaultValue="bulk_edit"
     values={[
+        { label: 'bulk_edit', value: 'bulk_edit' },
+        { label: 'bulk_create', value: 'bulk_create' },
         { label: 'preview', value: 'preview' }
     ]}
 >
+<TabItem value="bulk_edit">
+
+Edit token validation rules. A request can update multiple Token Validation Rules. Rules can be re-ordered using the `position` field. Returns all updated rules.
+
+```sql
+EXEC cloudflare.token_validation.rules.bulk_edit 
+@zone_id='{{ zone_id }}' --required
+;
+```
+</TabItem>
+<TabItem value="bulk_create">
+
+Create zone token validation rules. A request can create multiple Token Validation Rules.
+
+```sql
+EXEC cloudflare.token_validation.rules.bulk_create 
+@zone_id='{{ zone_id }}' --required
+;
+```
+</TabItem>
 <TabItem value="preview">
 
 Preview operations covered by a Token Validation rule. The API will return all operations on a zone annotated with an additional `state` field. Operations with an `included` `state` will be covered by a Token Validation Rule.

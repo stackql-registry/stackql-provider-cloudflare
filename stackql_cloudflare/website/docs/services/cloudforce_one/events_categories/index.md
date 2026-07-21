@@ -52,32 +52,7 @@ Returns a list of categories.
 </thead>
 <tbody>
 <tr>
-    <td><CopyableCode code="name" /></td>
-    <td><code>string</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="killChain" /></td>
-    <td><code>number</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="mitreAttack" /></td>
-    <td><code>array</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="mitreCapec" /></td>
-    <td><code>array</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="shortname" /></td>
-    <td><code>string</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="uuid" /></td>
+    <td><CopyableCode code="contents" /></td>
     <td><code>string</code></td>
     <td></td>
 </tr>
@@ -106,6 +81,13 @@ The following methods are available for this resource:
     <td><CopyableCode code="select" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a></td>
     <td><a href="#parameter-datasetIds"><code>datasetIds</code></a></td>
+    <td></td>
+</tr>
+<tr>
+    <td><a href="#create"><CopyableCode code="create" /></a></td>
+    <td><CopyableCode code="insert" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-name"><code>name</code></a>, <a href="#parameter-killChain"><code>killChain</code></a></td>
+    <td></td>
     <td></td>
 </tr>
 </tbody>
@@ -151,16 +133,76 @@ Returns a list of categories.
 
 ```sql
 SELECT
+contents
+FROM cloudflare.cloudforce_one.events_categories
+WHERE account_id = '{{ account_id }}' -- required
+AND datasetIds = '{{ datasetIds }}'
+;
+```
+</TabItem>
+</Tabs>
+
+
+## `INSERT` examples
+
+<Tabs
+    defaultValue="create"
+    values={[
+        { label: 'create', value: 'create' },
+        { label: 'Manifest', value: 'manifest' }
+    ]}
+>
+<TabItem value="create">
+
+No description available.
+
+```sql
+INSERT INTO cloudflare.cloudforce_one.events_categories (
+killChain,
+mitreAttack,
+mitreCapec,
+name,
+shortname,
+account_id
+)
+SELECT 
+{{ killChain }} /* required */,
+'{{ mitreAttack }}',
+'{{ mitreCapec }}',
+'{{ name }}' /* required */,
+'{{ shortname }}',
+'{{ account_id }}'
+RETURNING
 name,
 killChain,
 mitreAttack,
 mitreCapec,
 shortname,
 uuid
-FROM cloudflare.cloudforce_one.events_categories
-WHERE account_id = '{{ account_id }}' -- required
-AND datasetIds = '{{ datasetIds }}'
 ;
 ```
+</TabItem>
+<TabItem value="manifest">
+
+<CodeBlock language="yaml">{`# Description fields are for documentation purposes
+- name: events_categories
+  props:
+    - name: account_id
+      value: "{{ account_id }}"
+      description: Required parameter for the events_categories resource.
+    - name: killChain
+      value: {{ killChain }}
+    - name: mitreAttack
+      value:
+        - "{{ mitreAttack }}"
+    - name: mitreCapec
+      value:
+        - "{{ mitreCapec }}"
+    - name: name
+      value: "{{ name }}"
+    - name: shortname
+      value: "{{ shortname }}"
+`}</CodeBlock>
+
 </TabItem>
 </Tabs>

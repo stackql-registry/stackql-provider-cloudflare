@@ -25,7 +25,7 @@ total resources: __1__
 ## Resources
 <div class="row">
 <div class="providerDocColumn">
-<a href="/services/security_txt/securitytxt/">securitytxt</a>
+<a href="/services/security_txt/security_txt/">security_txt</a>
 </div>
 <div class="providerDocColumn">
 

@@ -51,6 +51,11 @@ Get an admin override code for a device response.
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -121,7 +126,7 @@ Fetches a one-time use admin override code for a device. This relies on the **Ad
 
 ```sql
 SELECT
-*
+contents
 FROM cloudflare.zero_trust.devices_override_codes
 WHERE device_id = '{{ device_id }}' -- required
 AND account_id = '{{ account_id }}' -- required

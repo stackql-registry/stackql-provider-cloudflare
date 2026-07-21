@@ -133,6 +133,51 @@ if (reqtx.status !== 0) {
   process.exit(reqtx.status ?? 1);
 }
 
+// Post-process: rewrite methods whose request body is application/
+// octet-stream (KV value PUT, Workers AI binary-input models, DLP
+// dataset uploads). Naive requestBodyTranslate is dropped for these
+// methods ONLY; a synthetic stackql*Body wrapper schema presents a
+// single required `value` column and a request.transform splats it
+// verbatim onto the wire as the raw body. Callers must use the
+// `data__value` prefix for these methods.
+console.log(`[generate-provider] rewriting application/octet-stream request bodies...`);
+const octet = spawnSync(pythonBin, ['-m', 'stackql_cloudflare_provider.octet_stream_requests'], {
+  cwd: BASE_DIR,
+  stdio: 'inherit',
+});
+if (octet.status !== 0) {
+  console.error(`[generate-provider] octet_stream_requests failed with exit ${octet.status}`);
+  process.exit(octet.status ?? 1);
+}
+
+// Post-process: collapse the ~93 per-model Workers AI run resources into
+// ~9 task-family SELECT resources (cloudflare.ai.text_generation, etc.)
+// riding the generic /ai/run/{model_name} operation with model_name as
+// the discriminator. Config: provider-dev/config/ai_task_families.yaml.
+console.log(`[generate-provider] collapsing Workers AI models into task-family resources...`);
+const aiFam = spawnSync(pythonBin, ['-m', 'stackql_cloudflare_provider.ai_task_families'], {
+  cwd: BASE_DIR,
+  stdio: 'inherit',
+});
+if (aiFam.status !== 0) {
+  console.error(`[generate-provider] ai_task_families failed with exit ${aiFam.status}`);
+  process.exit(aiFam.status ?? 1);
+}
+
+// Post-process: fix response shapes for resources whose SELECT would
+// yield no columns (untyped result items, scalar arrays, raw text
+// bodies, dynamic objects). Config: provider-dev/config/
+// select_response_fixes.yaml.
+console.log(`[generate-provider] fixing empty-column select response shapes...`);
+const selFix = spawnSync(pythonBin, ['-m', 'stackql_cloudflare_provider.select_response_fixes'], {
+  cwd: BASE_DIR,
+  stdio: 'inherit',
+});
+if (selFix.status !== 0) {
+  console.error(`[generate-provider] select_response_fixes failed with exit ${selFix.status}`);
+  process.exit(selFix.status ?? 1);
+}
+
 // Post-process: shim hand-authored Cloudflare GraphQL operations into
 // the matching service yamls. Source manifest + per-op specs live under
 // provider-dev/source-graphql/. The merge script is idempotent and only

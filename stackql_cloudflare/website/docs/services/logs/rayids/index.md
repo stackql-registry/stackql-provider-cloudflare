@@ -51,6 +51,11 @@ Get logs RayIDs response
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -131,7 +136,7 @@ The `/rayids` api route allows lookups by specific rayid. The rayids route will 
 
 ```sql
 SELECT
-*
+contents
 FROM cloudflare.logs.rayids
 WHERE zone_id = '{{ zone_id }}' -- required
 AND ray_id = '{{ ray_id }}' -- required

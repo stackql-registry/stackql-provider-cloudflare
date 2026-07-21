@@ -52,8 +52,8 @@ Get admin override codes for a registration response.
 </thead>
 <tbody>
 <tr>
-    <td><CopyableCode code="disable_for_time" /></td>
-    <td><code>object</code></td>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
     <td></td>
 </tr>
 </tbody>
@@ -126,7 +126,7 @@ Fetches one-time use admin override codes for a registration. This relies on the
 
 ```sql
 SELECT
-disable_for_time
+contents
 FROM cloudflare.zero_trust.registrations_override_codes
 WHERE account_id = '{{ account_id }}' -- required
 AND registration_id = '{{ registration_id }}' -- required

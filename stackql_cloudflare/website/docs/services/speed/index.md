@@ -25,12 +25,12 @@ total resources: __5__
 ## Resources
 <div class="row">
 <div class="providerDocColumn">
+<a href="/services/speed/api_pages/">api_pages</a><br />
 <a href="/services/speed/availabilities/">availabilities</a><br />
-<a href="/services/speed/pages_trend/">pages_trend</a><br />
-<a href="/services/speed/schedule/">schedule</a>
+<a href="/services/speed/pages_trend/">pages_trend</a>
 </div>
 <div class="providerDocColumn">
-<a href="/services/speed/speed_api_pages/">speed_api_pages</a><br />
+<a href="/services/speed/schedule/">schedule</a><br />
 <a href="/services/speed/tests/">tests</a>
 </div>
 </div>

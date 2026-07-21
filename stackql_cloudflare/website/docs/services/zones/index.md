@@ -26,7 +26,7 @@ total resources: __27__
 <div class="row">
 <div class="providerDocColumn">
 <a href="/services/zones/aegis/">aegis</a><br />
-<a href="/services/zones/cache_reserve_clear/">cache_reserve_clear</a><br />
+<a href="/services/zones/cache_reserve/">cache_reserve</a><br />
 <a href="/services/zones/custom_nameservers/">custom_nameservers</a><br />
 <a href="/services/zones/custom_topics/">custom_topics</a><br />
 <a href="/services/zones/environments/">environments</a><br />

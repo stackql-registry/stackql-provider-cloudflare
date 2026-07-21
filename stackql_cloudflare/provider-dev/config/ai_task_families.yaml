@@ -1,0 +1,229 @@
+# Workers AI task-family collapse configuration.
+#
+# Consumed by stackql_cloudflare_provider/ai_task_families.py (a
+# generate-provider post-pass). Each family becomes a single StackQL
+# resource (cloudflare.ai.<family>) with a `run` select method riding the
+# generic POST /accounts/{account_id}/ai/run/{model_name} operation;
+# `model_name` is the discriminator (WHERE model_name = '@cf/...').
+# The listed member models' per-model paths and resources are REMOVED
+# from the generated provider.
+#
+# mode: object   -> response objectKey $.result with the typed result_fields
+# mode: contents -> response wrapped as a single `contents` column (binary
+#                   or non-object results)
+#
+# excluded_octet_input_models cannot be SELECT methods: their input is a
+# raw octet-stream body (handled by octet_stream_requests.py via
+# data__value) which cannot be expressed as WHERE params. They are folded
+# into the generic `run` resource as exec methods via all_services.csv
+# (resource=run, verb=exec, method=<model short name>).
+#
+# New models added upstream land as new per-model resources until added
+# to a members list here. The generic cloudflare.ai.run resource remains
+# as the escape hatch for any model not yet listed.
+families:
+  text_generation:
+    title: Text Generation
+    description: LLM chat and completion models (llama, qwen, gemma, mistral, gpt-oss, phi, deepseek, and more).
+      Provide prompt or messages.
+    mode: object
+    result_fields:
+      response:
+        type: string
+        description: The generated text response from the model.
+      usage:
+        type: object
+        description: Token usage counts (prompt_tokens, completion_tokens, total_tokens).
+      tool_calls:
+        type: array
+        items:
+          type: object
+        description: Tool call requests emitted by the model, if tools were provided.
+    members:
+    - '@cf/aisingapore/gemma-sea-lion-v4-27b-it'
+    - '@cf/deepseek-ai/deepseek-math-7b-instruct'
+    - '@cf/deepseek-ai/deepseek-r1-distill-qwen-32b'
+    - '@cf/defog/sqlcoder-7b-2'
+    - '@cf/fblgit/una-cybertron-7b-v2-bf16'
+    - '@cf/google/gemma-2b-it-lora'
+    - '@cf/google/gemma-3-12b-it'
+    - '@cf/google/gemma-7b-it-lora'
+    - '@cf/ibm-granite/granite-4.0-h-micro'
+    - '@cf/meta-llama/llama-2-7b-chat-hf-lora'
+    - '@cf/meta/llama-2-7b-chat-fp16'
+    - '@cf/meta/llama-2-7b-chat-int8'
+    - '@cf/meta/llama-3-8b-instruct'
+    - '@cf/meta/llama-3-8b-instruct-awq'
+    - '@cf/meta/llama-3.1-70b-instruct-fp8-fast'
+    - '@cf/meta/llama-3.1-8b-instruct-awq'
+    - '@cf/meta/llama-3.1-8b-instruct-fp8'
+    - '@cf/meta/llama-3.1-8b-instruct-fp8-fast'
+    - '@cf/meta/llama-3.2-11b-vision-instruct'
+    - '@cf/meta/llama-3.2-1b-instruct'
+    - '@cf/meta/llama-3.2-3b-instruct'
+    - '@cf/meta/llama-3.3-70b-instruct-fp8-fast'
+    - '@cf/meta/llama-4-scout-17b-16e-instruct'
+    - '@cf/meta/llama-guard-3-8b'
+    - '@cf/microsoft/phi-2'
+    - '@cf/mistral/mistral-7b-instruct-v0.1'
+    - '@cf/mistral/mistral-7b-instruct-v0.2-lora'
+    - '@cf/mistralai/mistral-small-3.1-24b-instruct'
+    - '@cf/moonshotai/kimi-k2.5'
+    - '@cf/nvidia/nemotron-3-120b-a12b'
+    - '@cf/openai/gpt-oss-120b'
+    - '@cf/openai/gpt-oss-20b'
+    - '@cf/openchat/openchat-3.5-0106'
+    - '@cf/qwen/qwen1.5-0.5b-chat'
+    - '@cf/qwen/qwen1.5-1.8b-chat'
+    - '@cf/qwen/qwen1.5-14b-chat-awq'
+    - '@cf/qwen/qwen1.5-7b-chat-awq'
+    - '@cf/qwen/qwen2.5-coder-32b-instruct'
+    - '@cf/qwen/qwen3-30b-a3b-fp8'
+    - '@cf/qwen/qwq-32b'
+    - '@cf/thebloke/discolm-german-7b-v1-awq'
+    - '@cf/tiiuae/falcon-7b-instruct'
+    - '@cf/tinyllama/tinyllama-1.1b-chat-v1.0'
+    - '@cf/zai-org/glm-4.7-flash'
+    - '@hf/google/gemma-7b-it'
+    - '@hf/mistral/mistral-7b-instruct-v0.2'
+    - '@hf/nexusflow/starling-lm-7b-beta'
+    - '@hf/nousresearch/hermes-2-pro-mistral-7b'
+    - '@hf/thebloke/deepseek-coder-6.7b-base-awq'
+    - '@hf/thebloke/deepseek-coder-6.7b-instruct-awq'
+    - '@hf/thebloke/llama-2-13b-chat-awq'
+    - '@hf/thebloke/mistral-7b-instruct-v0.1-awq'
+    - '@hf/thebloke/neural-chat-7b-v3-1-awq'
+    - '@hf/thebloke/openhermes-2.5-mistral-7b-awq'
+    - '@hf/thebloke/zephyr-7b-beta-awq'
+  text_embeddings:
+    title: Text Embeddings
+    description: Embedding models (bge, embeddinggemma, plamo, qwen3-embedding). Provide text (string or array of
+      strings).
+    mode: object
+    result_fields:
+      shape:
+        type: array
+        items:
+          type: integer
+        description: Dimensions of the returned embedding matrix.
+      data:
+        type: array
+        items:
+          type: array
+          items:
+            type: number
+        description: Embedding vectors, one per input text.
+      pooling:
+        type: string
+        description: Pooling method used (cls or mean), where applicable.
+    members:
+    - '@cf/baai/bge-base-en-v1.5'
+    - '@cf/baai/bge-large-en-v1.5'
+    - '@cf/baai/bge-m3'
+    - '@cf/baai/bge-small-en-v1.5'
+    - '@cf/baai/nonomni-bge-base-en-v1.5'
+    - '@cf/baai/nonomni-bge-large-en-v1.5'
+    - '@cf/baai/nonomni-bge-m3'
+    - '@cf/baai/nonomni-bge-small-en-v1.5'
+    - '@cf/google/embeddinggemma-300m'
+    - '@cf/google/nonomni-embeddinggemma-300m'
+    - '@cf/pfnet/plamo-embedding-1b'
+    - '@cf/qwen/qwen3-embedding-0.6b'
+  speech_to_text:
+    title: Speech to Text
+    description: Speech recognition models with JSON input (nova-3, whisper-large-v3-turbo, deepgram flux). Provide
+      audio as base64 in the audio property.
+    mode: object
+    result_fields:
+      text:
+        type: string
+        description: The transcribed text.
+      word_count:
+        type: number
+        description: Number of words in the transcription, where reported.
+      words:
+        type: array
+        items:
+          type: object
+        description: Per-word timing detail, where reported.
+      vtt:
+        type: string
+        description: WebVTT formatted transcription, where reported.
+      transcription_info:
+        type: object
+        description: Model/language detail, where reported.
+    members:
+    - '@cf/deepgram/flux'
+    - '@cf/deepgram/nova-3'
+    - '@cf/openai/whisper-large-v3-turbo'
+  translation:
+    title: Translation
+    description: Translation models (m2m100, indictrans2). Provide text and target_lang / target_language.
+    mode: object
+    result_fields:
+      translated_text:
+        type: string
+        description: The translated text.
+    members:
+    - '@cf/ai4bharat/indictrans2-en-indic-1B'
+    - '@cf/ai4bharat/nonomni-indictrans2-en-indic-1b'
+    - '@cf/meta/m2m100-1.2b'
+  summarization:
+    title: Summarization
+    description: Summarization models (bart-large-cnn). Provide input_text.
+    mode: object
+    result_fields:
+      summary:
+        type: string
+        description: The summarized text.
+    members:
+    - '@cf/facebook/bart-large-cnn'
+    - '@cf/facebook/nonomni-bart-large-cnn'
+  text_to_image:
+    title: Text to Image
+    description: Image generation models (stable-diffusion, flux, dreamshaper, leonardo). Returns raw image bytes
+      or JSON with base64 image depending on the model - projected as a contents column.
+    mode: contents
+    members:
+    - '@cf/black-forest-labs/flux-1-schnell'
+    - '@cf/black-forest-labs/flux-2-dev'
+    - '@cf/black-forest-labs/flux-2-klein-4b'
+    - '@cf/black-forest-labs/flux-2-klein-9b'
+    - '@cf/bytedance/stable-diffusion-xl-lightning'
+    - '@cf/leonardo/lucid-origin'
+    - '@cf/leonardo/phoenix-1.0'
+    - '@cf/lykon/dreamshaper-8-lcm'
+    - '@cf/runwayml/stable-diffusion-v1-5-img2img'
+    - '@cf/runwayml/stable-diffusion-v1-5-inpainting'
+    - '@cf/stabilityai/stable-diffusion-xl-base-1.0'
+  text_to_speech:
+    title: Text to Speech
+    description: Speech synthesis models (aura, melotts). Returns audio bytes or JSON with base64 audio depending
+      on the model - projected as a contents column.
+    mode: contents
+    members:
+    - '@cf/deepgram/aura-1'
+    - '@cf/deepgram/aura-2-en'
+    - '@cf/deepgram/aura-2-es'
+    - '@cf/myshell-ai/melotts'
+  text_classification:
+    title: Text Classification
+    description: Sentiment / text classification models (distilbert-sst-2). Result is an array of label/score pairs
+      - projected as a contents column.
+    mode: contents
+    members:
+    - '@cf/huggingface/distilbert-sst-2-int8'
+    - '@cf/huggingface/nonomni-distilbert-sst-2-int8'
+  reranking:
+    title: Reranking
+    description: Reranker models (bge-reranker-base). Provide query and contexts. Result is an array of id/score
+      pairs - projected as a contents column.
+    mode: contents
+    members:
+    - '@cf/baai/bge-reranker-base'
+excluded_octet_input_models:
+- '@cf/facebook/nonomni-detr-resnet-50'
+- '@cf/microsoft/nonomni-resnet-50'
+- '@cf/microsoft/resnet-50'
+- '@cf/openai/whisper'
+- '@cf/openai/whisper-tiny-en'

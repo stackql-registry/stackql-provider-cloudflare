@@ -18,7 +18,7 @@ workflows service documentation.
 
 :::info[Service Summary]
 
-total resources: __8__  
+total resources: __7__  
 
 :::
 
@@ -33,7 +33,6 @@ total resources: __8__
 <div class="providerDocColumn">
 <a href="/services/workflows/terminate/">terminate</a><br />
 <a href="/services/workflows/versions/">versions</a><br />
-<a href="/services/workflows/workflows/">workflows</a><br />
-<a href="/services/workflows/workflows_instances/">workflows_instances</a>
+<a href="/services/workflows/workflows/">workflows</a>
 </div>
 </div>

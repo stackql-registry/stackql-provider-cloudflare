@@ -60,28 +60,28 @@ operations:
   - field: dnsAnalyticsAdaptiveGroups
     scope: zone
     service: dns
-    resource: dns_analytics_adaptive_groups
+    resource: analytics_adaptive_groups
     method: list
     spec: ops/dns_analytics_adaptive_groups.yaml
 
   - field: workersInvocationsAdaptive
     scope: account
     service: workers
-    resource: workers_invocations
+    resource: invocations
     method: list
     spec: ops/workers_invocations_adaptive.yaml
 
   - field: r2OperationsAdaptiveGroups
     scope: account
     service: r2
-    resource: r2_operations_adaptive_groups
+    resource: operations_adaptive_groups
     method: list
     spec: ops/r2_operations_adaptive_groups.yaml
 
   - field: d1AnalyticsAdaptiveGroups
     scope: account
     service: d1
-    resource: d1_analytics_adaptive_groups
+    resource: analytics_adaptive_groups
     method: list
     spec: ops/d1_analytics_adaptive_groups.yaml
 

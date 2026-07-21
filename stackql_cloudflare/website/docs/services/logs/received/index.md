@@ -51,6 +51,11 @@ Get logs received response
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -146,7 +151,7 @@ The `/received` api route allows customers to retrieve their edge HTTP logs. The
 
 ```sql
 SELECT
-*
+contents
 FROM cloudflare.logs.received
 WHERE zone_id = '{{ zone_id }}' -- required
 AND start = '{{ start }}'

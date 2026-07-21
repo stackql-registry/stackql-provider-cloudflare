@@ -52,39 +52,9 @@ List of targets.
 </thead>
 <tbody>
 <tr>
-    <td><CopyableCode code="id" /></td>
+    <td><CopyableCode code="contents" /></td>
     <td><code>string</code></td>
-    <td>Target ID.</td>
-</tr>
-<tr>
-    <td><CopyableCode code="description" /></td>
-    <td><code>string</code></td>
-    <td>Target description.</td>
-</tr>
-<tr>
-    <td><CopyableCode code="devtoolsFrontendUrl" /></td>
-    <td><code>string</code></td>
-    <td>DevTools frontend URL.</td>
-</tr>
-<tr>
-    <td><CopyableCode code="title" /></td>
-    <td><code>string</code></td>
-    <td>Title of the target.</td>
-</tr>
-<tr>
-    <td><CopyableCode code="type" /></td>
-    <td><code>string</code></td>
-    <td>Target type (page, background_page, worker, etc.).</td>
-</tr>
-<tr>
-    <td><CopyableCode code="url" /></td>
-    <td><code>string</code></td>
-    <td>URL of the target.</td>
-</tr>
-<tr>
-    <td><CopyableCode code="webSocketDebuggerUrl" /></td>
-    <td><code>string</code></td>
-    <td>WebSocket URL for debugging this target.</td>
+    <td></td>
 </tr>
 </tbody>
 </table>
@@ -168,13 +138,7 @@ Returns a list of all debuggable targets including tabs, pages, service workers,
 
 ```sql
 SELECT
-id,
-description,
-devtoolsFrontendUrl,
-title,
-type,
-url,
-webSocketDebuggerUrl
+contents
 FROM cloudflare.browser_rendering.targets
 WHERE account_id = '{{ account_id }}' -- required
 AND session_id = '{{ session_id }}' -- required

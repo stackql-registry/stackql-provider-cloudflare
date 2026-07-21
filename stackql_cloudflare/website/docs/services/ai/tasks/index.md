@@ -51,6 +51,21 @@ Returns a list of tasks
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="id" /></td>
+    <td><code>string</code></td>
+    <td>Task identifier (UUID).</td>
+</tr>
+<tr>
+    <td><CopyableCode code="name" /></td>
+    <td><code>string</code></td>
+    <td>Task name, e.g. Text Generation.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="description" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -116,7 +131,9 @@ Searches Workers AI models by task type (e.g., text-generation, embeddings).
 
 ```sql
 SELECT
-*
+id,
+name,
+description
 FROM cloudflare.ai.tasks
 WHERE account_id = '{{ account_id }}' -- required
 ;

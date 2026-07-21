@@ -51,6 +51,13 @@ The following methods are available for this resource:
 </thead>
 <tbody>
 <tr>
+    <td><a href="#create"><CopyableCode code="create" /></a></td>
+    <td><CopyableCode code="insert" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-request_id"><code>request_id</code></a></td>
+    <td></td>
+    <td>Adds a message to a Cloudforce One intelligence request conversation.</td>
+</tr>
+<tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-request_id"><code>request_id</code></a>, <a href="#parameter-message_id"><code>message_id</code></a></td>
@@ -97,6 +104,58 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tr>
 </tbody>
 </table>
+
+## `INSERT` examples
+
+<Tabs
+    defaultValue="create"
+    values={[
+        { label: 'create', value: 'create' },
+        { label: 'Manifest', value: 'manifest' }
+    ]}
+>
+<TabItem value="create">
+
+Adds a message to a Cloudforce One intelligence request conversation.
+
+```sql
+INSERT INTO cloudflare.cloudforce_one.message (
+content,
+account_id,
+request_id
+)
+SELECT 
+'{{ content }}',
+'{{ account_id }}',
+'{{ request_id }}'
+RETURNING
+errors,
+messages,
+result,
+success
+;
+```
+</TabItem>
+<TabItem value="manifest">
+
+<CodeBlock language="yaml">{`# Description fields are for documentation purposes
+- name: message
+  props:
+    - name: account_id
+      value: "{{ account_id }}"
+      description: Required parameter for the message resource.
+    - name: request_id
+      value: "{{ request_id }}"
+      description: Required parameter for the message resource.
+    - name: content
+      value: "{{ content }}"
+      description: |
+        Content of message.
+`}</CodeBlock>
+
+</TabItem>
+</Tabs>
+
 
 ## `REPLACE` examples
 

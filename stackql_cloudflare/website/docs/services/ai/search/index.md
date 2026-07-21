@@ -32,8 +32,39 @@ Creates, updates, deletes, gets or lists a <code>search</code> resource.
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="autorag_config_search"
+    values={[
+        { label: 'autorag_config_search', value: 'autorag_config_search' }
+    ]}
+>
+<TabItem value="autorag_config_search">
 
+Returns the log details
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="result" /></td>
+    <td><code>object</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="success" /></td>
+    <td><code>boolean</code></td>
+    <td></td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -52,8 +83,8 @@ The following methods are available for this resource:
 <tbody>
 <tr>
     <td><a href="#autorag_config_search"><CopyableCode code="autorag_config_search" /></a></td>
-    <td><CopyableCode code="insert" /></td>
-    <td><a href="#parameter-id"><code>id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-query"><code>query</code></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-id"><code>id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
     <td></td>
 </tr>
@@ -86,83 +117,26 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tbody>
 </table>
 
-## `INSERT` examples
+## `SELECT` examples
 
 <Tabs
     defaultValue="autorag_config_search"
     values={[
-        { label: 'autorag_config_search', value: 'autorag_config_search' },
-        { label: 'Manifest', value: 'manifest' }
+        { label: 'autorag_config_search', value: 'autorag_config_search' }
     ]}
 >
 <TabItem value="autorag_config_search">
 
-No description available.
+Returns the log details
 
 ```sql
-INSERT INTO cloudflare.ai.search (
-filters,
-max_num_results,
-query,
-ranking_options,
-reranking,
-rewrite_query,
-id,
-account_id
-)
-SELECT 
-'{{ filters }}',
-{{ max_num_results }},
-'{{ query }}' /* required */,
-'{{ ranking_options }}',
-'{{ reranking }}',
-{{ rewrite_query }},
-'{{ id }}',
-'{{ account_id }}'
-RETURNING
+SELECT
 result,
 success
+FROM cloudflare.ai.search
+WHERE id = '{{ id }}' -- required
+AND account_id = '{{ account_id }}' -- required
 ;
 ```
-</TabItem>
-<TabItem value="manifest">
-
-<CodeBlock language="yaml">{`# Description fields are for documentation purposes
-- name: search
-  props:
-    - name: id
-      value: "{{ id }}"
-      description: Required parameter for the search resource.
-    - name: account_id
-      value: "{{ account_id }}"
-      description: Required parameter for the search resource.
-    - name: filters
-      value:
-        key: "{{ key }}"
-        type: "{{ type }}"
-        value: "{{ value }}"
-        filters:
-          - key: "{{ key }}"
-            type: "{{ type }}"
-            value: "{{ value }}"
-    - name: max_num_results
-      value: {{ max_num_results }}
-      default: 10
-    - name: query
-      value: "{{ query }}"
-    - name: ranking_options
-      value:
-        ranker: "{{ ranker }}"
-        score_threshold: {{ score_threshold }}
-      default: [object Object]
-    - name: reranking
-      value:
-        enabled: {{ enabled }}
-        model: "{{ model }}"
-    - name: rewrite_query
-      value: {{ rewrite_query }}
-      default: false
-`}</CodeBlock>
-
 </TabItem>
 </Tabs>

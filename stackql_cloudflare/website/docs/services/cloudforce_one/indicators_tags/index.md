@@ -51,6 +51,11 @@ Returns an array of mirrored tags.
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -121,7 +126,7 @@ Returns all mirrored tags from the indicator dataset (DO mirror table). No pagin
 
 ```sql
 SELECT
-*
+contents
 FROM cloudflare.cloudforce_one.indicators_tags
 WHERE account_id = '{{ account_id }}' -- required
 AND dataset_id = '{{ dataset_id }}' -- required

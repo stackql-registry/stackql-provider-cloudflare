@@ -32,8 +32,52 @@ Creates, updates, deletes, gets or lists an <code>accounts</code> resource.
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="query_pay_per_crawl_zones"
+    values={[
+        { label: 'query_pay_per_crawl_zones', value: 'query_pay_per_crawl_zones' }
+    ]}
+>
+<TabItem value="query_pay_per_crawl_zones">
 
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="errors" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="messages" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="result" /></td>
+    <td><code>object</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="result_info" /></td>
+    <td><code>object</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="success" /></td>
+    <td><code>boolean</code></td>
+    <td></td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -51,18 +95,18 @@ The following methods are available for this resource:
 </thead>
 <tbody>
 <tr>
+    <td><a href="#query_pay_per_crawl_zones"><CopyableCode code="query_pay_per_crawl_zones" /></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Provided a list of pay-per-crawl configured zones this method will return whether they can enable PPC or not.</td>
+</tr>
+<tr>
     <td><a href="#set_pay_per_crawl_zones"><CopyableCode code="set_pay_per_crawl_zones" /></a></td>
     <td><CopyableCode code="exec" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
     <td>Allows an account admin to set the can_be_enabled setting on a list of zones.</td>
-</tr>
-<tr>
-    <td><a href="#query_pay_per_crawl_zones"><CopyableCode code="query_pay_per_crawl_zones" /></a></td>
-    <td><CopyableCode code="exec" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
-    <td></td>
-    <td>Provided a list of pay-per-crawl configured zones this method will return whether they can enable PPC or not.</td>
 </tr>
 </tbody>
 </table>
@@ -88,13 +132,39 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tbody>
 </table>
 
+## `SELECT` examples
+
+<Tabs
+    defaultValue="query_pay_per_crawl_zones"
+    values={[
+        { label: 'query_pay_per_crawl_zones', value: 'query_pay_per_crawl_zones' }
+    ]}
+>
+<TabItem value="query_pay_per_crawl_zones">
+
+Provided a list of pay-per-crawl configured zones this method will return whether they can enable PPC or not.
+
+```sql
+SELECT
+errors,
+messages,
+result,
+result_info,
+success
+FROM cloudflare.billing.accounts
+WHERE account_id = '{{ account_id }}' -- required
+;
+```
+</TabItem>
+</Tabs>
+
+
 ## Lifecycle Methods
 
 <Tabs
     defaultValue="set_pay_per_crawl_zones"
     values={[
-        { label: 'set_pay_per_crawl_zones', value: 'set_pay_per_crawl_zones' },
-        { label: 'query_pay_per_crawl_zones', value: 'query_pay_per_crawl_zones' }
+        { label: 'set_pay_per_crawl_zones', value: 'set_pay_per_crawl_zones' }
     ]}
 >
 <TabItem value="set_pay_per_crawl_zones">
@@ -103,20 +173,6 @@ Allows an account admin to set the can_be_enabled setting on a list of zones.
 
 ```sql
 EXEC cloudflare.billing.accounts.set_pay_per_crawl_zones 
-@account_id='{{ account_id }}' --required 
-@@json=
-'{
-"zones": "{{ zones }}"
-}'
-;
-```
-</TabItem>
-<TabItem value="query_pay_per_crawl_zones">
-
-Provided a list of pay-per-crawl configured zones this method will return whether they can enable PPC or not.
-
-```sql
-EXEC cloudflare.billing.accounts.query_pay_per_crawl_zones 
 @account_id='{{ account_id }}' --required 
 @@json=
 '{

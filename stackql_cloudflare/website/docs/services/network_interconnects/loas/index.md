@@ -51,6 +51,11 @@ Generated LOA in PDF format
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -121,7 +126,7 @@ Generated LOA in PDF format
 
 ```sql
 SELECT
-*
+contents
 FROM cloudflare.network_interconnects.loas
 WHERE icon = '{{ icon }}' -- required
 AND account_id = '{{ account_id }}' -- required

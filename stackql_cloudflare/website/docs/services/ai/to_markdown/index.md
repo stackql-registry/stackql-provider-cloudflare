@@ -33,12 +33,14 @@ Creates, updates, deletes, gets or lists a <code>to_markdown</code> resource.
 The following fields are returned by `SELECT` queries:
 
 <Tabs
-    defaultValue="list"
+    defaultValue="convert"
     values={[
-        { label: 'list', value: 'list' }
+        { label: 'convert', value: 'convert' }
     ]}
 >
-<TabItem value="list">
+<TabItem value="convert">
+
+Model Schema
 
 <table>
 <thead>
@@ -50,13 +52,13 @@ The following fields are returned by `SELECT` queries:
 </thead>
 <tbody>
 <tr>
-    <td><CopyableCode code="extension" /></td>
-    <td><code>string</code></td>
+    <td><CopyableCode code="result" /></td>
+    <td><code>array</code></td>
     <td></td>
 </tr>
 <tr>
-    <td><CopyableCode code="mimeType" /></td>
-    <td><code>string</code></td>
+    <td><CopyableCode code="success" /></td>
+    <td><code>boolean</code></td>
     <td></td>
 </tr>
 </tbody>
@@ -80,11 +82,11 @@ The following methods are available for this resource:
 </thead>
 <tbody>
 <tr>
-    <td><a href="#list"><CopyableCode code="list" /></a></td>
+    <td><a href="#convert"><CopyableCode code="convert" /></a></td>
     <td><CopyableCode code="select" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
-    <td>Lists all file formats supported for conversion to Markdown.</td>
+    <td>Converts uploaded files into Markdown format using Workers AI.</td>
 </tr>
 </tbody>
 </table>
@@ -113,19 +115,19 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 ## `SELECT` examples
 
 <Tabs
-    defaultValue="list"
+    defaultValue="convert"
     values={[
-        { label: 'list', value: 'list' }
+        { label: 'convert', value: 'convert' }
     ]}
 >
-<TabItem value="list">
+<TabItem value="convert">
 
-Lists all file formats supported for conversion to Markdown.
+Converts uploaded files into Markdown format using Workers AI.
 
 ```sql
 SELECT
-extension,
-mimeType
+result,
+success
 FROM cloudflare.ai.to_markdown
 WHERE account_id = '{{ account_id }}' -- required
 ;

@@ -18,22 +18,19 @@ security_center service documentation.
 
 :::info[Service Summary]
 
-total resources: __11__  
+total resources: __8__  
 
 :::
 
 ## Resources
 <div class="row">
 <div class="providerDocColumn">
-<a href="/services/security_center/audit_logs_6f0256/">audit_logs_6f0256</a><br />
-<a href="/services/security_center/audit_logs_8c2f64/">audit_logs_8c2f64</a><br />
-<a href="/services/security_center/audit_logs_bff19a/">audit_logs_bff19a</a><br />
-<a href="/services/security_center/audit_logs_e60d54/">audit_logs_e60d54</a><br />
+<a href="/services/security_center/audit_logs/">audit_logs</a><br />
 <a href="/services/security_center/class/">class</a><br />
-<a href="/services/security_center/classification/">classification</a>
+<a href="/services/security_center/classification/">classification</a><br />
+<a href="/services/security_center/context/">context</a>
 </div>
 <div class="providerDocColumn">
-<a href="/services/security_center/context/">context</a><br />
 <a href="/services/security_center/insights/">insights</a><br />
 <a href="/services/security_center/scans/">scans</a><br />
 <a href="/services/security_center/severity/">severity</a><br />

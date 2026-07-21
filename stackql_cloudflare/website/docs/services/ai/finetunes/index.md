@@ -115,6 +115,13 @@ The following methods are available for this resource:
     <td></td>
     <td>Creates a new fine-tuning job for a Workers AI model using custom training data.</td>
 </tr>
+<tr>
+    <td><a href="#upload_asset"><CopyableCode code="upload_asset" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-finetune_id"><code>finetune_id</code></a>, <a href="#parameter-file_name"><code>file_name</code></a>, <a href="#parameter-file"><code>file</code></a></td>
+    <td></td>
+    <td>Uploads training data assets for a Workers AI fine-tuning job.</td>
+</tr>
 </tbody>
 </table>
 
@@ -135,6 +142,11 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
     <td><CopyableCode code="account_id" /></td>
     <td><code>string</code></td>
     <td>The Cloudflare account ID.</td>
+</tr>
+<tr id="parameter-finetune_id">
+    <td><CopyableCode code="finetune_id" /></td>
+    <td><code>string</code></td>
+    <td></td>
 </tr>
 </tbody>
 </table>
@@ -219,5 +231,32 @@ success
       default: false
 `}</CodeBlock>
 
+</TabItem>
+</Tabs>
+
+
+## Lifecycle Methods
+
+<Tabs
+    defaultValue="upload_asset"
+    values={[
+        { label: 'upload_asset', value: 'upload_asset' }
+    ]}
+>
+<TabItem value="upload_asset">
+
+Uploads training data assets for a Workers AI fine-tuning job.
+
+```sql
+EXEC cloudflare.ai.finetunes.upload_asset 
+@account_id='{{ account_id }}' --required, 
+@finetune_id='{{ finetune_id }}' --required 
+@@json=
+'{
+"file": "{{ file }}", 
+"file_name": "{{ file_name }}"
+}'
+;
+```
 </TabItem>
 </Tabs>

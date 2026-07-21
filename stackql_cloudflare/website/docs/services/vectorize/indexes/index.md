@@ -32,8 +32,49 @@ Creates, updates, deletes, gets or lists an <code>indexes</code> resource.
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="query_v2"
+    values={[
+        { label: 'query_v2', value: 'query_v2' }
+    ]}
+>
+<TabItem value="query_v2">
 
+Query Vectors Response
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="errors" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="messages" /></td>
+    <td><code>array</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="result" /></td>
+    <td><code>object</code></td>
+    <td></td>
+</tr>
+<tr>
+    <td><CopyableCode code="success" /></td>
+    <td><code>boolean</code></td>
+    <td>Whether the API call was successful (true)</td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -50,6 +91,20 @@ The following methods are available for this resource:
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><a href="#query_v2"><CopyableCode code="query_v2" /></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-index_name"><code>index_name</code></a></td>
+    <td></td>
+    <td>Finds vectors closest to a given vector in an index.</td>
+</tr>
+<tr>
+    <td><a href="#update_index"><CopyableCode code="update_index" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-index_name"><code>index_name</code></a>, <a href="#parameter-description"><code>description</code></a></td>
+    <td></td>
+    <td>Updates and returns the specified Vectorize Index.</td>
+</tr>
 <tr>
     <td><a href="#create_delete_by_ids"><CopyableCode code="create_delete_by_ids" /></a></td>
     <td><CopyableCode code="exec" /></td>
@@ -107,13 +162,6 @@ The following methods are available for this resource:
     <td>Inserts vectors into the specified index and returns a mutation id corresponding to the vectors enqueued for insertion.</td>
 </tr>
 <tr>
-    <td><a href="#query_v2"><CopyableCode code="query_v2" /></a></td>
-    <td><CopyableCode code="exec" /></td>
-    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-index_name"><code>index_name</code></a>, <a href="#parameter-vector"><code>vector</code></a></td>
-    <td></td>
-    <td>Finds vectors closest to a given vector in an index.</td>
-</tr>
-<tr>
     <td><a href="#upsert_v2"><CopyableCode code="upsert_v2" /></a></td>
     <td><CopyableCode code="exec" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-index_name"><code>index_name</code></a></td>
@@ -154,11 +202,39 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tbody>
 </table>
 
+## `SELECT` examples
+
+<Tabs
+    defaultValue="query_v2"
+    values={[
+        { label: 'query_v2', value: 'query_v2' }
+    ]}
+>
+<TabItem value="query_v2">
+
+Finds vectors closest to a given vector in an index.
+
+```sql
+SELECT
+errors,
+messages,
+result,
+success
+FROM cloudflare.vectorize.indexes
+WHERE account_id = '{{ account_id }}' -- required
+AND index_name = '{{ index_name }}' -- required
+;
+```
+</TabItem>
+</Tabs>
+
+
 ## Lifecycle Methods
 
 <Tabs
-    defaultValue="create_delete_by_ids"
+    defaultValue="update_index"
     values={[
+        { label: 'update_index', value: 'update_index' },
         { label: 'create_delete_by_ids', value: 'create_delete_by_ids' },
         { label: 'get_by_ids', value: 'get_by_ids' },
         { label: 'create_insert', value: 'create_insert' },
@@ -167,10 +243,24 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
         { label: 'create_delete_by_ids_v2', value: 'create_delete_by_ids_v2' },
         { label: 'get_by_ids_v2', value: 'get_by_ids_v2' },
         { label: 'create_insert_v2', value: 'create_insert_v2' },
-        { label: 'query_v2', value: 'query_v2' },
         { label: 'upsert_v2', value: 'upsert_v2' }
     ]}
 >
+<TabItem value="update_index">
+
+Updates and returns the specified Vectorize Index.
+
+```sql
+EXEC cloudflare.vectorize.indexes.update_index 
+@account_id='{{ account_id }}' --required, 
+@index_name='{{ index_name }}' --required 
+@@json=
+'{
+"description": "{{ description }}"
+}'
+;
+```
+</TabItem>
 <TabItem value="create_delete_by_ids">
 
 Delete a set of vectors from an index by their vector identifiers.
@@ -281,25 +371,6 @@ EXEC cloudflare.vectorize.indexes.create_insert_v2
 @account_id='{{ account_id }}' --required, 
 @index_name='{{ index_name }}' --required, 
 @unparsable-behavior='{{ unparsable-behavior }}'
-;
-```
-</TabItem>
-<TabItem value="query_v2">
-
-Finds vectors closest to a given vector in an index.
-
-```sql
-EXEC cloudflare.vectorize.indexes.query_v2 
-@account_id='{{ account_id }}' --required, 
-@index_name='{{ index_name }}' --required 
-@@json=
-'{
-"filter": "{{ filter }}", 
-"returnMetadata": "{{ returnMetadata }}", 
-"returnValues": {{ returnValues }}, 
-"topK": {{ topK }}, 
-"vector": "{{ vector }}"
-}'
 ;
 ```
 </TabItem>

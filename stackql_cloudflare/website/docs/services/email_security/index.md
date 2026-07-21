@@ -18,7 +18,7 @@ email_security service documentation.
 
 :::info[Service Summary]
 
-total resources: __15__  
+total resources: __14__  
 
 :::
 
@@ -31,8 +31,7 @@ total resources: __15__
 <a href="/services/email_security/detections/">detections</a><br />
 <a href="/services/email_security/domains/">domains</a><br />
 <a href="/services/email_security/impersonation_registry/">impersonation_registry</a><br />
-<a href="/services/email_security/investigate/">investigate</a><br />
-<a href="/services/email_security/move/">move</a>
+<a href="/services/email_security/investigate/">investigate</a>
 </div>
 <div class="providerDocColumn">
 <a href="/services/email_security/preview/">preview</a><br />

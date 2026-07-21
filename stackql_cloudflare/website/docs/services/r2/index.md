@@ -18,7 +18,7 @@ r2 service documentation.
 
 :::info[Service Summary]
 
-total resources: __18__  
+total resources: __16__  
 
 :::
 
@@ -32,18 +32,16 @@ total resources: __18__
 <a href="/services/r2/jobs/">jobs</a><br />
 <a href="/services/r2/jobs_progress/">jobs_progress</a><br />
 <a href="/services/r2/lifecycle/">lifecycle</a><br />
-<a href="/services/r2/local_uploads/">local_uploads</a><br />
-<a href="/services/r2/locks/">locks</a>
+<a href="/services/r2/local_uploads/">local_uploads</a>
 </div>
 <div class="providerDocColumn">
+<a href="/services/r2/locks/">locks</a><br />
 <a href="/services/r2/logs/">logs</a><br />
 <a href="/services/r2/managed/">managed</a><br />
 <a href="/services/r2/metrics/">metrics</a><br />
+<a href="/services/r2/operations_adaptive_groups/">operations_adaptive_groups</a><br />
 <a href="/services/r2/r2/">r2</a><br />
-<a href="/services/r2/r2_operations_adaptive_groups/">r2_operations_adaptive_groups</a><br />
 <a href="/services/r2/sippy/">sippy</a><br />
-<a href="/services/r2/slurper_jobs/">slurper_jobs</a><br />
-<a href="/services/r2/source_connectivity_precheck/">source_connectivity_precheck</a><br />
-<a href="/services/r2/target_connectivity_precheck/">target_connectivity_precheck</a>
+<a href="/services/r2/slurper_jobs/">slurper_jobs</a>
 </div>
 </div>

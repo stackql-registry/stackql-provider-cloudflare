@@ -25,7 +25,7 @@ total resources: __4__
 ## Resources
 <div class="row">
 <div class="providerDocColumn">
-<a href="/services/dns_firewall/bytimes/">bytimes</a><br />
+<a href="/services/dns_firewall/dimensions_and_metrics/">dimensions_and_metrics</a><br />
 <a href="/services/dns_firewall/dns_firewall/">dns_firewall</a>
 </div>
 <div class="providerDocColumn">

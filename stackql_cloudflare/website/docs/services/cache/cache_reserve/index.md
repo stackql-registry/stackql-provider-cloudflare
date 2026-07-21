@@ -32,8 +32,49 @@ Creates, updates, deletes, gets or lists a <code>cache_reserve</code> resource.
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="get"
+    values={[
+        { label: 'get', value: 'get' }
+    ]}
+>
+<TabItem value="get">
 
+Get Cache Reserve setting response.
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="id" /></td>
+    <td><code>string</code></td>
+    <td>The identifier of the caching setting. (cache_reserve)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="editable" /></td>
+    <td><code>boolean</code></td>
+    <td>Whether the setting is editable.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="modified_on" /></td>
+    <td><code>string (date-time)</code></td>
+    <td>Last time this setting was modified.</td>
+</tr>
+<tr>
+    <td><CopyableCode code="value" /></td>
+    <td><code>string</code></td>
+    <td>Value of the Cache Reserve zone setting. (on, off) (default: off)</td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -51,11 +92,25 @@ The following methods are available for this resource:
 </thead>
 <tbody>
 <tr>
+    <td><a href="#get"><CopyableCode code="get" /></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a></td>
+    <td></td>
+    <td>Increase cache lifetimes by automatically storing all cacheable files into Cloudflare's persistent object storage buckets. Requires Cache Reserve subscription. Note: using Tiered Cache with Cache Reserve is highly recommended to reduce Reserve operations costs. See the [developer docs](https://developers.cloudflare.com/cache/about/cache-reserve) for more information.</td>
+</tr>
+<tr>
     <td><a href="#edit"><CopyableCode code="edit" /></a></td>
     <td><CopyableCode code="update" /></td>
     <td><a href="#parameter-zone_id"><code>zone_id</code></a>, <a href="#parameter-value"><code>value</code></a></td>
     <td></td>
     <td>Increase cache lifetimes by automatically storing all cacheable files into Cloudflare's persistent object storage buckets. Requires Cache Reserve subscription. Note: using Tiered Cache with Cache Reserve is highly recommended to reduce Reserve operations costs. See the [developer docs](https://developers.cloudflare.com/cache/about/cache-reserve) for more information.</td>
+</tr>
+<tr>
+    <td><a href="#get_clear_status"><CopyableCode code="get_clear_status" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a></td>
+    <td></td>
+    <td>You can use Cache Reserve Clear to clear your Cache Reserve, but you must first disable Cache Reserve. In most cases, this will be accomplished within 24 hours. You cannot re-enable Cache Reserve while this process is ongoing. Keep in mind that you cannot undo or cancel this operation.</td>
 </tr>
 <tr>
     <td><a href="#clear"><CopyableCode code="clear" /></a></td>
@@ -87,6 +142,32 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tr>
 </tbody>
 </table>
+
+## `SELECT` examples
+
+<Tabs
+    defaultValue="get"
+    values={[
+        { label: 'get', value: 'get' }
+    ]}
+>
+<TabItem value="get">
+
+Increase cache lifetimes by automatically storing all cacheable files into Cloudflare's persistent object storage buckets. Requires Cache Reserve subscription. Note: using Tiered Cache with Cache Reserve is highly recommended to reduce Reserve operations costs. See the [developer docs](https://developers.cloudflare.com/cache/about/cache-reserve) for more information.
+
+```sql
+SELECT
+id,
+editable,
+modified_on,
+value
+FROM cloudflare.cache.cache_reserve
+WHERE zone_id = '{{ zone_id }}' -- required
+;
+```
+</TabItem>
+</Tabs>
+
 
 ## `UPDATE` examples
 
@@ -120,11 +201,22 @@ success;
 ## Lifecycle Methods
 
 <Tabs
-    defaultValue="clear"
+    defaultValue="get_clear_status"
     values={[
+        { label: 'get_clear_status', value: 'get_clear_status' },
         { label: 'clear', value: 'clear' }
     ]}
 >
+<TabItem value="get_clear_status">
+
+You can use Cache Reserve Clear to clear your Cache Reserve, but you must first disable Cache Reserve. In most cases, this will be accomplished within 24 hours. You cannot re-enable Cache Reserve while this process is ongoing. Keep in mind that you cannot undo or cancel this operation.
+
+```sql
+EXEC cloudflare.cache.cache_reserve.get_clear_status 
+@zone_id='{{ zone_id }}' --required
+;
+```
+</TabItem>
 <TabItem value="clear">
 
 You can use Cache Reserve Clear to clear your Cache Reserve, but you must first disable Cache Reserve. In most cases, this will be accomplished within 24 hours. You cannot re-enable Cache Reserve while this process is ongoing. Keep in mind that you cannot undo or cancel this operation.

@@ -10,6 +10,7 @@ on:
 
 jobs:
   publish:
+    if: github.repository == 'cloudflare/cloudflare-python'
     name: publish
     permissions:
       contents: read

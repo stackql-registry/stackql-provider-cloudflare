@@ -18,7 +18,7 @@ vectorize service documentation.
 
 :::info[Service Summary]
 
-total resources: __7__  
+total resources: __6__  
 
 :::
 
@@ -27,12 +27,11 @@ total resources: __7__
 <div class="providerDocColumn">
 <a href="/services/vectorize/indexes/">indexes</a><br />
 <a href="/services/vectorize/indexes_info/">indexes_info</a><br />
-<a href="/services/vectorize/indexes_list/">indexes_list</a><br />
-<a href="/services/vectorize/metadata_index/">metadata_index</a>
+<a href="/services/vectorize/indexes_list/">indexes_list</a>
 </div>
 <div class="providerDocColumn">
+<a href="/services/vectorize/metadata_index/">metadata_index</a><br />
 <a href="/services/vectorize/v2_indexes/">v2_indexes</a><br />
-<a href="/services/vectorize/vectorize/">vectorize</a><br />
 <a href="/services/vectorize/vectorize_indexes/">vectorize_indexes</a>
 </div>
 </div>

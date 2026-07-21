@@ -18,7 +18,7 @@ intel service documentation.
 
 :::info[Service Summary]
 
-total resources: __21__  
+total resources: __20__  
 
 :::
 
@@ -34,8 +34,7 @@ total resources: __21__
 <a href="/services/intel/domains/">domains</a><br />
 <a href="/services/intel/download/">download</a><br />
 <a href="/services/intel/indicator_feeds/">indicator_feeds</a><br />
-<a href="/services/intel/intel/">intel</a><br />
-<a href="/services/intel/intel_indicator_feeds/">intel_indicator_feeds</a>
+<a href="/services/intel/intel/">intel</a>
 </div>
 <div class="providerDocColumn">
 <a href="/services/intel/ip_lists/">ip_lists</a><br />

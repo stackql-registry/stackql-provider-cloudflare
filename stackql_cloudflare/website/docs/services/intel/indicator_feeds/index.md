@@ -35,7 +35,8 @@ The following fields are returned by `SELECT` queries:
 <Tabs
     defaultValue="get"
     values={[
-        { label: 'get', value: 'get' }
+        { label: 'get', value: 'get' },
+        { label: 'list', value: 'list' }
     ]}
 >
 <TabItem value="get">
@@ -109,6 +110,62 @@ Get indicator feed metadata
 </tbody>
 </table>
 </TabItem>
+<TabItem value="list">
+
+Get indicator feeds response
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="id" /></td>
+    <td><code>integer</code></td>
+    <td>The unique identifier for the indicator feed</td>
+</tr>
+<tr>
+    <td><CopyableCode code="name" /></td>
+    <td><code>string</code></td>
+    <td>The name of the indicator feed</td>
+</tr>
+<tr>
+    <td><CopyableCode code="created_on" /></td>
+    <td><code>string (date-time)</code></td>
+    <td>The date and time when the data entry was created</td>
+</tr>
+<tr>
+    <td><CopyableCode code="description" /></td>
+    <td><code>string</code></td>
+    <td>The description of the example test</td>
+</tr>
+<tr>
+    <td><CopyableCode code="is_attributable" /></td>
+    <td><code>boolean</code></td>
+    <td>Whether the indicator feed can be attributed to a provider</td>
+</tr>
+<tr>
+    <td><CopyableCode code="is_downloadable" /></td>
+    <td><code>boolean</code></td>
+    <td>Whether the indicator feed can be downloaded</td>
+</tr>
+<tr>
+    <td><CopyableCode code="is_public" /></td>
+    <td><code>boolean</code></td>
+    <td>Whether the indicator feed is exposed to customers</td>
+</tr>
+<tr>
+    <td><CopyableCode code="modified_on" /></td>
+    <td><code>string (date-time)</code></td>
+    <td>The date and time when the data entry was last modified</td>
+</tr>
+</tbody>
+</table>
+</TabItem>
 </Tabs>
 
 ## Methods
@@ -132,6 +189,13 @@ The following methods are available for this resource:
     <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-feed_id"><code>feed_id</code></a></td>
     <td></td>
     <td>Retrieves details for a specific custom threat indicator feed.</td>
+</tr>
+<tr>
+    <td><a href="#list"><CopyableCode code="list" /></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Retrieves details for all accessible custom threat indicator feeds.</td>
 </tr>
 <tr>
     <td><a href="#create"><CopyableCode code="create" /></a></td>
@@ -188,7 +252,8 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 <Tabs
     defaultValue="get"
     values={[
-        { label: 'get', value: 'get' }
+        { label: 'get', value: 'get' },
+        { label: 'list', value: 'list' }
     ]}
 >
 <TabItem value="get">
@@ -211,6 +276,25 @@ modified_on
 FROM cloudflare.intel.indicator_feeds
 WHERE account_id = '{{ account_id }}' -- required
 AND feed_id = '{{ feed_id }}' -- required
+;
+```
+</TabItem>
+<TabItem value="list">
+
+Retrieves details for all accessible custom threat indicator feeds.
+
+```sql
+SELECT
+id,
+name,
+created_on,
+description,
+is_attributable,
+is_downloadable,
+is_public,
+modified_on
+FROM cloudflare.intel.indicator_feeds
+WHERE account_id = '{{ account_id }}' -- required
 ;
 ```
 </TabItem>

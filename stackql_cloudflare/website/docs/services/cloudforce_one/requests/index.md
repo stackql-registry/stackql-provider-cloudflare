@@ -144,6 +144,13 @@ The following methods are available for this resource:
     <td>Retrieves details for a specific Cloudforce One intelligence request.</td>
 </tr>
 <tr>
+    <td><a href="#create"><CopyableCode code="create" /></a></td>
+    <td><CopyableCode code="insert" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Creating a request adds the request into the Cloudforce One queue for analysis. In addition to the content, a short title, type, priority, and releasability should be provided. If one is not provided, a default will be assigned.</td>
+</tr>
+<tr>
     <td><a href="#update"><CopyableCode code="update" /></a></td>
     <td><CopyableCode code="replace" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-request_id"><code>request_id</code></a></td>
@@ -239,6 +246,78 @@ WHERE account_id = '{{ account_id }}' -- required
 AND request_id = '{{ request_id }}' -- required
 ;
 ```
+</TabItem>
+</Tabs>
+
+
+## `INSERT` examples
+
+<Tabs
+    defaultValue="create"
+    values={[
+        { label: 'create', value: 'create' },
+        { label: 'Manifest', value: 'manifest' }
+    ]}
+>
+<TabItem value="create">
+
+Creating a request adds the request into the Cloudforce One queue for analysis. In addition to the content, a short title, type, priority, and releasability should be provided. If one is not provided, a default will be assigned.
+
+```sql
+INSERT INTO cloudflare.cloudforce_one.requests (
+content,
+priority,
+request_type,
+summary,
+tlp,
+account_id
+)
+SELECT 
+'{{ content }}',
+'{{ priority }}',
+'{{ request_type }}',
+'{{ summary }}',
+'{{ tlp }}',
+'{{ account_id }}'
+RETURNING
+errors,
+messages,
+result,
+success
+;
+```
+</TabItem>
+<TabItem value="manifest">
+
+<CodeBlock language="yaml">{`# Description fields are for documentation purposes
+- name: requests
+  props:
+    - name: account_id
+      value: "{{ account_id }}"
+      description: Required parameter for the requests resource.
+    - name: content
+      value: "{{ content }}"
+      description: |
+        Request content.
+    - name: priority
+      value: "{{ priority }}"
+      description: |
+        Priority for analyzing the request.
+    - name: request_type
+      value: "{{ request_type }}"
+      description: |
+        Requested information from request.
+    - name: summary
+      value: "{{ summary }}"
+      description: |
+        Brief description of the request.
+    - name: tlp
+      value: "{{ tlp }}"
+      description: |
+        The CISA defined Traffic Light Protocol (TLP).
+      valid_values: ['clear', 'amber', 'amber-strict', 'green', 'red']
+`}</CodeBlock>
+
 </TabItem>
 </Tabs>
 

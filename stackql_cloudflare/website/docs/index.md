@@ -22,7 +22,7 @@ The connectivity cloud - DNS, CDN, Zero Trust, Workers, and more.
 :::info[Provider Summary] 
 
 total services: __108__  
-total resources: __1375__  
+total resources: __1235__  
 
 :::
 
@@ -79,7 +79,7 @@ stackql.exe shell --auth=$Auth
 <a href="/services/addressing/">addressing</a><br />
 <a href="/services/ai/">ai</a><br />
 <a href="/services/ai_gateway/">ai_gateway</a><br />
-<a href="/services/aisearch/">aisearch</a><br />
+<a href="/services/ai_search/">ai_search</a><br />
 <a href="/services/alerting/">alerting</a><br />
 <a href="/services/api_gateway/">api_gateway</a><br />
 <a href="/services/argo/">argo</a><br />

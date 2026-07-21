@@ -298,7 +298,8 @@ def sanitize_file(path: Path, analytics_pages: set[Path]) -> dict:
         text, analytics_n = _inject_analytics_callout(text)
 
     if text != original:
-        path.write_text(text, encoding="utf-8")
+        # newline='\n' so Windows doesn't rewrite the whole file to CRLF
+        path.write_text(text, encoding="utf-8", newline="\n")
     return {
         "code": code_n, "br": br_n, "cf_link": link_n,
         "anchor": anchor_n, "bogus_type": type_n, "analytics": analytics_n,

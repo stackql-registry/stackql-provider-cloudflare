@@ -32,8 +32,34 @@ Creates, updates, deletes, gets or lists an <code>accounts_logs_explorer_query_s
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="create_sql"
+    values={[
+        { label: 'create_sql', value: 'create_sql' }
+    ]}
+>
+<TabItem value="create_sql">
 
+Query results.
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="contents" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -52,7 +78,7 @@ The following methods are available for this resource:
 <tbody>
 <tr>
     <td><a href="#create_sql"><CopyableCode code="create_sql" /></a></td>
-    <td><CopyableCode code="exec" /></td>
+    <td><CopyableCode code="select" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
     <td>Run a SQL query against account or zone-level datasets.</td>
@@ -81,7 +107,7 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tbody>
 </table>
 
-## Lifecycle Methods
+## `SELECT` examples
 
 <Tabs
     defaultValue="create_sql"
@@ -94,8 +120,10 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 Run a SQL query against account or zone-level datasets.
 
 ```sql
-EXEC cloudflare.logs.accounts_logs_explorer_query_sql.create_sql 
-@account_id='{{ account_id }}' --required
+SELECT
+contents
+FROM cloudflare.logs.accounts_logs_explorer_query_sql
+WHERE account_id = '{{ account_id }}' -- required
 ;
 ```
 </TabItem>

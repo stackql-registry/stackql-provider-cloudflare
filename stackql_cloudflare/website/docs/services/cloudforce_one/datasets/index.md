@@ -52,17 +52,7 @@ Returns a list of dataset in an account.
 </thead>
 <tbody>
 <tr>
-    <td><CopyableCode code="name" /></td>
-    <td><code>string</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="isPublic" /></td>
-    <td><code>boolean</code></td>
-    <td></td>
-</tr>
-<tr>
-    <td><CopyableCode code="uuid" /></td>
+    <td><CopyableCode code="contents" /></td>
     <td><code>string</code></td>
     <td></td>
 </tr>
@@ -176,9 +166,7 @@ Returns a list of dataset in an account.
 
 ```sql
 SELECT
-name,
-isPublic,
-uuid
+contents
 FROM cloudflare.cloudforce_one.datasets
 WHERE account_id = '{{ account_id }}' -- required
 ;

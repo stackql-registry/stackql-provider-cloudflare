@@ -18,7 +18,7 @@ cloudforce_one service documentation.
 
 :::info[Service Summary]
 
-total resources: __56__  
+total resources: __50__  
 
 :::
 
@@ -42,8 +42,6 @@ total resources: __56__
 <a href="/services/cloudforce_one/event_tags/">event_tags</a><br />
 <a href="/services/cloudforce_one/events/">events</a><br />
 <a href="/services/cloudforce_one/events_categories/">events_categories</a><br />
-<a href="/services/cloudforce_one/events_categories_create/">events_categories_create</a><br />
-<a href="/services/cloudforce_one/events_create/">events_create</a><br />
 <a href="/services/cloudforce_one/events_dataset/">events_dataset</a><br />
 <a href="/services/cloudforce_one/events_indicators/">events_indicators</a><br />
 <a href="/services/cloudforce_one/events_raw/">events_raw</a><br />
@@ -51,24 +49,21 @@ total resources: __56__
 <a href="/services/cloudforce_one/events_target_industries/">events_target_industries</a><br />
 <a href="/services/cloudforce_one/groups/">groups</a><br />
 <a href="/services/cloudforce_one/indicator_types/">indicator_types</a><br />
-<a href="/services/cloudforce_one/indicator_types_indicator_types/">indicator_types_indicator_types</a><br />
-<a href="/services/cloudforce_one/indicators/">indicators</a>
+<a href="/services/cloudforce_one/indicator_types_indicator_types/">indicator_types_indicator_types</a>
 </div>
 <div class="providerDocColumn">
+<a href="/services/cloudforce_one/indicators/">indicators</a><br />
 <a href="/services/cloudforce_one/indicators_tags/">indicators_tags</a><br />
 <a href="/services/cloudforce_one/managed/">managed</a><br />
 <a href="/services/cloudforce_one/members/">members</a><br />
 <a href="/services/cloudforce_one/message/">message</a><br />
-<a href="/services/cloudforce_one/message_new/">message_new</a><br />
 <a href="/services/cloudforce_one/permissions/">permissions</a><br />
 <a href="/services/cloudforce_one/priority/">priority</a><br />
 <a href="/services/cloudforce_one/queries/">queries</a><br />
 <a href="/services/cloudforce_one/raw/">raw</a><br />
-<a href="/services/cloudforce_one/relate_create/">relate_create</a><br />
 <a href="/services/cloudforce_one/relationships/">relationships</a><br />
 <a href="/services/cloudforce_one/requests/">requests</a><br />
 <a href="/services/cloudforce_one/requests_constants/">requests_constants</a><br />
-<a href="/services/cloudforce_one/requests_new/">requests_new</a><br />
 <a href="/services/cloudforce_one/requests_quota/">requests_quota</a><br />
 <a href="/services/cloudforce_one/requests_types/">requests_types</a><br />
 <a href="/services/cloudforce_one/results/">results</a><br />
@@ -76,7 +71,6 @@ total resources: __56__
 <a href="/services/cloudforce_one/stats/">stats</a><br />
 <a href="/services/cloudforce_one/tags/">tags</a><br />
 <a href="/services/cloudforce_one/tags_categories/">tags_categories</a><br />
-<a href="/services/cloudforce_one/tags_categories_create/">tags_categories_create</a><br />
 <a href="/services/cloudforce_one/tags_indicators/">tags_indicators</a><br />
 <a href="/services/cloudforce_one/target_industries_catalog/">target_industries_catalog</a><br />
 <a href="/services/cloudforce_one/templates/">templates</a><br />

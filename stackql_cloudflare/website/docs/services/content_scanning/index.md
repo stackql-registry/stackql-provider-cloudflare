@@ -18,14 +18,13 @@ content_scanning service documentation.
 
 :::info[Service Summary]
 
-total resources: __3__  
+total resources: __2__  
 
 :::
 
 ## Resources
 <div class="row">
 <div class="providerDocColumn">
-<a href="/services/content_scanning/content_upload_scan/">content_upload_scan</a><br />
 <a href="/services/content_scanning/payloads/">payloads</a>
 </div>
 <div class="providerDocColumn">

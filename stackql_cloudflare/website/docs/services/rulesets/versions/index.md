@@ -32,8 +32,230 @@ Creates, updates, deletes, gets or lists a <code>versions</code> resource.
 
 The following fields are returned by `SELECT` queries:
 
-`SELECT` not supported for this resource, use `SHOW METHODS` to view available operations for the resource.
+<Tabs
+    defaultValue="get_by_account"
+    values={[
+        { label: 'get_by_account', value: 'get_by_account' },
+        { label: 'get_by_zone', value: 'get_by_zone' },
+        { label: 'list_by_account', value: 'list_by_account' },
+        { label: 'list_by_zone', value: 'list_by_zone' }
+    ]}
+>
+<TabItem value="get_by_account">
 
+A ruleset response.
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="id" /></td>
+    <td><code>string</code></td>
+    <td>The unique ID of the ruleset. (example: 2f2feab2026849078ba485f918791bdc, title: Ruleset ID)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="name" /></td>
+    <td><code>string</code></td>
+    <td>The human-readable name of the ruleset. (title: Name)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="description" /></td>
+    <td><code>string</code></td>
+    <td>An informative description of the ruleset. (default: , title: Description)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="kind" /></td>
+    <td><code>string</code></td>
+    <td>The kind of the ruleset. (managed, custom, root, zone) (example: root, title: Kind)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="last_updated" /></td>
+    <td><code>string (date-time)</code></td>
+    <td>The timestamp of when the ruleset was last modified. (title: Last Updated)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="phase" /></td>
+    <td><code>string</code></td>
+    <td>The phase of the ruleset. (ddos_l4, ddos_l7, http_config_settings, http_custom_errors, http_log_custom_fields, http_ratelimit, http_request_cache_settings, http_request_dynamic_redirect, http_request_firewall_custom, http_request_firewall_managed, http_request_late_transform, http_request_origin, http_request_redirect, http_request_sanitize, http_request_sbfm, http_request_transform, http_response_cache_settings, http_response_compression, http_response_firewall_managed, http_response_headers_transform, magic_transit, magic_transit_ids_managed, magic_transit_managed, magic_transit_ratelimit) (example: http_request_firewall_custom, title: Phase)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="rules" /></td>
+    <td><code>array</code></td>
+    <td>The list of rules in the ruleset. (title: Rules)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="version" /></td>
+    <td><code>string</code></td>
+    <td>The version of the ruleset. (example: 1, title: Version)</td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+<TabItem value="get_by_zone">
+
+A ruleset response.
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="id" /></td>
+    <td><code>string</code></td>
+    <td>The unique ID of the ruleset. (example: 2f2feab2026849078ba485f918791bdc, title: Ruleset ID)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="name" /></td>
+    <td><code>string</code></td>
+    <td>The human-readable name of the ruleset. (title: Name)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="description" /></td>
+    <td><code>string</code></td>
+    <td>An informative description of the ruleset. (default: , title: Description)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="kind" /></td>
+    <td><code>string</code></td>
+    <td>The kind of the ruleset. (managed, custom, root, zone) (example: root, title: Kind)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="last_updated" /></td>
+    <td><code>string (date-time)</code></td>
+    <td>The timestamp of when the ruleset was last modified. (title: Last Updated)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="phase" /></td>
+    <td><code>string</code></td>
+    <td>The phase of the ruleset. (ddos_l4, ddos_l7, http_config_settings, http_custom_errors, http_log_custom_fields, http_ratelimit, http_request_cache_settings, http_request_dynamic_redirect, http_request_firewall_custom, http_request_firewall_managed, http_request_late_transform, http_request_origin, http_request_redirect, http_request_sanitize, http_request_sbfm, http_request_transform, http_response_cache_settings, http_response_compression, http_response_firewall_managed, http_response_headers_transform, magic_transit, magic_transit_ids_managed, magic_transit_managed, magic_transit_ratelimit) (example: http_request_firewall_custom, title: Phase)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="rules" /></td>
+    <td><code>array</code></td>
+    <td>The list of rules in the ruleset. (title: Rules)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="version" /></td>
+    <td><code>string</code></td>
+    <td>The version of the ruleset. (example: 1, title: Version)</td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+<TabItem value="list_by_account">
+
+A rulesets response.
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="id" /></td>
+    <td><code>string</code></td>
+    <td>The unique ID of the ruleset. (example: 2f2feab2026849078ba485f918791bdc, title: Ruleset ID)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="name" /></td>
+    <td><code>string</code></td>
+    <td>The human-readable name of the ruleset. (title: Name)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="description" /></td>
+    <td><code>string</code></td>
+    <td>An informative description of the ruleset. (default: , title: Description)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="kind" /></td>
+    <td><code>string</code></td>
+    <td>The kind of the ruleset. (managed, custom, root, zone) (example: root, title: Kind)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="last_updated" /></td>
+    <td><code>string (date-time)</code></td>
+    <td>The timestamp of when the ruleset was last modified. (title: Last Updated)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="phase" /></td>
+    <td><code>string</code></td>
+    <td>The phase of the ruleset. (ddos_l4, ddos_l7, http_config_settings, http_custom_errors, http_log_custom_fields, http_ratelimit, http_request_cache_settings, http_request_dynamic_redirect, http_request_firewall_custom, http_request_firewall_managed, http_request_late_transform, http_request_origin, http_request_redirect, http_request_sanitize, http_request_sbfm, http_request_transform, http_response_cache_settings, http_response_compression, http_response_firewall_managed, http_response_headers_transform, magic_transit, magic_transit_ids_managed, magic_transit_managed, magic_transit_ratelimit) (example: http_request_firewall_custom, title: Phase)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="version" /></td>
+    <td><code>string</code></td>
+    <td>The version of the ruleset. (example: 1, title: Version)</td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+<TabItem value="list_by_zone">
+
+A rulesets response.
+
+<table>
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Datatype</th>
+    <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td><CopyableCode code="id" /></td>
+    <td><code>string</code></td>
+    <td>The unique ID of the ruleset. (example: 2f2feab2026849078ba485f918791bdc, title: Ruleset ID)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="name" /></td>
+    <td><code>string</code></td>
+    <td>The human-readable name of the ruleset. (title: Name)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="description" /></td>
+    <td><code>string</code></td>
+    <td>An informative description of the ruleset. (default: , title: Description)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="kind" /></td>
+    <td><code>string</code></td>
+    <td>The kind of the ruleset. (managed, custom, root, zone) (example: root, title: Kind)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="last_updated" /></td>
+    <td><code>string (date-time)</code></td>
+    <td>The timestamp of when the ruleset was last modified. (title: Last Updated)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="phase" /></td>
+    <td><code>string</code></td>
+    <td>The phase of the ruleset. (ddos_l4, ddos_l7, http_config_settings, http_custom_errors, http_log_custom_fields, http_ratelimit, http_request_cache_settings, http_request_dynamic_redirect, http_request_firewall_custom, http_request_firewall_managed, http_request_late_transform, http_request_origin, http_request_redirect, http_request_sanitize, http_request_sbfm, http_request_transform, http_response_cache_settings, http_response_compression, http_response_firewall_managed, http_response_headers_transform, magic_transit, magic_transit_ids_managed, magic_transit_managed, magic_transit_ratelimit) (example: http_request_firewall_custom, title: Phase)</td>
+</tr>
+<tr>
+    <td><CopyableCode code="version" /></td>
+    <td><code>string</code></td>
+    <td>The version of the ruleset. (example: 1, title: Version)</td>
+</tr>
+</tbody>
+</table>
+</TabItem>
+</Tabs>
 
 ## Methods
 
@@ -50,6 +272,34 @@ The following methods are available for this resource:
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><a href="#get_by_account"><CopyableCode code="get_by_account" /></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-ruleset_version"><code>ruleset_version</code></a>, <a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Fetches a specific version of an account or zone ruleset.</td>
+</tr>
+<tr>
+    <td><a href="#get_by_zone"><CopyableCode code="get_by_zone" /></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-ruleset_version"><code>ruleset_version</code></a>, <a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a></td>
+    <td></td>
+    <td>Fetches a specific version of an account or zone ruleset.</td>
+</tr>
+<tr>
+    <td><a href="#list_by_account"><CopyableCode code="list_by_account" /></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Fetches the versions of an account or zone ruleset.</td>
+</tr>
+<tr>
+    <td><a href="#list_by_zone"><CopyableCode code="list_by_zone" /></a></td>
+    <td><CopyableCode code="select" /></td>
+    <td><a href="#parameter-ruleset_id"><code>ruleset_id</code></a>, <a href="#parameter-zone_id"><code>zone_id</code></a></td>
+    <td></td>
+    <td>Fetches the versions of an account or zone ruleset.</td>
+</tr>
 <tr>
     <td><a href="#delete_by_account"><CopyableCode code="delete_by_account" /></a></td>
     <td><CopyableCode code="delete" /></td>
@@ -102,6 +352,100 @@ Parameters can be passed in the `WHERE` clause of a query. Check the [Methods](#
 </tr>
 </tbody>
 </table>
+
+## `SELECT` examples
+
+<Tabs
+    defaultValue="get_by_account"
+    values={[
+        { label: 'get_by_account', value: 'get_by_account' },
+        { label: 'get_by_zone', value: 'get_by_zone' },
+        { label: 'list_by_account', value: 'list_by_account' },
+        { label: 'list_by_zone', value: 'list_by_zone' }
+    ]}
+>
+<TabItem value="get_by_account">
+
+Fetches a specific version of an account or zone ruleset.
+
+```sql
+SELECT
+id,
+name,
+description,
+kind,
+last_updated,
+phase,
+rules,
+version
+FROM cloudflare.rulesets.versions
+WHERE ruleset_version = '{{ ruleset_version }}' -- required
+AND ruleset_id = '{{ ruleset_id }}' -- required
+AND account_id = '{{ account_id }}' -- required
+;
+```
+</TabItem>
+<TabItem value="get_by_zone">
+
+Fetches a specific version of an account or zone ruleset.
+
+```sql
+SELECT
+id,
+name,
+description,
+kind,
+last_updated,
+phase,
+rules,
+version
+FROM cloudflare.rulesets.versions
+WHERE ruleset_version = '{{ ruleset_version }}' -- required
+AND ruleset_id = '{{ ruleset_id }}' -- required
+AND zone_id = '{{ zone_id }}' -- required
+;
+```
+</TabItem>
+<TabItem value="list_by_account">
+
+Fetches the versions of an account or zone ruleset.
+
+```sql
+SELECT
+id,
+name,
+description,
+kind,
+last_updated,
+phase,
+version
+FROM cloudflare.rulesets.versions
+WHERE ruleset_id = '{{ ruleset_id }}' -- required
+AND account_id = '{{ account_id }}' -- required
+;
+```
+</TabItem>
+<TabItem value="list_by_zone">
+
+Fetches the versions of an account or zone ruleset.
+
+```sql
+SELECT
+id,
+name,
+description,
+kind,
+last_updated,
+phase,
+version
+FROM cloudflare.rulesets.versions
+WHERE ruleset_id = '{{ ruleset_id }}' -- required
+AND zone_id = '{{ zone_id }}' -- required
+;
+```
+</TabItem>
+</Tabs>
+
 
 ## `DELETE` examples
 

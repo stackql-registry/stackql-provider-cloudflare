@@ -51,6 +51,11 @@ Returns a list of authors
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td><CopyableCode code="author" /></td>
+    <td><code>string</code></td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </TabItem>
@@ -116,7 +121,7 @@ Searches Workers AI models by author or organization name.
 
 ```sql
 SELECT
-*
+author
 FROM cloudflare.ai.authors
 WHERE account_id = '{{ account_id }}' -- required
 ;

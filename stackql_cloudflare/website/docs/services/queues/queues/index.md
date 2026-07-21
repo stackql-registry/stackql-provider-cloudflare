@@ -228,6 +228,13 @@ The following methods are available for this resource:
     <td>Push a message to a Queue</td>
 </tr>
 <tr>
+    <td><a href="#ack_messages"><CopyableCode code="ack_messages" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-queue_id"><code>queue_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Acknowledge + Retry messages from a Queue</td>
+</tr>
+<tr>
     <td><a href="#batch"><CopyableCode code="batch" /></a></td>
     <td><CopyableCode code="exec" /></td>
     <td><a href="#parameter-queue_id"><code>queue_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
@@ -240,6 +247,13 @@ The following methods are available for this resource:
     <td><a href="#parameter-queue_id"><code>queue_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
     <td>Preview messages from a Queue without leasing them. Messages remain available for subsequent preview or pull operations.</td>
+</tr>
+<tr>
+    <td><a href="#ack_preview_messages"><CopyableCode code="ack_preview_messages" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-queue_id"><code>queue_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Delete previewed messages from a Queue. Note that messages acknowledged this way aren't considered delivered, they are instantly deleted from this queue and do not affect metrics.</td>
 </tr>
 <tr>
     <td><a href="#pull"><CopyableCode code="pull" /></a></td>
@@ -463,8 +477,10 @@ AND account_id = '{{ account_id }}' --required
     defaultValue="create_messages"
     values={[
         { label: 'create_messages', value: 'create_messages' },
+        { label: 'ack_messages', value: 'ack_messages' },
         { label: 'batch', value: 'batch' },
         { label: 'preview', value: 'preview' },
+        { label: 'ack_preview_messages', value: 'ack_preview_messages' },
         { label: 'pull', value: 'pull' }
     ]}
 >
@@ -481,6 +497,22 @@ EXEC cloudflare.queues.queues.create_messages
 "delay_seconds": {{ delay_seconds }}, 
 "body": "{{ body }}", 
 "content_type": "{{ content_type }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="ack_messages">
+
+Acknowledge + Retry messages from a Queue
+
+```sql
+EXEC cloudflare.queues.queues.ack_messages 
+@queue_id='{{ queue_id }}' --required, 
+@account_id='{{ account_id }}' --required 
+@@json=
+'{
+"acks": "{{ acks }}", 
+"retries": "{{ retries }}"
 }'
 ;
 ```
@@ -512,6 +544,22 @@ EXEC cloudflare.queues.queues.preview
 @@json=
 '{
 "batch_size": {{ batch_size }}
+}'
+;
+```
+</TabItem>
+<TabItem value="ack_preview_messages">
+
+Delete previewed messages from a Queue. Note that messages acknowledged this way aren't considered delivered, they are instantly deleted from this queue and do not affect metrics.
+
+```sql
+EXEC cloudflare.queues.queues.ack_preview_messages 
+@queue_id='{{ queue_id }}' --required, 
+@account_id='{{ account_id }}' --required 
+@@json=
+'{
+"acks": "{{ acks }}", 
+"retries": "{{ retries }}"
 }'
 ;
 ```

@@ -18,7 +18,7 @@ zero_trust service documentation.
 
 :::info[Service Summary]
 
-total resources: __155__  
+total resources: __141__  
 
 :::
 
@@ -45,10 +45,6 @@ total resources: __155__
 <a href="/services/zero_trust/behaviours/">behaviours</a><br />
 <a href="/services/zero_trust/bookmarks/">bookmarks</a><br />
 <a href="/services/zero_trust/cas/">cas</a><br />
-<a href="/services/zero_trust/cas_0145fa/">cas_0145fa</a><br />
-<a href="/services/zero_trust/cas_c5c46c/">cas_c5c46c</a><br />
-<a href="/services/zero_trust/cas_e335ab/">cas_e335ab</a><br />
-<a href="/services/zero_trust/cas_f84f2f/">cas_f84f2f</a><br />
 <a href="/services/zero_trust/categories/">categories</a><br />
 <a href="/services/zero_trust/certificates/">certificates</a><br />
 <a href="/services/zero_trust/certificates_settings/">certificates_settings</a><br />
@@ -74,7 +70,6 @@ total resources: __155__
 <a href="/services/zero_trust/devices_policies/">devices_policies</a><br />
 <a href="/services/zero_trust/devices_policy/">devices_policy</a><br />
 <a href="/services/zero_trust/devices_policy_certificates/">devices_policy_certificates</a><br />
-<a href="/services/zero_trust/devices_revoke/">devices_revoke</a><br />
 <a href="/services/zero_trust/devices_settings/">devices_settings</a><br />
 <a href="/services/zero_trust/dex_rules/">dex_rules</a><br />
 <a href="/services/zero_trust/dex_tests/">dex_tests</a><br />
@@ -86,13 +81,9 @@ total resources: __155__
 <a href="/services/zero_trust/email_rules/">email_rules</a><br />
 <a href="/services/zero_trust/entries/">entries</a><br />
 <a href="/services/zero_trust/entries_predefined/">entries_predefined</a><br />
-<a href="/services/zero_trust/exclude/">exclude</a><br />
-<a href="/services/zero_trust/excludes_26edfa/">excludes_26edfa</a><br />
-<a href="/services/zero_trust/excludes_9e6eed/">excludes_9e6eed</a><br />
+<a href="/services/zero_trust/excludes/">excludes</a><br />
 <a href="/services/zero_trust/failed_logins/">failed_logins</a><br />
 <a href="/services/zero_trust/fallback_domains/">fallback_domains</a><br />
-<a href="/services/zero_trust/fallback_domains_97f458/">fallback_domains_97f458</a><br />
-<a href="/services/zero_trust/fallback_domains_f560de/">fallback_domains_f560de</a><br />
 <a href="/services/zero_trust/fleet_status/">fleet_status</a><br />
 <a href="/services/zero_trust/fleet_status_devices/">fleet_status_devices</a><br />
 <a href="/services/zero_trust/fleet_status_live/">fleet_status_live</a><br />
@@ -102,19 +93,16 @@ total resources: __155__
 <a href="/services/zero_trust/gateway_categories/">gateway_categories</a><br />
 <a href="/services/zero_trust/gateway_certificates/">gateway_certificates</a><br />
 <a href="/services/zero_trust/gateway_configuration/">gateway_configuration</a><br />
-<a href="/services/zero_trust/gateway_rules/">gateway_rules</a>
+<a href="/services/zero_trust/gateway_rules/">gateway_rules</a><br />
+<a href="/services/zero_trust/global_warp_override/">global_warp_override</a><br />
+<a href="/services/zero_trust/groups/">groups</a>
 </div>
 <div class="providerDocColumn">
-<a href="/services/zero_trust/global_warp_override/">global_warp_override</a><br />
-<a href="/services/zero_trust/groups/">groups</a><br />
 <a href="/services/zero_trust/hostname_routes/">hostname_routes</a><br />
 <a href="/services/zero_trust/http_tests/">http_tests</a><br />
 <a href="/services/zero_trust/identity_providers/">identity_providers</a><br />
-<a href="/services/zero_trust/include/">include</a><br />
-<a href="/services/zero_trust/includes_11848d/">includes_11848d</a><br />
-<a href="/services/zero_trust/includes_73882e/">includes_73882e</a><br />
+<a href="/services/zero_trust/includes/">includes</a><br />
 <a href="/services/zero_trust/infrastructure/">infrastructure</a><br />
-<a href="/services/zero_trust/integration/">integration</a><br />
 <a href="/services/zero_trust/integrations/">integrations</a><br />
 <a href="/services/zero_trust/ip_profiles/">ip_profiles</a><br />
 <a href="/services/zero_trust/ips/">ips</a><br />
@@ -131,7 +119,6 @@ total resources: __155__
 <a href="/services/zero_trust/pacfiles/">pacfiles</a><br />
 <a href="/services/zero_trust/payload_logs/">payload_logs</a><br />
 <a href="/services/zero_trust/percentiles/">percentiles</a><br />
-<a href="/services/zero_trust/physical_devices_revoke/">physical_devices_revoke</a><br />
 <a href="/services/zero_trust/policy_tests/">policy_tests</a><br />
 <a href="/services/zero_trust/policy_tests_users/">policy_tests_users</a><br />
 <a href="/services/zero_trust/portals/">portals</a><br />
@@ -170,7 +157,6 @@ total resources: __155__
 <a href="/services/zero_trust/tunnels/">tunnels</a><br />
 <a href="/services/zero_trust/unique_devices/">unique_devices</a><br />
 <a href="/services/zero_trust/updates/">updates</a><br />
-<a href="/services/zero_trust/upload/">upload</a><br />
 <a href="/services/zero_trust/user_policy_checks/">user_policy_checks</a><br />
 <a href="/services/zero_trust/users/">users</a><br />
 <a href="/services/zero_trust/virtual_networks/">virtual_networks</a><br />

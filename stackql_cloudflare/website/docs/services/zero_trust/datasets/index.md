@@ -244,6 +244,20 @@ The following methods are available for this resource:
     <td>This deletes all versions of the dataset.</td>
 </tr>
 <tr>
+    <td><a href="#upload_version"><CopyableCode code="upload_version" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-dataset_id"><code>dataset_id</code></a></td>
+    <td></td>
+    <td>Creates a new version of a DLP dataset, allowing you to stage changes before activation. Used for single-column EDM and custom word lists.</td>
+</tr>
+<tr>
+    <td><a href="#upload_version_data"><CopyableCode code="upload_version_data" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-dataset_id"><code>dataset_id</code></a>, <a href="#parameter-version"><code>version</code></a></td>
+    <td></td>
+    <td>This is used for single-column EDMv1 and Custom Word Lists. The EDM format can only be created in the Cloudflare dashboard. For other clients, this operation can only be used for non-secret Custom Word Lists. The body must be a UTF-8 encoded, newline (NL or CRNL) separated list of words to be matched.</td>
+</tr>
+<tr>
     <td><a href="#dlp_datasets_define_columns"><CopyableCode code="dlp_datasets_define_columns" /></a></td>
     <td><CopyableCode code="exec" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-dataset_id"><code>dataset_id</code></a>, <a href="#parameter-version"><code>version</code></a></td>
@@ -468,11 +482,36 @@ AND dataset_id = '{{ dataset_id }}' --required
 ## Lifecycle Methods
 
 <Tabs
-    defaultValue="dlp_datasets_define_columns"
+    defaultValue="upload_version"
     values={[
+        { label: 'upload_version', value: 'upload_version' },
+        { label: 'upload_version_data', value: 'upload_version_data' },
         { label: 'dlp_datasets_define_columns', value: 'dlp_datasets_define_columns' }
     ]}
 >
+<TabItem value="upload_version">
+
+Creates a new version of a DLP dataset, allowing you to stage changes before activation. Used for single-column EDM and custom word lists.
+
+```sql
+EXEC cloudflare.zero_trust.datasets.upload_version 
+@account_id='{{ account_id }}' --required, 
+@dataset_id='{{ dataset_id }}' --required
+;
+```
+</TabItem>
+<TabItem value="upload_version_data">
+
+This is used for single-column EDMv1 and Custom Word Lists. The EDM format can only be created in the Cloudflare dashboard. For other clients, this operation can only be used for non-secret Custom Word Lists. The body must be a UTF-8 encoded, newline (NL or CRNL) separated list of words to be matched.
+
+```sql
+EXEC cloudflare.zero_trust.datasets.upload_version_data 
+@account_id='{{ account_id }}' --required, 
+@dataset_id='{{ dataset_id }}' --required, 
+@version='{{ version }}' --required
+;
+```
+</TabItem>
 <TabItem value="dlp_datasets_define_columns">
 
 This is used for multi-column EDMv2 datasets. The EDMv2 format can only be created in the Cloudflare dashboard. The columns in the response appear in the same order as in the request.

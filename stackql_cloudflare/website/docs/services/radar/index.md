@@ -18,7 +18,7 @@ radar service documentation.
 
 :::info[Service Summary]
 
-total resources: __266__  
+total resources: __263__  
 
 :::
 
@@ -26,7 +26,9 @@ total resources: __266__
 <div class="row">
 <div class="providerDocColumn">
 <a href="/services/radar/agent_readiness/">agent_readiness</a><br />
+<a href="/services/radar/ai_bots_summary/">ai_bots_summary</a><br />
 <a href="/services/radar/ai_bots_timeseries/">ai_bots_timeseries</a><br />
+<a href="/services/radar/ai_bots_timeseries_groups/">ai_bots_timeseries_groups</a><br />
 <a href="/services/radar/annotations/">annotations</a><br />
 <a href="/services/radar/annotations_outages/">annotations_outages</a><br />
 <a href="/services/radar/as112/">as112</a><br />
@@ -67,13 +69,9 @@ total resources: __266__
 <a href="/services/radar/bgp_top_ases/">bgp_top_ases</a><br />
 <a href="/services/radar/bgp_top_prefixes/">bgp_top_prefixes</a><br />
 <a href="/services/radar/bots/">bots</a><br />
-<a href="/services/radar/bots_summary_dimension_7adba9/">bots_summary_dimension_7adba9</a><br />
-<a href="/services/radar/bots_summary_dimension_f85b26/">bots_summary_dimension_f85b26</a><br />
-<a href="/services/radar/bots_summary_user_agent/">bots_summary_user_agent</a><br />
+<a href="/services/radar/bots_summary/">bots_summary</a><br />
 <a href="/services/radar/bots_timeseries/">bots_timeseries</a><br />
-<a href="/services/radar/bots_timeseries_groups_dimension_42beed/">bots_timeseries_groups_dimension_42beed</a><br />
-<a href="/services/radar/bots_timeseries_groups_dimension_5dbf28/">bots_timeseries_groups_dimension_5dbf28</a><br />
-<a href="/services/radar/bots_timeseries_groups_user_agent/">bots_timeseries_groups_user_agent</a><br />
+<a href="/services/radar/bots_timeseries_groups/">bots_timeseries_groups</a><br />
 <a href="/services/radar/crawlers_summary/">crawlers_summary</a><br />
 <a href="/services/radar/crawlers_timeseries_groups/">crawlers_timeseries_groups</a><br />
 <a href="/services/radar/ct/">ct</a><br />
@@ -157,10 +155,10 @@ total resources: __266__
 <a href="/services/radar/layer3_summary_protocol/">layer3_summary_protocol</a><br />
 <a href="/services/radar/layer3_summary_vector/">layer3_summary_vector</a><br />
 <a href="/services/radar/layer3_summary_vertical/">layer3_summary_vertical</a><br />
-<a href="/services/radar/layer3_timeseries_groups/">layer3_timeseries_groups</a>
+<a href="/services/radar/layer3_timeseries_groups/">layer3_timeseries_groups</a><br />
+<a href="/services/radar/layer3_timeseries_groups_bitrate/">layer3_timeseries_groups_bitrate</a>
 </div>
 <div class="providerDocColumn">
-<a href="/services/radar/layer3_timeseries_groups_bitrate/">layer3_timeseries_groups_bitrate</a><br />
 <a href="/services/radar/layer3_timeseries_groups_duration/">layer3_timeseries_groups_duration</a><br />
 <a href="/services/radar/layer3_timeseries_groups_industry/">layer3_timeseries_groups_industry</a><br />
 <a href="/services/radar/layer3_timeseries_groups_ip_version/">layer3_timeseries_groups_ip_version</a><br />
@@ -225,7 +223,6 @@ total resources: __266__
 <a href="/services/radar/origins/">origins</a><br />
 <a href="/services/radar/origins_timeseries_groups/">origins_timeseries_groups</a><br />
 <a href="/services/radar/outages_locations/">outages_locations</a><br />
-<a href="/services/radar/radar_bots/">radar_bots</a><br />
 <a href="/services/radar/radar_entities_locations/">radar_entities_locations</a><br />
 <a href="/services/radar/radar_http_top_locations/">radar_http_top_locations</a><br />
 <a href="/services/radar/radar_tlds/">radar_tlds</a><br />

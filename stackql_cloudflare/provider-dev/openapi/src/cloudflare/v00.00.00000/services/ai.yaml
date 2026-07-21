@@ -5107,6 +5107,15 @@ components:
           response:
             mediaType: application/json
             openAPIDocKey: '200'
+        upload_asset:
+          config:
+            requestBodyTranslate:
+              algorithm: naive
+          operation:
+            $ref: '#/paths/~1accounts~1{account_id}~1ai~1finetunes~1{finetune_id}~1finetune-assets/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
       sqlVerbs:
         select:
         - $ref: '#/components/x-stackQL-resources/finetunes/methods/list'
@@ -5131,27 +5140,6 @@ components:
         select:
         - $ref: '#/components/x-stackQL-resources/public/methods/list'
         insert: []
-        update: []
-        delete: []
-        replace: []
-    assets:
-      id: cloudflare.ai.assets
-      name: assets
-      title: Assets
-      methods:
-        create:
-          config:
-            requestBodyTranslate:
-              algorithm: naive
-          operation:
-            $ref: '#/paths/~1accounts~1{account_id}~1ai~1finetunes~1{finetune_id}~1finetune-assets/post'
-          response:
-            mediaType: application/json
-            openAPIDocKey: '200'
-      sqlVerbs:
-        select: []
-        insert:
-        - $ref: '#/components/x-stackQL-resources/assets/methods/create'
         update: []
         delete: []
         replace: []

@@ -18,7 +18,7 @@ images service documentation.
 
 :::info[Service Summary]
 
-total resources: __8__  
+total resources: __7__  
 
 :::
 
@@ -28,12 +28,11 @@ total resources: __8__
 <a href="/services/images/blobs/">blobs</a><br />
 <a href="/services/images/flat/">flat</a><br />
 <a href="/services/images/images/">images</a><br />
-<a href="/services/images/keys/">keys</a>
+<a href="/services/images/images_v1/">images_v1</a>
 </div>
 <div class="providerDocColumn">
+<a href="/services/images/keys/">keys</a><br />
 <a href="/services/images/stats/">stats</a><br />
-<a href="/services/images/v1/">v1</a><br />
-<a href="/services/images/v2/">v2</a><br />
 <a href="/services/images/variants/">variants</a>
 </div>
 </div>

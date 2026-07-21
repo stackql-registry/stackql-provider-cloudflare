@@ -95,6 +95,20 @@ The following methods are available for this resource:
     <td></td>
     <td>Update the Content Scanning status.</td>
 </tr>
+<tr>
+    <td><a href="#disable"><CopyableCode code="disable" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a></td>
+    <td></td>
+    <td>Disable Content Scanning.</td>
+</tr>
+<tr>
+    <td><a href="#enable"><CopyableCode code="enable" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-zone_id"><code>zone_id</code></a></td>
+    <td></td>
+    <td>Enable Content Scanning.</td>
+</tr>
 </tbody>
 </table>
 
@@ -167,6 +181,38 @@ errors,
 messages,
 result,
 success;
+```
+</TabItem>
+</Tabs>
+
+
+## Lifecycle Methods
+
+<Tabs
+    defaultValue="disable"
+    values={[
+        { label: 'disable', value: 'disable' },
+        { label: 'enable', value: 'enable' }
+    ]}
+>
+<TabItem value="disable">
+
+Disable Content Scanning.
+
+```sql
+EXEC cloudflare.content_scanning.settings.disable 
+@zone_id='{{ zone_id }}' --required
+;
+```
+</TabItem>
+<TabItem value="enable">
+
+Enable Content Scanning.
+
+```sql
+EXEC cloudflare.content_scanning.settings.enable 
+@zone_id='{{ zone_id }}' --required
+;
 ```
 </TabItem>
 </Tabs>

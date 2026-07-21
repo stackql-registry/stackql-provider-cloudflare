@@ -203,6 +203,13 @@ The following methods are available for this resource:
     <td>Lists all instances of a workflow with their execution status.</td>
 </tr>
 <tr>
+    <td><a href="#create"><CopyableCode code="create" /></a></td>
+    <td><CopyableCode code="insert" /></td>
+    <td><a href="#parameter-workflow_name"><code>workflow_name</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Creates a new instance of a workflow, starting its execution.</td>
+</tr>
+<tr>
     <td><a href="#batch"><CopyableCode code="batch" /></a></td>
     <td><CopyableCode code="exec" /></td>
     <td><a href="#parameter-workflow_name"><code>workflow_name</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
@@ -357,6 +364,67 @@ AND date_start = '{{ date_start }}'
 AND date_end = '{{ date_end }}'
 ;
 ```
+</TabItem>
+</Tabs>
+
+
+## `INSERT` examples
+
+<Tabs
+    defaultValue="create"
+    values={[
+        { label: 'create', value: 'create' },
+        { label: 'Manifest', value: 'manifest' }
+    ]}
+>
+<TabItem value="create">
+
+Creates a new instance of a workflow, starting its execution.
+
+```sql
+INSERT INTO cloudflare.workflows.instances (
+instance_id,
+instance_retention,
+params,
+workflow_name,
+account_id
+)
+SELECT 
+'{{ instance_id }}',
+'{{ instance_retention }}',
+'{{ params }}',
+'{{ workflow_name }}',
+'{{ account_id }}'
+RETURNING
+errors,
+messages,
+result,
+result_info,
+success
+;
+```
+</TabItem>
+<TabItem value="manifest">
+
+<CodeBlock language="yaml">{`# Description fields are for documentation purposes
+- name: instances
+  props:
+    - name: workflow_name
+      value: "{{ workflow_name }}"
+      description: Required parameter for the instances resource.
+    - name: account_id
+      value: "{{ account_id }}"
+      description: Required parameter for the instances resource.
+    - name: instance_id
+      value: "{{ instance_id }}"
+    - name: instance_retention
+      value:
+        error_retention: {{ error_retention }}
+        success_retention: {{ success_retention }}
+    - name: params
+      value: "{{ params }}"
+`}</CodeBlock>
+
 </TabItem>
 </Tabs>
 

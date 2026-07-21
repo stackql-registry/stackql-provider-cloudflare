@@ -202,8 +202,10 @@ op_description
 `stackql_resource_name`, `stackql_method_name`, `stackql_verb`,
 `stackql_object_key` are **preserved verbatim** if the user has edited them
 (non-default value). `--reset` forces re-defaulting. `--strict` (used by
-`make mappings`) exits non-zero when any operation has no existing CSV row -
-default rows are still written so the user can curate them and re-run.
+`make mappings`) exits non-zero when any operation has no existing CSV row
+OR any row carries a hash-suffixed resource/method name (disambiguation
+fallback) - default rows are still written so the user can curate/rename
+them and re-run. The provider is hash-suffix free as of 2026-07-21.
 
 ### Verb classification (`_refine_stackql_verb`)
 
@@ -515,6 +517,32 @@ download. Critical default: registry path is `provider-dev/openapi`
 
 ## Conventions and gotchas
 
+### Resource / method mapping heuristics (user's rules, 2026-07-21)
+
+When reviewing CSV mappings (new upstream ops or cleanup passes), apply
+these smell tests:
+
+- A resource prefixed with `by_` is probably a method of another
+  resource accessed with a different discriminator (e.g. rulesets
+  `by_tag` -> `rulesets.list_rules_by_tag_*`).
+- A resource name containing a verb (`requests_new`, `events_create`,
+  `relate_create`) is probably a method for the noun resource.
+- Redundant doubled names (`builds_builds`) are incorrect - merge.
+- Repeating the service name in a resource name is redundant
+  (`workers.workers_versions` -> `workers.versions`).
+- A singular resource next to a plural sibling is usually wrong -
+  resources should generally be plural (`exclude` -> `excludes`,
+  `subdomain` folded into `subdomains`, `integration` ->
+  `integrations`).
+- Hash-suffixed resources (`audit_logs_6f0256`) are pass-3
+  disambiguation fallbacks - remap them as differently-named methods on
+  one resource (`list_by_account`, `list_by_account_issue`,
+  `list_by_zone`, ...) whose required-param signatures differ.
+- Two select methods on one resource MUST have different required-param
+  signatures or the meta gate fails - when they collide (e.g. workers
+  `scripts-search` vs `scripts.list`, both `{account_id}`), map the
+  action-flavoured one as exec instead.
+
 ### Identifier casing rules (user's mandate)
 
 - **Schema names**: camelCase (we don't care — opaque to StackQL).
@@ -627,6 +655,33 @@ cd website && yarn start
 
 ## What's been done recently
 
+- Mapping cleanup round 3 (2026-07-21): SERVICE rename `aisearch` ->
+  `ai_search` (split.py capability map, source yaml renamed + internal
+  title/x-stackql-sdk refs patched, 48 CSV filename rows, stale
+  generated yaml deleted - service renames touch all four). GraphQL
+  manifest resources de-prefixed (`dns.analytics_adaptive_groups`,
+  `d1.analytics_adaptive_groups`, `r2.operations_adaptive_groups`;
+  GRAPHQL.md + examples/analytics updated). CSV renames/merges: images
+  v1 -> images_v1, v2 list merged into images; intel
+  intel_indicator_feeds -> indicator_feeds.list; pagerules ->
+  page_rules; accounts_pipelines merged into pipelines;
+  rulesets_versions merged into versions (now selectable);
+  securitytxt -> security_txt; speed_api_pages -> api_pages;
+  r2_catalog_maintenance_configs -> maintenance_configs; dns bytimes ->
+  reports_by_times; dns_firewall bytimes -> dimensions_and_metrics.
+  Non-selectable now 50/1127 (4.4%), gate green.
+- Mapping cleanup sweep (2026-07-21, 62 CSV edits + graphql manifest
+  rename): merged verb-named create resources into their nouns
+  (cloudforce_one), collapsed hash-suffixed resources (security_center
+  audit_logs, zero_trust cas/includes/excludes/fallback_domains),
+  de-duplicated workers naming (builds, versions, scripts,
+  scripts_settings, subdomains, invocations), folded validators/
+  prechecks as exec methods (r2 slurper -> buckets, content scanning ->
+  settings, token_validation bulk -> rules), remapped aisearch chat
+  completions to SELECT (objectKey $.choices), plus cache/zones
+  cache_reserve tidy-up. Non-selectable now 53/1134 (4.7% - under the
+  5% target), meta gate green. Heuristics captured under "Resource /
+  method mapping heuristics".
 - AI service cleanup round 2: the 5 octet-input models folded into
   `ai.run` as exec methods (CSV; data__value request blocks follow the
   paths); `tomarkdown`/`to_markdown` unified into `to_markdown`
@@ -639,9 +694,9 @@ cd website && yarn start
   page) and runnable SELECT examples (family result columns + model
   input WHERE params that docgen cannot derive from
   request.schema_override). ai service = 24 resources.
-- Executed the non-selectable remap plan (see `NON_SELECTABLE_ANALYSIS.md`):
-  non-selectable resources now 73/1171 (6.2%), was 221/1267 (17.4%).
-  Meta-route gate passes. Three mechanisms:
+- Executed the non-selectable remap plan (working doc
+  NON_SELECTABLE_ANALYSIS.md, since deleted - final numbers in the
+  mapping-cleanup entry above). Three mechanisms:
   1. CSV verb/resource edits in `all_services.csv` - read-like POSTs
      (d1 query, autorag/aisearch search, vectorize v2 query, traceroute,
      domain-check, ssl analyze, logs SQL, billing query) remapped to
@@ -661,9 +716,7 @@ cd website && yarn start
   `provider-dev/config/ai_task_families.yaml`: collapsed 93 per-model
   Workers AI resources into 9 task-family SELECT resources riding the
   generic `/ai/run/{model_name}` op. Verified live (text_generation,
-  text_embeddings typed columns; text_to_image contents). Non-selectable
-  resources dropped from 220/1267 (17%) to 126/1183 (10.7%). Remaining
-  phases of the remap plan are in `NON_SELECTABLE_ANALYSIS.md`.
+  text_embeddings typed columns; text_to_image contents).
 - Fixed `sanitize_docs.py` to write LF (`newline='\n'`) - on Windows it
   was rewriting every touched doc page to CRLF (whole-file git churn).
   Note: the generated provider yamls are CRLF in git (historical,

@@ -1077,8 +1077,10 @@ def main(argv: list[str] | None = None) -> int:
                         help="Reset all four stackql_* columns to their defaults, discarding manual edits.")
     parser.add_argument("--strict", action="store_true",
                         help="Exit non-zero if any source operation has no existing mapping row in the "
-                             "CSV. Default rows ARE still written for the new operations, so review "
-                             "them (tighten resource/method/verb if needed) and re-run.")
+                             "CSV, or if any row carries a hash-suffixed resource/method name (the "
+                             "disambiguation fallback). Default rows ARE still written for the new "
+                             "operations, so review them (tighten resource/method/verb, rename hashed "
+                             "names) and re-run.")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -1146,6 +1148,24 @@ def main(argv: list[str] | None = None) -> int:
             "stackql_resource_name / stackql_method_name / stackql_verb / stackql_object_key "
             "columns, then re-run.", added)
         return 2
+    if args.strict:
+        # Hash-suffixed names are the pass-3 disambiguation fallback and
+        # are never an acceptable end state - fail so a human picks
+        # semantic names in the CSV (see the mapping heuristics in
+        # CLAUDE.md).
+        hashed = [r for r in out_rows
+                  if re.search(r"_[0-9a-f]{6}$", r["stackql_resource_name"])
+                  or re.search(r"_[0-9a-f]{6}$", r["stackql_method_name"])]
+        if hashed:
+            for r in hashed:
+                logger.error("--strict: hash-suffixed name: %s %s %s -> %s.%s",
+                             r["filename"], r["verb"].upper(), r["path"],
+                             r["stackql_resource_name"], r["stackql_method_name"])
+            logger.error(
+                "--strict: %d row(s) carry hash-suffixed resource/method names "
+                "(disambiguation fallback). Rename them in the CSV, then re-run.",
+                len(hashed))
+            return 2
     return 0
 
 

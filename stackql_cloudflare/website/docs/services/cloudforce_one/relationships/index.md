@@ -221,6 +221,13 @@ The following methods are available for this resource:
     <td>This method is deprecated. Please use `event_create_bulk` instead</td>
 </tr>
 <tr>
+    <td><a href="#create_relate"><CopyableCode code="create_relate" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-event_id"><code>event_id</code></a>, <a href="#parameter-events"><code>events</code></a></td>
+    <td></td>
+    <td></td>
+</tr>
+<tr>
     <td><a href="#create"><CopyableCode code="create" /></a></td>
     <td><CopyableCode code="exec" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-parentId"><code>parentId</code></a>, <a href="#parameter-childIds"><code>childIds</code></a>, <a href="#parameter-relationshipType"><code>relationshipType</code></a>, <a href="#parameter-datasetId"><code>datasetId</code></a></td>
@@ -426,11 +433,27 @@ errors
 ## Lifecycle Methods
 
 <Tabs
-    defaultValue="create"
+    defaultValue="create_relate"
     values={[
+        { label: 'create_relate', value: 'create_relate' },
         { label: 'create', value: 'create' }
     ]}
 >
+<TabItem value="create_relate">
+
+Returns success if operation succeeded.
+
+```sql
+EXEC cloudflare.cloudforce_one.relationships.create_relate 
+@account_id='{{ account_id }}' --required, 
+@event_id='{{ event_id }}' --required 
+@@json=
+'{
+"events": "{{ events }}"
+}'
+;
+```
+</TabItem>
 <TabItem value="create">
 
 Creates a directed relationship between two events. The relationship is from parent to child with a specified type.

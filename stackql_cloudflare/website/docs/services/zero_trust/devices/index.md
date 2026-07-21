@@ -65,6 +65,13 @@ The following methods are available for this resource:
     <td>Creates a new device managed network.</td>
 </tr>
 <tr>
+    <td><a href="#revoke_physical_device"><CopyableCode code="revoke_physical_device" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-device_id"><code>device_id</code></a></td>
+    <td></td>
+    <td>Revokes all WARP registrations associated with the specified device.</td>
+</tr>
+<tr>
     <td><a href="#delete_policy"><CopyableCode code="delete_policy" /></a></td>
     <td><CopyableCode code="exec" /></td>
     <td><a href="#parameter-policy_id"><code>policy_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
@@ -77,6 +84,13 @@ The following methods are available for this resource:
     <td><a href="#parameter-policy_id"><code>policy_id</code></a>, <a href="#parameter-account_id"><code>account_id</code></a></td>
     <td></td>
     <td>Updates a configured device settings profile.</td>
+</tr>
+<tr>
+    <td><a href="#revoke"><CopyableCode code="revoke" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a></td>
+    <td></td>
+    <td>Revokes a list of devices. Not supported when [multi-user mode](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/deployment/mdm-deployment/windows-multiuser/) is enabled. **Deprecated**: please use POST /accounts/&#123;account_id&#125;/devices/registrations/revoke instead.</td>
 </tr>
 <tr>
     <td><a href="#unrevoke"><CopyableCode code="unrevoke" /></a></td>
@@ -147,8 +161,10 @@ AND account_id = '{{ account_id }}' --required
     defaultValue="create_networks"
     values={[
         { label: 'create_networks', value: 'create_networks' },
+        { label: 'revoke_physical_device', value: 'revoke_physical_device' },
         { label: 'delete_policy', value: 'delete_policy' },
         { label: 'update_policy', value: 'update_policy' },
+        { label: 'revoke', value: 'revoke' },
         { label: 'unrevoke', value: 'unrevoke' }
     ]}
 >
@@ -165,6 +181,17 @@ EXEC cloudflare.zero_trust.devices.create_networks
 "name": "{{ name }}", 
 "type": "{{ type }}"
 }'
+;
+```
+</TabItem>
+<TabItem value="revoke_physical_device">
+
+Revokes all WARP registrations associated with the specified device.
+
+```sql
+EXEC cloudflare.zero_trust.devices.revoke_physical_device 
+@account_id='{{ account_id }}' --required, 
+@device_id='{{ device_id }}' --required
 ;
 ```
 </TabItem>
@@ -213,6 +240,16 @@ EXEC cloudflare.zero_trust.devices.update_policy
 "tunnel_protocol": "{{ tunnel_protocol }}", 
 "virtual_networks": "{{ virtual_networks }}"
 }'
+;
+```
+</TabItem>
+<TabItem value="revoke">
+
+Revokes a list of devices. Not supported when [multi-user mode](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/deployment/mdm-deployment/windows-multiuser/) is enabled. **Deprecated**: please use POST /accounts/&#123;account_id&#125;/devices/registrations/revoke instead.
+
+```sql
+EXEC cloudflare.zero_trust.devices.revoke 
+@account_id='{{ account_id }}' --required
 ;
 ```
 </TabItem>

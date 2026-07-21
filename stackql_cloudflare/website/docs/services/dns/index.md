@@ -27,17 +27,17 @@ total resources: __20__
 <div class="providerDocColumn">
 <a href="/services/dns/account/">account</a><br />
 <a href="/services/dns/acls/">acls</a><br />
-<a href="/services/dns/bytimes/">bytimes</a><br />
-<a href="/services/dns/dns_analytics_adaptive_groups/">dns_analytics_adaptive_groups</a><br />
+<a href="/services/dns/analytics_adaptive_groups/">analytics_adaptive_groups</a><br />
 <a href="/services/dns/dns_records/">dns_records</a><br />
 <a href="/services/dns/dnssec/">dnssec</a><br />
 <a href="/services/dns/incoming/">incoming</a><br />
 <a href="/services/dns/outgoing/">outgoing</a><br />
 <a href="/services/dns/peers/">peers</a><br />
-<a href="/services/dns/records/">records</a>
+<a href="/services/dns/records/">records</a><br />
+<a href="/services/dns/reports/">reports</a>
 </div>
 <div class="providerDocColumn">
-<a href="/services/dns/reports/">reports</a><br />
+<a href="/services/dns/reports_by_times/">reports_by_times</a><br />
 <a href="/services/dns/scan_review/">scan_review</a><br />
 <a href="/services/dns/secondary_dns/">secondary_dns</a><br />
 <a href="/services/dns/status/">status</a><br />

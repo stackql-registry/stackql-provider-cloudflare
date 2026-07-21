@@ -25,7 +25,7 @@ total resources: __2__
 ## Resources
 <div class="row">
 <div class="providerDocColumn">
-<a href="/services/page_rules/pagerules/">pagerules</a>
+<a href="/services/page_rules/page_rules/">page_rules</a>
 </div>
 <div class="providerDocColumn">
 <a href="/services/page_rules/settings/">settings</a>

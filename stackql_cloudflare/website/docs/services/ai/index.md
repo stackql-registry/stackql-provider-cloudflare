@@ -18,7 +18,7 @@ ai service documentation.
 
 :::info[Service Summary]
 
-total resources: __24__  
+total resources: __23__  
 
 :::
 
@@ -26,7 +26,6 @@ total resources: __24__
 <div class="row">
 <div class="providerDocColumn">
 <a href="/services/ai/ai_search/">ai_search</a><br />
-<a href="/services/ai/assets/">assets</a><br />
 <a href="/services/ai/authors/">authors</a><br />
 <a href="/services/ai/files/">files</a><br />
 <a href="/services/ai/finetunes/">finetunes</a><br />
@@ -36,10 +35,10 @@ total resources: __24__
 <a href="/services/ai/public/">public</a><br />
 <a href="/services/ai/reranking/">reranking</a><br />
 <a href="/services/ai/run/">run</a><br />
-<a href="/services/ai/schema/">schema</a>
+<a href="/services/ai/schema/">schema</a><br />
+<a href="/services/ai/search/">search</a>
 </div>
 <div class="providerDocColumn">
-<a href="/services/ai/search/">search</a><br />
 <a href="/services/ai/speech_to_text/">speech_to_text</a><br />
 <a href="/services/ai/summarization/">summarization</a><br />
 <a href="/services/ai/tasks/">tasks</a><br />

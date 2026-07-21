@@ -127,7 +127,7 @@ On subsequent runs (e.g. after refreshing the upstream spec):
 
 Use `--reset` to discard all user edits and re-default the entire CSV from scratch (rare; useful only when the defaulter logic itself has changed and you want to re-baseline).
 
-Use `--strict` (what `make mappings` runs) to turn "new op found" into a hard failure: the command exits non-zero if any operation had no existing mapping row. The default rows ARE still written, so the workflow is: review the new rows in the CSV, tighten resource/method/verb where the defaults are wrong, and re-run.
+Use `--strict` (what `make mappings` runs) to turn "new op found" into a hard failure: the command exits non-zero if any operation had no existing mapping row, or if any row carries a hash-suffixed resource/method name (the collision-disambiguation fallback - never an acceptable end state). The default rows ARE still written, so the workflow is: review the new rows in the CSV, tighten resource/method/verb where the defaults are wrong, rename any hashed names semantically, and re-run.
 
 CSV columns:
 

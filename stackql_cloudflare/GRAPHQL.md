@@ -11,12 +11,12 @@ The provider shims a curated set of Cloudflare GraphQL operations into the relev
 | `cloudflare.zones.http_requests_adaptive_groups` | zone | HTTP request analytics with adaptive sampling, per (minute, country, status, method) | `GET /zones/{id}/analytics/dashboard` (sunset, code 1015) |
 | `cloudflare.zones.http_requests_1h_groups` | zone | Hourly HTTP request rollups (requests, bytes, cache, threats, page views, etc.) | - |
 | `cloudflare.zones.http_requests_overview_adaptive_groups` | zone | HTTP request overview by (country, status, content type, browser) | `GET /zones/{id}/analytics/colos` (deprecated, EOL 2026-12-01) |
-| `cloudflare.dns.dns_analytics_adaptive_groups` | zone | DNS query analytics by (query name, type, code, colo) | `GET /zones/{id}/dns_analytics/*` (deprecated, EOL 2026-12-01) |
+| `cloudflare.dns.analytics_adaptive_groups` | zone | DNS query analytics by (query name, type, code, colo) | `GET /zones/{id}/dns_analytics/*` (deprecated, EOL 2026-12-01) |
 | `cloudflare.firewall.firewall_events_adaptive_groups` | zone | Firewall event rollups by (action, source, rule, country) | - |
 | `cloudflare.firewall.firewall_events` | zone | Raw firewall event stream (one row per event) | - |
-| `cloudflare.workers.workers_invocations` | account | Workers invocation analytics by (script, status, colo) | - |
-| `cloudflare.r2.r2_operations_adaptive_groups` | account | R2 operation analytics by (bucket, action, status) | - |
-| `cloudflare.d1.d1_analytics_adaptive_groups` | account | D1 query analytics by (database, role, region) | - |
+| `cloudflare.workers.invocations` | account | Workers invocation analytics by (script, status, colo) | - |
+| `cloudflare.r2.operations_adaptive_groups` | account | R2 operation analytics by (bucket, action, status) | - |
+| `cloudflare.d1.analytics_adaptive_groups` | account | D1 query analytics by (database, role, region) | - |
 | `cloudflare.cache.cdn_network_analytics_adaptive_groups` | account | Edge L3/L4 network analytics by (colo, direction, protocol) | - |
 
 A wider inventory of Cloudflare's ~250 GraphQL nodes is in [GRAPHQL_OPS_INVENTORY.md](GRAPHQL_OPS_INVENTORY.md) - additions follow the same pattern (one manifest entry + one ops spec file) and can be incremental.

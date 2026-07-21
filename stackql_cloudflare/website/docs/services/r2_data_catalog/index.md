@@ -25,9 +25,9 @@ total resources: __5__
 ## Resources
 <div class="row">
 <div class="providerDocColumn">
+<a href="/services/r2_data_catalog/maintenance_configs/">maintenance_configs</a><br />
 <a href="/services/r2_data_catalog/namespaces/">namespaces</a><br />
-<a href="/services/r2_data_catalog/r2_catalog/">r2_catalog</a><br />
-<a href="/services/r2_data_catalog/r2_catalog_maintenance_configs/">r2_catalog_maintenance_configs</a>
+<a href="/services/r2_data_catalog/r2_catalog/">r2_catalog</a>
 </div>
 <div class="providerDocColumn">
 <a href="/services/r2_data_catalog/tables/">tables</a><br />

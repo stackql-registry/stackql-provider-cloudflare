@@ -103,6 +103,13 @@ The following methods are available for this resource:
     <td><a href="#parameter-search"><code>search</code></a></td>
     <td>Returns all Source-of-Truth tag categories for an account.</td>
 </tr>
+<tr>
+    <td><a href="#create"><CopyableCode code="create" /></a></td>
+    <td><CopyableCode code="insert" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-name"><code>name</code></a></td>
+    <td></td>
+    <td>Creates a new Source-of-Truth tag category for an account.</td>
+</tr>
 </tbody>
 </table>
 
@@ -156,5 +163,55 @@ WHERE account_id = '{{ account_id }}' -- required
 AND search = '{{ search }}'
 ;
 ```
+</TabItem>
+</Tabs>
+
+
+## `INSERT` examples
+
+<Tabs
+    defaultValue="create"
+    values={[
+        { label: 'create', value: 'create' },
+        { label: 'Manifest', value: 'manifest' }
+    ]}
+>
+<TabItem value="create">
+
+Creates a new Source-of-Truth tag category for an account.
+
+```sql
+INSERT INTO cloudflare.cloudforce_one.tags_categories (
+description,
+name,
+account_id
+)
+SELECT 
+'{{ description }}',
+'{{ name }}' /* required */,
+'{{ account_id }}'
+RETURNING
+name,
+createdAt,
+description,
+updatedAt,
+uuid
+;
+```
+</TabItem>
+<TabItem value="manifest">
+
+<CodeBlock language="yaml">{`# Description fields are for documentation purposes
+- name: tags_categories
+  props:
+    - name: account_id
+      value: "{{ account_id }}"
+      description: Required parameter for the tags_categories resource.
+    - name: description
+      value: "{{ description }}"
+    - name: name
+      value: "{{ name }}"
+`}</CodeBlock>
+
 </TabItem>
 </Tabs>

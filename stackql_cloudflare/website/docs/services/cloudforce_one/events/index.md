@@ -221,6 +221,13 @@ The following methods are available for this resource:
     <td></td>
 </tr>
 <tr>
+    <td><a href="#create"><CopyableCode code="create" /></a></td>
+    <td><CopyableCode code="insert" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-date"><code>date</code></a>, <a href="#parameter-category"><code>category</code></a>, <a href="#parameter-event"><code>event</code></a>, <a href="#parameter-tlp"><code>tlp</code></a>, <a href="#parameter-raw"><code>raw</code></a></td>
+    <td></td>
+    <td>To create a dataset, see the [`Create Dataset`](https://developers.cloudflare.com/api/resources/cloudforce_one/subresources/threat_events/subresources/datasets/methods/create/) endpoint. When `datasetId` parameter is unspecified, it will be created in a default dataset named `Cloudforce One Threat Events`.</td>
+</tr>
+<tr>
     <td><a href="#create_graphql"><CopyableCode code="create_graphql" /></a></td>
     <td><CopyableCode code="exec" /></td>
     <td><a href="#parameter-account_id"><code>account_id</code></a></td>
@@ -344,6 +351,7 @@ AND event_id = '{{ event_id }}' -- required
     defaultValue="post_event_update"
     values={[
         { label: 'post_event_update', value: 'post_event_update' },
+        { label: 'create', value: 'create' },
         { label: 'Manifest', value: 'manifest' }
     ]}
 >
@@ -418,6 +426,79 @@ uuid
 ;
 ```
 </TabItem>
+<TabItem value="create">
+
+To create a dataset, see the [`Create Dataset`](https://developers.cloudflare.com/api/resources/cloudforce_one/subresources/threat_events/subresources/datasets/methods/create/) endpoint. When `datasetId` parameter is unspecified, it will be created in a default dataset named `Cloudforce One Threat Events`.
+
+```sql
+INSERT INTO cloudflare.cloudforce_one.events (
+accountId,
+attacker,
+attackerCountry,
+category,
+datasetId,
+date,
+event,
+indicator,
+indicatorType,
+indicators,
+insight,
+raw,
+tags,
+targetCountry,
+targetIndustry,
+tlp,
+account_id
+)
+SELECT 
+{{ accountId }},
+'{{ attacker }}',
+'{{ attackerCountry }}',
+'{{ category }}' /* required */,
+'{{ datasetId }}',
+'{{ date }}' /* required */,
+'{{ event }}' /* required */,
+'{{ indicator }}',
+'{{ indicatorType }}',
+'{{ indicators }}',
+'{{ insight }}',
+'{{ raw }}' /* required */,
+'{{ tags }}',
+'{{ targetCountry }}',
+'{{ targetIndustry }}',
+'{{ tlp }}' /* required */,
+'{{ account_id }}'
+RETURNING
+attacker,
+attackerCountry,
+category,
+datasetId,
+date,
+event,
+hasChildren,
+indicator,
+indicatorType,
+indicatorTypeId,
+insight,
+killChain,
+mitreAttack,
+mitreCapec,
+numReferenced,
+numReferences,
+rawId,
+referenced,
+referencedIds,
+references,
+referencesIds,
+releasabilityId,
+tags,
+targetCountry,
+targetIndustry,
+tlp,
+uuid
+;
+```
+</TabItem>
 <TabItem value="manifest">
 
 <CodeBlock language="yaml">{`# Description fields are for documentation purposes
@@ -439,8 +520,6 @@ uuid
       value: "{{ createdAt }}"
     - name: datasetId
       value: "{{ datasetId }}"
-      description: |
-        Dataset ID containing the event to update.
     - name: date
       value: "{{ date }}"
     - name: event
@@ -462,6 +541,17 @@ uuid
       value: "{{ targetIndustry }}"
     - name: tlp
       value: "{{ tlp }}"
+    - name: accountId
+      value: {{ accountId }}
+    - name: indicators
+      description: |
+        Array of indicators for this event. Supports multiple indicators per event for complex scenarios.
+      value:
+        - indicatorType: "{{ indicatorType }}"
+          value: "{{ value }}"
+    - name: tags
+      value:
+        - "{{ tags }}"
 `}</CodeBlock>
 
 </TabItem>

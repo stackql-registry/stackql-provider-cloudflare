@@ -25,7 +25,7 @@ total resources: __4__
 ## Resources
 <div class="row">
 <div class="providerDocColumn">
-<a href="/services/d1/d1_analytics_adaptive_groups/">d1_analytics_adaptive_groups</a><br />
+<a href="/services/d1/analytics_adaptive_groups/">analytics_adaptive_groups</a><br />
 <a href="/services/d1/database/">database</a>
 </div>
 <div class="providerDocColumn">

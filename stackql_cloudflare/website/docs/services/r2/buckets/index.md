@@ -173,6 +173,20 @@ The following methods are available for this resource:
     <td><a href="#parameter-cf-r2-jurisdiction"><code>cf-r2-jurisdiction</code></a></td>
     <td>Deletes an existing R2 bucket.</td>
 </tr>
+<tr>
+    <td><a href="#update_source_connectivity_precheck"><CopyableCode code="update_source_connectivity_precheck" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-bucket"><code>bucket</code></a>, <a href="#parameter-secret"><code>secret</code></a>, <a href="#parameter-vendor"><code>vendor</code></a></td>
+    <td></td>
+    <td>Check whether tokens are valid against the source bucket</td>
+</tr>
+<tr>
+    <td><a href="#update_target_connectivity_precheck"><CopyableCode code="update_target_connectivity_precheck" /></a></td>
+    <td><CopyableCode code="exec" /></td>
+    <td><a href="#parameter-account_id"><code>account_id</code></a>, <a href="#parameter-vendor"><code>vendor</code></a>, <a href="#parameter-bucket"><code>bucket</code></a>, <a href="#parameter-secret"><code>secret</code></a></td>
+    <td></td>
+    <td>Check whether tokens are valid against the target bucket</td>
+</tr>
 </tbody>
 </table>
 
@@ -409,6 +423,56 @@ DELETE FROM cloudflare.r2.buckets
 WHERE bucket_name = '{{ bucket_name }}' --required
 AND account_id = '{{ account_id }}' --required
 AND cf-r2-jurisdiction = '{{ cf-r2-jurisdiction }}'
+;
+```
+</TabItem>
+</Tabs>
+
+
+## Lifecycle Methods
+
+<Tabs
+    defaultValue="update_source_connectivity_precheck"
+    values={[
+        { label: 'update_source_connectivity_precheck', value: 'update_source_connectivity_precheck' },
+        { label: 'update_target_connectivity_precheck', value: 'update_target_connectivity_precheck' }
+    ]}
+>
+<TabItem value="update_source_connectivity_precheck">
+
+Check whether tokens are valid against the source bucket
+
+```sql
+EXEC cloudflare.r2.buckets.update_source_connectivity_precheck 
+@account_id='{{ account_id }}' --required 
+@@json=
+'{
+"bucket": "{{ bucket }}", 
+"endpoint": "{{ endpoint }}", 
+"keys": "{{ keys }}", 
+"pathPrefix": "{{ pathPrefix }}", 
+"region": "{{ region }}", 
+"secret": "{{ secret }}", 
+"vendor": "{{ vendor }}", 
+"jurisdiction": "{{ jurisdiction }}"
+}'
+;
+```
+</TabItem>
+<TabItem value="update_target_connectivity_precheck">
+
+Check whether tokens are valid against the target bucket
+
+```sql
+EXEC cloudflare.r2.buckets.update_target_connectivity_precheck 
+@account_id='{{ account_id }}' --required 
+@@json=
+'{
+"bucket": "{{ bucket }}", 
+"jurisdiction": "{{ jurisdiction }}", 
+"secret": "{{ secret }}", 
+"vendor": "{{ vendor }}"
+}'
 ;
 ```
 </TabItem>

@@ -5,6 +5,7 @@ on:
 name: Semgrep config
 jobs:
   semgrep:
+    if: github.repository == 'cloudflare/cloudflare-python'
     name: semgrep/ci
     permissions:
       contents: read

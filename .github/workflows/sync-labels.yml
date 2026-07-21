@@ -8,6 +8,7 @@ on:
       - .github/labels.yml
 jobs:
   build:
+    if: github.repository == 'cloudflare/cloudflare-python'
     permissions:
       issues: write   # action-label-syncer creates/updates repo labels
     runs-on: ubuntu-latest

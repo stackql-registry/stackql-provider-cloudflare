@@ -7,6 +7,7 @@ on:
 
 jobs:
   detect_breaking_changes:
+    if: github.repository == 'cloudflare/cloudflare-python'
     runs-on: 'ubuntu-latest'
     name: detect-breaking-changes
     permissions:

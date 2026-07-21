@@ -489,6 +489,8 @@ git push origin main
 
 That's it. No GitHub UI dance needed. If the `--ff-only` merge fails (rare - means Stainless force-pushed upstream `main`, or you've committed to `main` locally by mistake), investigate before reaching for `--no-ff` or `reset --hard`.
 
+Note on CI: every job in the inherited Stainless workflows (`.github/workflows/` - ci, detect-breaking-changes, release-doctor, semgrep, sync-labels, publish-pypi) is guarded with `if: github.repository == 'cloudflare/cloudflare-python'`, so they all skip instantly on this fork's PRs and pushes. After an upstream sync, re-check the workflows: upstream edits to those files may conflict with the guard lines (keep the guard), and any NEW workflow upstream adds needs the same guard added to its jobs.
+
 (`gh repo sync stackql-registry/stackql-provider-cloudflare --branch main` is a thin wrapper around the same fetch/merge if you prefer it.)
 
 Cadence: typically quarterly, or whenever an upstream Cloudflare feature you want to expose lands in the SDK. There's no automated trigger - skim the upstream changelog and bump when relevant.

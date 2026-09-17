@@ -69,6 +69,135 @@ stackql.exe shell --auth=$Auth
 ```
 </details>
 
+## Example Queries
+
+Try the following queries using `stackql shell`, or run them from a script or CI pipeline with `stackql exec`.
+
+### Accounts
+
+Accounts the token has access to, with the IDs the other queries take as `account_id`:
+
+```sql
+SELECT id, name, type, created_on
+FROM cloudflare.accounts.accounts
+ORDER BY name;
+```
+
+### Zones by status and plan
+
+Every zone visible to the token, with its status, plan and owning account read from the nested `plan` and `account` columns:
+
+```sql
+SELECT name, status, paused, type,
+       json_extract(plan, '$.name') AS plan_name,
+       json_extract(account, '$.name') AS account_name
+FROM cloudflare.zones.zones
+ORDER BY account_name, name;
+```
+
+### DNS records of one type in a zone
+
+A records in a zone, with the `type` filter passed through to the API:
+
+```sql
+SELECT name, content, proxied, ttl, comment
+FROM cloudflare.dns.zones_dns_records
+WHERE zone_id = '{{ zone_id }}' AND type = 'A'
+ORDER BY name;
+```
+
+### DNS records across every zone
+
+All records in every zone, resolved from the zone list with one request per zone:
+
+```sql
+SELECT z.name AS zone, r.name AS record, r.type, r.content, r.proxied, r.ttl
+FROM cloudflare.zones.zones z
+JOIN cloudflare.dns.zones_dns_records r ON r.zone_id = z.id
+ORDER BY zone, r.type, record;
+```
+
+### Workers scripts
+
+Scripts deployed in an account (`id` is the script name), most recently modified first:
+
+```sql
+SELECT id, modified_on, compatibility_date, usage_model, has_modules, logpush
+FROM cloudflare.workers.scripts
+WHERE account_id = '{{ account_id }}'
+ORDER BY modified_on DESC;
+```
+
+### KV namespaces and R2 buckets
+
+Workers KV namespaces and R2 buckets in an account as one storage inventory:
+
+```sql
+SELECT 'kv' AS store, title AS name, NULL AS location, NULL AS storage_class
+FROM cloudflare.kv.namespaces
+WHERE account_id = '{{ account_id }}'
+UNION ALL
+SELECT 'r2', name, location, storage_class
+FROM cloudflare.r2.buckets
+WHERE account_id = '{{ account_id }}';
+```
+
+### Rulesets for a zone
+
+WAF, rate limiting and other rulesets deployed to a zone, ordered by phase:
+
+```sql
+SELECT name, phase, kind, version, last_updated
+FROM cloudflare.rulesets.rulesets
+WHERE zone_id = '{{ zone_id }}'
+ORDER BY phase, name;
+```
+
+### Cloudflare Tunnels by health
+
+Tunnels in an account with their health status and the time they last had an active connection:
+
+```sql
+SELECT name, status, tun_type, config_src, conns_active_at, created_at
+FROM cloudflare.zero_trust.tunnels
+WHERE account_id = '{{ account_id }}'
+ORDER BY status, name;
+```
+
+### Workers invocations over a time window
+
+Invocations, errors and CPU time per script over a window, from the GraphQL analytics resource (the token needs Analytics Read on the account, and `account_tag` takes the account ID):
+
+```sql
+SELECT script_name, status,
+       SUM(requests) AS invocations,
+       SUM(errors) AS errors,
+       SUM(cpu_time_us) AS cpu_time_us
+FROM cloudflare.workers.invocations
+WHERE account_tag = '{{ account_id }}'
+  AND since = '2026-09-16T00:00:00Z'
+  AND until = '2026-09-17T00:00:00Z'
+GROUP BY script_name, status
+ORDER BY invocations DESC;
+```
+
+### KV namespace lifecycle
+
+Create a namespace (`RETURNING result` returns the new namespace with its `id`), rename it, then delete it:
+
+```sql
+INSERT INTO cloudflare.kv.namespaces (title, account_id)
+SELECT 'stackql-demo', '{{ account_id }}'
+RETURNING result;
+
+REPLACE cloudflare.kv.namespaces
+SET title = 'stackql-demo-renamed'
+WHERE namespace_id = '{{ namespace_id }}' AND account_id = '{{ account_id }}';
+
+DELETE FROM cloudflare.kv.namespaces
+WHERE namespace_id = '{{ namespace_id }}' AND account_id = '{{ account_id }}';
+```
+
 
 ## Services
 <div class="row">

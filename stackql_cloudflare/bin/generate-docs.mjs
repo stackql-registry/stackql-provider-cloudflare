@@ -23,6 +23,9 @@ const providerDir     = path.join(BASE_DIR, 'provider-dev', 'openapi', 'src', 'c
 // website/docs/...
 const outputDir       = path.join(BASE_DIR, 'website');
 const providerDataDir = path.join(BASE_DIR, 'provider-dev', 'docgen', 'provider-data');
+// Repository linked from the Provider Summary on the docs landing page (the
+// provider-utils --source-project row); override with SOURCE_PROJECT.
+const sourceProject   = process.env.SOURCE_PROJECT || 'https://github.com/stackql-registry/stackql-provider-cloudflare';
 
 console.log(`[generate-docs] provider:    ${providerDir}`);
 console.log(`[generate-docs] providerData:${providerDataDir}`);
@@ -33,6 +36,7 @@ const result = await docgen.generateDocs({
   providerDir,
   outputDir,
   providerDataDir,
+  sourceProject,
   // Let docgen run SwaggerParser.dereference + flattenAllOf. Cloudflare's
   // upstream `{accounts_or_zones}` paths (which used to crash the
   // dereferencer) are now fanned out into concrete /accounts/ and /zones/

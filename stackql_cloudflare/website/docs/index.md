@@ -23,6 +23,7 @@ The connectivity cloud - DNS, CDN, Zero Trust, Workers, and more.
 
 total services: __108__  
 total resources: __1235__  
+source project: __[stackql-provider-cloudflare](https://github.com/stackql-registry/stackql-provider-cloudflare)__  
 
 :::
 

@@ -9,7 +9,7 @@ keywords:
   - infrastructure-as-code
   - configuration-as-data
   - cloud inventory
-description: Query, deploy and manage cloudflare resources using SQL
+description: "Query, deploy and manage the url_normalization resource in the cloudflare url_normalization service using SQL"
 custom_edit_url: null
 image: /img/stackql-cloudflare-provider-featured-image.png
 ---

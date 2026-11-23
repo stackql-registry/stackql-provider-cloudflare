@@ -12,6 +12,7 @@ description: Query, deploy and manage Cloudflare resources using SQL
 custom_edit_url: null
 image: /img/stackql-cloudflare-provider-featured-image.png
 id: 'provider-intro'
+softwareApplication: true
 ---
 
 import CopyableCode from '@site/src/components/CopyableCode/CopyableCode';

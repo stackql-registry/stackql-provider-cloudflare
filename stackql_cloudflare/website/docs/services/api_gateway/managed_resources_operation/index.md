@@ -9,7 +9,7 @@ keywords:
   - infrastructure-as-code
   - configuration-as-data
   - cloud inventory
-description: Query, deploy and manage cloudflare resources using SQL
+description: "Query, deploy and manage the managed_resources_operation resource in the cloudflare api_gateway service using SQL"
 custom_edit_url: null
 image: /img/stackql-cloudflare-provider-featured-image.png
 ---

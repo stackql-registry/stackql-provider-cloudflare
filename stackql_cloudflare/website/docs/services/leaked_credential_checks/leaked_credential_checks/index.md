@@ -9,7 +9,7 @@ keywords:
   - infrastructure-as-code
   - configuration-as-data
   - cloud inventory
-description: Query, deploy and manage cloudflare resources using SQL
+description: "Query, deploy and manage the leaked_credential_checks resource in the cloudflare leaked_credential_checks service using SQL"
 custom_edit_url: null
 image: /img/stackql-cloudflare-provider-featured-image.png
 ---
